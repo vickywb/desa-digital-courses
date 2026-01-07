@@ -15,9 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id')->unique(); //Relasi ke table users dengan menggunakan user id
             $table->string('profile_picture')->nullable();
-            $table->integer('identity_number')->unique();
+            $table->string('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
-            $table->date('date_birth');
+            $table->date('date_of_birth');
             $table->string('phone_number')->unique();
             $table->string('occupation');
             $table->enum('marital_status', ['single', 'married', 'widower', 'widow']);

@@ -17,14 +17,14 @@ class HeadOfFamily extends Model
         'profile_picture',
         'identify_number',
         'gender',
-        'date_birth',
+        'date_of_birth',
         'phone_number',
         'occupation',
         'marital_status',
     ];
 
     protected $casts = [
-        'date_birth' => 'date',
+        'date_of_birth' => 'date',
     ];
 
     // Relasi dengan model User
