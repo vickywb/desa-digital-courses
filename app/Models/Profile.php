@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Profile extends Model
 {
-    use SoftDeletes, HasUuid;
+    use SoftDeletes, HasUuids;
 
     protected $fillable = [
         'thumbnail',

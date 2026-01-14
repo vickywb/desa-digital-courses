@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SocialAssistanceRecipient extends Model
 {
-    use SoftDeletes, HasUuid;
+    use SoftDeletes, HasUuids;
 
     protected $fillable = [
         'social_assistance_id',

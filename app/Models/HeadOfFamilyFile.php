@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HeadOfFamilyFile extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $fillable = [
         'head_of_family_id',
