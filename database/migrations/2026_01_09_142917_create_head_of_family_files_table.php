@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('head_of_family_files', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('head_of_family_id'); // Relasi ke table head_of_families
-            $table->uuid('file_id'); // Relasi ke table files
-
-            $table->foreignUuid('head_of_family_id')->constrained('head_of_families')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('head_of_family_id')->constrained('head_of_families')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table head_of_families
+            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table files
             $table->timestamps();
         });
     }

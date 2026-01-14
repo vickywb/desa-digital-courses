@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('social_assistance_files', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('social_assistance_id'); // Relasi ke table social_assistances
-            $table->uuid('file_id'); // Relasi ke table files
-
-            $table->foreignUuid('social_assistance_id')->constrained('social_assistances')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('social_assistance_id')->constrained('social_assistances')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table social assistances
+            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table files
             $table->timestamps();
         });
     }

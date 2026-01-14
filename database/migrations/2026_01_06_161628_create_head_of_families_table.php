@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('head_of_families', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id')->unique(); //Relasi ke table users dengan menggunakan user id
+            $table->foreignUuid('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table users
             $table->string('profile_picture')->nullable();
             $table->string('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
-            $table->string('phone_number')->unique();
+            $table->string('phone_number')->nullable();
             $table->string('occupation');
             $table->enum('marital_status', ['single', 'married', 'widower', 'widow']);
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreignUuid('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

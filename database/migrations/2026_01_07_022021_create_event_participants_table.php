@@ -13,16 +13,13 @@ return new class extends Migration
     {
         Schema::create('event_participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('event_id'); //Relasi ke table events
-            $table->uuid('head_of_family_id'); //Relasi ke table head of family
+            $table->foreignUuid('event_id')->constrained('events')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table events
+            $table->foreignUuid('head_of_family_id')->constrained('head_of_families')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table head of families
             $table->integer('quantity')->default(0);
             $table->decimal('total_price', 16, 2)->default(0);
             $table->string('payment_status')->default('pending');
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreignUuid('event_id')->constrained('events')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignUuid('head_of_family_id')->constrained('head_of_families')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
