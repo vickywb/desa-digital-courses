@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Helpers;
 
 use Illuminate\Http\JsonResponse;
@@ -8,41 +7,43 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class ResponseHelper
 {
     /**
-     * Membuat response JSON sukses dengan format standar.
-     * Jika data adalah ResourceCollection (Pagination),
-     * maka meta & links akan digabungkan secara otomatis.
+     * Success response dengan support untuk pagination otomatis.
      */
     public static function success(
         string $message,
+        array|object|null $data = null,
         int $statusCode = 200,
-        mixed $data = null,
         string $status = 'Success'
     ): JsonResponse 
     {
-        $response = [
+        // Jika data adalah ResourceCollection (Pagination)
+        if ($data instanceof ResourceCollection) {
+            $dataArray = $data->response()->getData(true);
+            
+            return response()->json([
+                'status'  => $status,
+                'message' => $message,
+                'data'    => $dataArray['data'],
+                'meta'    => $dataArray['meta'] ?? null,
+                'links'   => $dataArray['links'] ?? null,
+            ], $statusCode);
+        }
+        
+        // Response biasa (non-paginated)
+        return response()->json([
             'status'  => $status,
             'message' => $message,
             'data'    => $data,
-        ];
-
-        // Jika data adalah ResourceCollection (Pagination), gabungkan meta & links secara otomatis
-        if ($data instanceof ResourceCollection) {
-            $dataArray = $data->response()->getData(true);
-            $response['data']  = $dataArray['data'];
-            $response['meta']  = $dataArray['meta'] ?? null;
-            $response['links'] = $dataArray['links'] ?? null;
-        }
-
-        return response()->json($response, $statusCode);
+        ], $statusCode);
     }
 
     /**
-     * Membuat response JSON error dengan format standar.
+     * Error response dengan format standar.
      */
     public static function error(
         string $message,
-        int $statusCode = 400,
-        mixed $data = null,
+        array|object|null $data = null,
+        int $statusCode = 500,
         string $status = 'Error'
     ): JsonResponse 
     {
@@ -51,5 +52,36 @@ class ResponseHelper
             'message' => $message,
             'data'    => $data,
         ], $statusCode);
+    }
+
+    /**
+     * Response untuk validation error (shortcut).
+     */
+    public static function validationError(
+        string $message = 'Validation failed',
+        array $errors = []
+    ): JsonResponse 
+    {
+        return self::error($message, $errors, 422, 'Validation Error');
+    }
+
+    /**
+     * Response untuk unauthorized.
+     */
+    public static function unauthorized(
+        string $message = 'Unauthorized'
+    ): JsonResponse 
+    {
+        return self::error($message, null, 401, 'Unauthorized');
+    }
+
+    /**
+     * Response untuk forbidden.
+     */
+    public static function forbidden(
+        string $message = 'Access Denied'
+    ): JsonResponse 
+    {
+        return self::error($message, null, 403, 'Forbidden');
     }
 }
