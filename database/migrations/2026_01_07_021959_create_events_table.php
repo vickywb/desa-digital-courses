@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('thumbnail')->nullable();
+            $table->foreignUuid('file_id')->nullable()->constrained('files')->onUpdate('cascade')->onDelete('set null');
             $table->string('title');
             $table->longText('description')->nullable();
             $table->decimal('price', 16, 2)->default(0);

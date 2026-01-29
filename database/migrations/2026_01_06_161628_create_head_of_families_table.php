@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('head_of_families', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table users
-            $table->string('profile_picture')->nullable();
+            $table->foreignUuid('file_id')->nullable()->constrained('files')->onUpdate('cascade')->onDelete('set null');
             $table->string('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
