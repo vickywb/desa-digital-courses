@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Profile;
+use App\Models\VillageProfile;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class ProfileSeeder extends Seeder
+class VillageProfileSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,6 @@ class ProfileSeeder extends Seeder
     {
         $profiles = [
             [
-                'thumbnail' => '',
                 'name' => 'Pondok Nirwana Anggaswangi',
                 'about' => 'Pondok Nirwana Anggaswangi adalah desa yang berkomitmen pada pengembangan digital.',
                 'headman' => 'Budi Santoso',
@@ -26,7 +25,7 @@ class ProfileSeeder extends Seeder
         ];
 
         foreach ($profiles as $profile) {
-            Profile::create($profile);
+            VillageProfile::create($profile);
         }
     }
 }
