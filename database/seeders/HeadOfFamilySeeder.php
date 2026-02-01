@@ -21,7 +21,6 @@ class HeadOfFamilySeeder extends Seeder
 
             HeadOfFamily::create([
                 'user_id' => $user->id,
-                'profile_picture' => '',
                 'identity_number' => $faker->nik(),
                 'gender' => 'male',
                 'date_of_birth' => $faker->date(),

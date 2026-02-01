@@ -15,7 +15,6 @@ class SocialAssistanceSeeder extends Seeder
     {
         $socialAssistances = [
             [
-                'thumbnail' => '',
                 'title' => 'Bantuan Sosial 1',
                 'category' => 'healthcare',
                 'amount' => 500000,
@@ -24,7 +23,6 @@ class SocialAssistanceSeeder extends Seeder
                 'is_available' => true,
             ],
             [
-                'thumbnail' => '',
                 'title' => 'Bantuan Sosial 2',
                 'category' => 'cash',
                 'amount' => 300000,
@@ -33,7 +31,6 @@ class SocialAssistanceSeeder extends Seeder
                 'is_available' => true,
             ],
             [
-                'thumbnail' => '',
                 'title' => 'Bantuan Sosial 3',
                 'category' => 'healthcare',
                 'amount' => 400000,

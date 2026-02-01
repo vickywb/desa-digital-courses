@@ -15,7 +15,6 @@ class DevelopmentSeeder extends Seeder
     {
         $developments = [
             [
-                'thumbnail' => '',
                 'title' => 'Development 1',
                 'description' => 'Description for Development 1',
                 'person_in_charge' => 'Person In Charge 1',
@@ -25,7 +24,6 @@ class DevelopmentSeeder extends Seeder
                 'status' => 'ongoing'
             ],
             [
-                'thumbnail' => '',
                 'title' => 'Development 2',
                 'description' => 'Description for Development 2',
                 'person_in_charge' => 'Person In Charge 2',
@@ -35,7 +33,6 @@ class DevelopmentSeeder extends Seeder
                 'status' => 'completed'
             ],
             [
-                'thumbnail' => '',
                 'title' => 'Development 3',
                 'description' => 'Description for Development 3',
                 'person_in_charge' => '',
@@ -45,7 +42,6 @@ class DevelopmentSeeder extends Seeder
                 'status' => 'planned',
             ],
             [
-                'thumbnail' => '',
                 'title' => 'Development 4',
                 'description' => 'Description for Development 4',
                 'person_in_charge' => '',
