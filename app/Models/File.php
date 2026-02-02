@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class File extends Model
 {
@@ -19,38 +20,21 @@ class File extends Model
     ];
 
     // Relasi ke ProfileImage
-    public function profileImages(): HasMany
+    public function villageProfiles(): HasMany
     {
-        return $this->hasMany(ProfileImage::class);
+        return $this->hasMany(VillageProfile::class);
     }
 
-    // Relasi ke DevelopmentFile
-    public function developmentFiles(): HasMany
-    {
-        return $this->hasMany(DevelopmentFile::class);
-    }
-
-    // Relasi ke EventFile
-    public function eventFiles(): HasMany
-    {
-        return $this->hasMany(EventFile::class);
-    }
-
-    // Relasi ke SocialAssistanceFile
-    public function socialAssistanceFiles(): HasMany
-    {
-        return $this->hasMany(SocialAssistanceFile::class);
-    }
 
     // Relasi ke HeadOfFamilyFile
-    public function headOfFamilyFiles(): HasMany
+    public function headOfFamilyFile(): HasOne
     {
-        return $this->hasMany(HeadOfFamilyFile::class);
+        return $this->hasOne(HeadOfFamily::class);
     }
 
     // Relasi ke FamilyMemberFile
-    public function familyMemberFiles(): HasMany
+    public function familyMemberFile(): HasOne
     {
-        return $this->hasMany(FamilyMemberFile::class);
+        return $this->hasOne(FamilyMember::class);
     }
 }

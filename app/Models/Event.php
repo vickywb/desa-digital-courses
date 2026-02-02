@@ -11,7 +11,7 @@ class Event extends Model
     use SoftDeletes, HasUuids;
 
     protected $fillable = [
-        'thumbnail',
+        'file_id',
         'title',
         'description',
         'price',

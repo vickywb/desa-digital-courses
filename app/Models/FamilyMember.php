@@ -13,6 +13,7 @@ class FamilyMember extends Model
 
     protected $fillable = [
         'head_of_family_id',
+        'file_id',
         'full_name',
         'email',
         'date_of_birth',

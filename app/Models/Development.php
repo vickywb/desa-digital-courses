@@ -12,7 +12,7 @@ class Development extends Model
     use SoftDeletes, HasUuids;
 
     protected $fillable = [
-        'thumbnail',
+        'file_id',
         'title',
         'description',
         'person_in_charge',
