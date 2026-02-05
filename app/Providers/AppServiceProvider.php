@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Date;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->configureDefault();
+    }
+
+    protected function configureDefault(): void
+    {
+        Date::use(CarbonImmutable::class);
     }
 }
