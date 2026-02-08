@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Enums\FamilyRelation;
+use App\Enums\Gender;
+use App\Enums\MaritalStatus;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FamilyMember extends Model
 {
@@ -28,6 +31,9 @@ class FamilyMember extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'gender' => Gender::class,
+        'marital_status' => MaritalStatus::class,
+        'relation' => FamilyRelation::class
     ];
 
     // Relasi dengan model HeadOfFamily

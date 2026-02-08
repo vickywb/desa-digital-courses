@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Gender;
+use App\Enums\MaritalStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,7 +27,15 @@ class HeadOfFamily extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'gender' => Gender::class,
+        'marital_status' => MaritalStatus::class
     ];
+
+    // Relasi dengan model File
+    public function file(): BelongsTo
+    {
+        return $this->belongsTo(File::class);
+    }
 
     // Relasi dengan model User
     public function user(): BelongsTo
@@ -49,5 +59,13 @@ class HeadOfFamily extends Model
     public function eventParticipants(): HasMany
     {
         return $this->hasMany(EventParticipant::class);
+    }
+    
+    // Accesor untuk file URL
+    public function getProfileUrlAttribute()
+    {
+        return $this->file
+            ? $this->file->file_url
+            : asset('images/no-image.png');
     }
 }
