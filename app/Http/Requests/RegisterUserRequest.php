@@ -24,7 +24,8 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'username'        => 'required|string|min:3|max:24|unique:users,username|alpha_dash',
-            'email'           => 'required|string|email:rfc,dns|max:255|unique:users,email',
+            'full_name'            => 'required|string|min:3|max:50',
+            'email'           => 'required|string|email|max:255|unique:users,email',
             'password'        => [
                 'required',
                 'string',
@@ -34,7 +35,7 @@ class RegisterUserRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised(), // Check against known breached passwords
+                    // ->uncompromised(), // Check against known breached passwords
             ],
             'image'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'identity_number' => 'required|string|max:20|unique:head_of_families,identity_number',
