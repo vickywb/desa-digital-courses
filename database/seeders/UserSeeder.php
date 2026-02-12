@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,34 +17,34 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Admin',
+                'username' => 'admin',
                 'email' => 'admin@test.com',
                 'password' => Hash::make('secret'),
-                'role' => 'admin'
+                'role' => Role::Admin
             ],
             [
-                'name' => 'Kades',
+                'username' => 'kades',
                 'email' => 'kades@test.com',
                 'password' => Hash::make('secret'),
-                'role' => 'head_village'
+                'role' => Role::HeadVillage
             ],
             [
-                'name' => 'Agus',
+                'username' => 'agus',
                 'email' => 'agus@test.com',
                 'password' => Hash::make('secret'),
-                'role' => 'head_of_family'
+                'role' => Role::HeadOfFamily
             ],
             [
-                'name' => 'Budi',
+                'username' => 'budi',
                 'email' => 'budi@test.com',
                 'password' => Hash::make('secret'),
-                'role' => 'head_of_family'
+                'role' => Role::HeadOfFamily
             ],
             [
-                'name' => 'Bambang',
+                'username' => 'bambang',
                 'email' => 'bambang@test.com',
                 'password' => Hash::make('secret'),
-                'role' => 'head_of_family'
+                'role' => Role::HeadOfFamily
             ],
         ];
 
