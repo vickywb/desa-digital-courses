@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class ResponseHelper
 {
     /**
-     * Success response dengan support untuk pagination otomatis.
+     * Success response dengan support untuk pagination
      */
     public static function success(
         string $message,
