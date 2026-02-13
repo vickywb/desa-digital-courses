@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table users
             $table->foreignUuid('file_id')->nullable()->constrained('files')->onUpdate('cascade')->onDelete('set null');
+            $table->string('full_name');
             $table->string('identity_number')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
