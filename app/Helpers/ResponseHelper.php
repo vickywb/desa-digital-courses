@@ -13,7 +13,7 @@ class ResponseHelper
         string $message,
         array|object|null $data = null,
         int $statusCode = 200,
-        string $status = 'Success'
+        string $status = 'success'
     ): JsonResponse 
     {
         // Jika data adalah ResourceCollection (Pagination)
@@ -44,7 +44,7 @@ class ResponseHelper
         string $message,
         array|object|null $data = null,
         int $statusCode = 500,
-        string $status = 'Error'
+        string $status = 'error'
     ): JsonResponse 
     {
         return response()->json([
