@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Enums\MaritalStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,12 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HeadOfFamily extends Model
 {
-    use SoftDeletes, HasUuids;
+    use SoftDeletes, HasUuids, HasFactory;
 
     protected $fillable = [
         'user_id',
         'file_id',
-        'identify_number',
+        'full_name',
+        'identity_number',
         'gender',
         'date_of_birth',
         'phone_number',
