@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Models\User;
-use App\Service\AuthService;
-use Illuminate\Http\Request;
 use App\Helpers\LoggerHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Service\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -19,36 +19,49 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            // Log
+        // Determine login field
+        $loginField = $request->has('email') ? 'email' : 'username';
+        $loginValue = $request->has('email') ? $request->email : $request->username;
+        
+        // Attempt login
+        if (!Auth::attempt([
+            $loginField => $loginValue,
+            'password' => $request->password
+        ])) {
+            // Log failed attempt
             LoggerHelper::alert('Login Attempt Failed', [
-                'email' => $request->email,
-                'ip' => $request->ip()
+                $loginField => $loginValue,
+                'ip' => $request->ip(),
             ]);
-
-            return ResponseHelper::unauthorized('Username or Password invalid.');
+            
+            return ResponseHelper::error('Invalid credentials.', null, 401);
         }
-
+        
+        // Get authenticated user
+        $user = Auth::user();
+        
+        // Generate token
         $token = $user->createToken('auth_token', [$user->role])->plainTextToken;
-
-        // Log
-        LoggerHelper::info('User Successfully Logged in.', [
+        
+        // Log success
+        LoggerHelper::info('User Successfully Logged In.', [
             'token' => substr($token, 0, 5) . '...' . substr($token, -5),
             'user' => [
-                'name' => $user->name,
-                'email' => $user->email
-            ]
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+            ],
         ]);
-
-        return ResponseHelper::success('Successfully Logged in.', [
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email
-            ]
+        
+        // Load relationships
+        $user->load('headOfFamily.file');
+        
+        // Return JSON response
+        return ResponseHelper::success('Successfully Logged In.', [
+            'user' => $user,
+            'token' => $token,
         ])->cookie(
             'token',
             $token,
@@ -70,19 +83,27 @@ class AuthController extends Controller
             return ResponseHelper::error('Registration Failed. ', null, 500);
         }
 
-        return ResponseHelper::success('Successfully Create new Account.', $user);
+        return ResponseHelper::success('Successfully Create new Account.', $user, 201);
     }
 
     public function me(Request $request)
     {
-        $user = $request->user();
+        $user = $request->user()->load('headOfFamily.file');
 
         return ResponseHelper::success('User data retrieved.', [
-            'user' => [
-                'name'  => $user->name,
-                'email' => $user->email,
-                'role'  => $user->role, // Penting untuk UI di Vue
-            ]
+            'user' => $user
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        // // Delete current access token only
+        // $request->user()->currentAccessToken()?->delete();
+
+        $user = $request->user();
+        
+        $user->tokens()->delete();
+            
+        return ResponseHelper::success('Successfully logged out.', null);
     }
 }
