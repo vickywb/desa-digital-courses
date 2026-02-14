@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\HeadOfFamily;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -41,5 +42,14 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    // create user dengan head_of_family
+    public function withHeadOfFamily(array $attributes = []): static
+    {
+        return $this->has(
+            HeadOfFamily::factory()->state($attributes),
+            'headOfFamily'
+        );
     }
 }
