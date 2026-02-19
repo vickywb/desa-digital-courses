@@ -6,25 +6,38 @@ use App\Models\File;
 
 class FileRepository
 {
-    private $file;
+    public function __construct(private File $file) {}
 
-    public function __construct(File $file) {
-        $this->file = $file;
-    }
-
-    public function save($data)
+    /**
+     * Save file info ke database.
+     *
+     * @param  array  $fileData
+     * @return File
+     */
+    public function save(array $fileData): File
     {
-        $file = $this->file->create($data);
-        return $file;
+        return $this->file->create($fileData);
     }
-    
-    public function findById($id)
+
+    /**
+     * Find file by ID.
+     *
+     * @param  int  $id
+     * @return File|null
+     */
+    public function findById(int $id): ?File
     {
         return $this->file->find($id);
     }
-    
-    public function delete($id)
+
+    /**
+     * Delete file from database.
+     *
+     * @param  File  $file
+     * @return bool
+     */
+    public function delete(File $file): bool
     {
-        return $this->file->destroy($id);
+        return $file->delete();
     }
 }
