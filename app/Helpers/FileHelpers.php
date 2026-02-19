@@ -4,31 +4,59 @@ namespace App\Helpers;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Laravel\Facades\Image; // Jika pakai v3
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class FileHelpers
 {
-    public static function uploadFileToStorage(UploadedFile $file, string $directory): array
+    /**
+     * Upload file dan convert ke WebP.
+     *
+     * @param  UploadedFile  $file
+     * @param  string  $directory  (e.g., 'profile-photos', 'events', 'documents')
+     * @return array
+     */
+    public static function uploadFile(UploadedFile $file, string $directory): array
     {
-        // Tentukan nama file baru dengan ekstensi .webp
+        // Generate unique filename
         $filename = Str::random(20) . '.webp';
         $path = $directory . '/' . $filename;
 
-        // Proses konversi menggunakan Intervention Image
-        // baca file asli, lalu encode ke webp dengan kualitas 80
+        // Convert to WebP
         $encodedImage = Image::read($file)->toWebp(80);
 
-        // Simpan hasil konversi ke disk public
+        // Save to storage/app/public
         Storage::disk('public')->put($path, (string) $encodedImage);
 
-        // Ambil data untuk tabel 'files'
+        // Return file info
         return [
-            'file_name' => $file->getClientOriginalName(), // Nama asli untuk referensi user
+            'file_name' => $file->getClientOriginalName(),
             'file_url'  => asset('storage/' . $path),
             'file_path' => $path,
-            'file_type' => 'image/webp', // Sekarang tipenya sudah webp
-            'file_size' => strlen((string) $encodedImage), // Ukuran setelah dikompresi
+            'file_type' => 'image/webp',
+            'file_size' => strlen((string) $encodedImage),
         ];
+    }
+
+    /**
+     * Delete file from storage.
+     *
+     * @param  string  $path
+     * @return bool
+     */
+    public static function delete(string $path): bool
+    {
+        return Storage::disk('public')->delete($path);
+    }
+
+    /**
+     * Get full URL dari file path.
+     *
+     * @param  string|null  $path
+     * @return string|null
+     */
+    public static function url(?string $path): ?string
+    {
+        return $path ? asset('storage/' . $path) : null;
     }
 }
