@@ -17,9 +17,9 @@ class SocialAssistanceRecipientSeeder extends Seeder
      */
     public function run(): void
     {
-        $socialAssistanceList = SocialAssistance::all(); // Koleksi semua bantuan
+        $socialAssistanceList = SocialAssistance::all();
         $headOfFamilies = HeadOfFamily::skip(1)->take(5)->get();
-        $faker = Factory::create('id_ID'); // Lokalisasi Indonesia
+        $faker = Factory::create('id_ID');
 
         foreach ($headOfFamilies as $headOfFamily) {
             // Pilih 1 atau 2 bantuan secara acak untuk setiap kepala keluarga
