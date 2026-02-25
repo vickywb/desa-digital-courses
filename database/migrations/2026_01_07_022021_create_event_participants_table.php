@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('event_id')->constrained('events')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table events
             $table->foreignUuid('head_of_family_id')->constrained('head_of_families')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table head of families
+            $table->foreignUuid('family_member_id')->constrained('family_members')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table family members
             $table->integer('quantity')->default(0);
             $table->decimal('total_price', 16, 2)->default(0);
             $table->string('payment_status')->default('pending');
