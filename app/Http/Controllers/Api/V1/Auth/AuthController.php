@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Helpers\LoggerHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
-use App\Service\AuthService;
+use App\Http\Resources\UserResource;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -21,56 +20,38 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        // Determine login field
-        $loginField = $request->has('email') ? 'email' : 'username';
-        $loginValue = $request->has('email') ? $request->email : $request->username;
+        $credentials = $request->validated();
+
+        $identifier = $credentials['identifier'];
+        $password = $credentials['password'];
+
+        try {
+        $data = $this->authService->login($identifier, $password);
         
-        // Attempt login
-        if (!Auth::attempt([
-            $loginField => $loginValue,
-            'password' => $request->password
-        ])) {
-            // Log failed attempt
-            LoggerHelper::alert('Login Attempt Failed', [
-                $loginField => $loginValue,
-                'ip' => $request->ip(),
-            ]);
-            
-            return ResponseHelper::error('Invalid credentials.', null, 401);
+        } catch (\Throwable $th) {
+           
+            return ResponseHelper::error('Login Failed. Please check your credentials.', null, 401);
         }
         
-        // Get authenticated user
-        $user = Auth::user();
-        
-        // Generate token
-        $token = $user->createToken('auth_token', [$user->role])->plainTextToken;
-        
-        // Log success
-        LoggerHelper::info('User Successfully Logged In.', [
-            'token' => substr($token, 0, 5) . '...' . substr($token, -5),
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-            ],
-        ]);
-        
-        // Load relationships
-        $user->load('headOfFamily.file');
-        
-        // Return JSON response
         return ResponseHelper::success('Successfully Logged In.', [
-            'user' => $user,
-            'token' => $token,
+            'user' => new UserResource($data['user']),
+            'token' => $data['token']
         ])->cookie(
             'token',
-            $token,
+            $data['token'],
             60,
             '/',
             null,
             true,
             true
         );
+    }
+
+    public function logout(Request $request)
+    {
+        $this->authService->logout($request->user());
+            
+        return ResponseHelper::success('Successfully logged out.', null);
     }
 
     public function register(RegisterUserRequest $request)
@@ -88,22 +69,10 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()->load('headOfFamily.file');
+       $user = $this->authService->me($request->user());
 
         return ResponseHelper::success('User data retrieved.', [
-            'user' => $user
+            'user' => new UserResource($user)
         ]);
-    }
-
-    public function logout(Request $request)
-    {
-        // // Delete current access token only
-        // $request->user()->currentAccessToken()?->delete();
-
-        $user = $request->user();
-        
-        $user->tokens()->delete();
-            
-        return ResponseHelper::success('Successfully logged out.', null);
     }
 }
