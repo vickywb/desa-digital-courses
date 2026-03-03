@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,24 +19,34 @@ class FileHelpers
      */
     public static function uploadFile(UploadedFile $file, string $directory): array
     {
-        // Generate unique filename
-        $filename = Str::random(20) . '.webp';
-        $path = $directory . '/' . $filename;
+        try {
 
-        // Convert to WebP
-        $encodedImage = Image::read($file)->toWebp(80);
+            // Generate random string
+            $filename = Str::random(20) . '.webp';
+            $path = $directory . '/' . $filename;
 
-        // Save to storage/app/public
-        Storage::disk('public')->put($path, (string) $encodedImage);
+            // Convert to WebP
+            $encodedImage = Image::read($file)->toWebp(80);
 
-        // Return file info
-        return [
-            'file_name' => $file->getClientOriginalName(),
-            'file_url'  => asset('storage/' . $path),
-            'file_path' => $path,
-            'file_type' => 'image/webp',
-            'file_size' => strlen((string) $encodedImage),
-        ];
+            // Save to storage/app/public
+            Storage::disk('public')->put($path, (string) $encodedImage);
+
+            // Return file info
+            return [
+                'file_name' => $file->getClientOriginalName(),
+                'file_url'  => asset('storage/' . $path),
+                'file_path' => $path,
+                'file_type' => 'image/webp',
+                'file_size' => strlen((string) $encodedImage),
+            ];
+
+        } catch (\Throwable $th) {
+            // 1. Log error agar dev tahu apa yang salah
+            LoggerHelper::error('Gagal upload file: ' . $th->getMessage());
+
+            // 2. Lempar kembali exception agar Controller tahu ada masalah
+            throw new Exception('Failed to upload file. Please try again later.');
+        }
     }
 
     /**
