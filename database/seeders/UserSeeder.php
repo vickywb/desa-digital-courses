@@ -19,31 +19,31 @@ class UserSeeder extends Seeder
             [
                 'username' => 'admin',
                 'email' => 'admin@test.com',
-                'password' => Hash::make('secret'),
+                'password' => Hash::make('secret123'),
                 'role' => Role::Admin
             ],
             [
                 'username' => 'kades',
                 'email' => 'kades@test.com',
-                'password' => Hash::make('secret'),
+                'password' => Hash::make('secret123'),
                 'role' => Role::HeadVillage
             ],
             [
                 'username' => 'agus',
                 'email' => 'agus@test.com',
-                'password' => Hash::make('secret'),
+                'password' => Hash::make('secret123'),
                 'role' => Role::HeadOfFamily
             ],
             [
                 'username' => 'budi',
                 'email' => 'budi@test.com',
-                'password' => Hash::make('secret'),
+                'password' => Hash::make('secret123'),
                 'role' => Role::HeadOfFamily
             ],
             [
                 'username' => 'bambang',
                 'email' => 'bambang@test.com',
-                'password' => Hash::make('secret'),
+                'password' => Hash::make('secret123'),
                 'role' => Role::HeadOfFamily
             ],
         ];
