@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->string('occupation');
             $table->enum('marital_status', ['single', 'married']);
-            $table->enum('relation', ['child', 'wife', 'husband']);
+            $table->enum('relation', ['child', 'wife']);
             $table->softDeletes();
             $table->timestamps();
         });
