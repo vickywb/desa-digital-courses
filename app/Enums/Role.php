@@ -6,16 +6,15 @@ enum Role: string
 {
     case Admin = 'admin';
     case HeadOfFamily = 'head_of_family';
-    case FamilyMember = 'family_member';
     case HeadVillage = 'head_village';
+    case Staff = 'staff';
 
-    public function label(): string
+    public function maxQuota(): ?int
     {
         return match($this) {
-            self::Admin => 'Administrator',
-            self::HeadVillage => 'Kepala Desa',
-            self::HeadOfFamily => 'Kepala Keluarga',
-            self::FamilyMember => 'Anggota Keluarga',
+           Role::HeadVillage => 1,
+           Role::Staff => 3,
+           Role::HeadOfFamily => null
         };
     }
 }
