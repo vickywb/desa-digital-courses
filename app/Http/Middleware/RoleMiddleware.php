@@ -13,12 +13,12 @@ class RoleMiddleware
         $user = $request->user();
         
         // Cek user, apakah user terautentikasi dan role diizinkan
-        if (!$user || !in_array($user->role, $roles)) {
+        if (!$user || !in_array($user->role->value, $roles)) {
 
             // Log
             LoggerHelper::error('Access Denied', [
-                'user_id' => $user->id,
-                'roles' => $user->role ?? 'head_family'
+                'user_id' => $user->id ?? 'guest',
+                'roles' => $user->role->value ?? 'guest'
             ]);
 
             return ResponseHelper::forbidden('Access Denied: Insufficient permissions.', 403);
