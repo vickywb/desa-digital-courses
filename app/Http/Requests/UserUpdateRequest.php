@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Role;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class LoginRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +24,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'identifier' => 'required|string',
-            'password' => 'required|string|min:6',
+            'is_active' => 'nullable|boolean',
+            'role' => ['required', Rule::enum(Role::class)]
         ];
     }
 }

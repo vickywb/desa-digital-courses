@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class VillageProfileStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,12 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'identifier' => 'required|string',
-            'password' => 'required|string|min:6',
+            'name' => 'required|string|max:255',
+            'about' => 'required|string',
+            'headman' => 'required|string|max:255',
+            'people' => 'required|integer|min:0',
+            'agriculture_area' => 'required|string|max:255',
+            'total_area' => 'required|string|max:255',
         ];
     }
 }
