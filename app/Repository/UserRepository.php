@@ -54,6 +54,6 @@ class UserRepository
     {
         $user->save();
         
-        return $user;
+        return $user->fresh();
     }
 }
