@@ -20,32 +20,44 @@ class UserSeeder extends Seeder
                 'username' => 'admin',
                 'email' => 'admin@test.com',
                 'password' => Hash::make('secret123'),
+                'is_active' => true,
                 'role' => Role::Admin
             ],
             [
-                'username' => 'kades',
-                'email' => 'kades@test.com',
+                'username' => 'Slamet',
+                'email' => 'slamet@test.com',
                 'password' => Hash::make('secret123'),
+                'is_active' => true,
                 'role' => Role::HeadVillage
             ],
             [
-                'username' => 'agus',
+                'username' => 'Agus',
                 'email' => 'agus@test.com',
                 'password' => Hash::make('secret123'),
+                'is_active' => true,
                 'role' => Role::HeadOfFamily
             ],
             [
-                'username' => 'budi',
+                'username' => 'Budi',
                 'email' => 'budi@test.com',
                 'password' => Hash::make('secret123'),
+                'is_active' => true,
                 'role' => Role::HeadOfFamily
             ],
             [
-                'username' => 'bambang',
+                'username' => 'Bambang',
                 'email' => 'bambang@test.com',
                 'password' => Hash::make('secret123'),
+                'is_active' => true,
                 'role' => Role::HeadOfFamily
             ],
+            [
+                'username' => 'Adi',
+                'email' => 'adi@test.com',
+                'password' => Hash::make('secret123'),
+                'is_active' => true,
+                'role' => Role::Staff
+            ]
         ];
 
         foreach ($users as $user) {
