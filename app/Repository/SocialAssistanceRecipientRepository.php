@@ -6,11 +6,7 @@ use App\Models\SocialAssistanceRecipient;
 
 class SocialAssistanceRecipientRepository
 {
-    private $socialAssistanceRecipient;
-
-    public function __construct(SocialAssistanceRecipient $socialAssistanceRecipient) {
-        $this->socialAssistanceRecipient = $socialAssistanceRecipient;
-    }
+    public function __construct(private SocialAssistanceRecipient $socialAssistanceRecipient) {}
     
     public function save(SocialAssistanceRecipient $socialAssistanceRecipient)
     {

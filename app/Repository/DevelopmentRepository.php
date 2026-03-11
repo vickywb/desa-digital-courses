@@ -6,16 +6,12 @@ use App\Models\Development;
 
 class DevelopmentRepository
 {
-    private $development;
+    public function __construct(private Development $development) {}
 
-    public function __construct(Development $development) {
-        $this->development = $development;
-    }
-
-    public function save(Development $development)
+    public function save(Development $development): Development
     {
         $development->save();
+        return $development->fresh();
 
-        return $development;
     }
 }

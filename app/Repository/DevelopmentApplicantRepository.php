@@ -6,16 +6,12 @@ use App\Models\DevelopmentApplicant;
 
 class DevelopmentApplicantRepository
 {
-    private $developmentApplicant;
+    public function __construct(private DevelopmentApplicant $developmentApplicant) {}
 
-    public function __construct(DevelopmentApplicant $developmentApplicant) {
-        $this->developmentApplicant = $developmentApplicant;
-    }
-
-    public function save(DevelopmentApplicant $developmentApplicant)
+    public function save(DevelopmentApplicant $developmentApplicant): DevelopmentApplicant
     {
         $developmentApplicant->save();
 
-        return $developmentApplicant;
+        return $developmentApplicant->fresh();
     }
 }

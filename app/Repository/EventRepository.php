@@ -6,16 +6,11 @@ use App\Models\Event;
 
 class EventRepository
 {
-    private $event;
+    public function __construct(private Event $event) {}
 
-    public function __construct(Event $event) {
-        $this->event = $event;
-    }
-
-    public function save(Event $event)
+    public function save(Event $event): Event
     {
         $event->save();
-
-        return $event;
+        return $event->fresh();
     }
 }
