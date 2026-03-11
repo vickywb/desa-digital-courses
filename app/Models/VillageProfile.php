@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\VillageProfileFile;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,5 +29,18 @@ class VillageProfile extends Model
     public function villageProfileFiles()
     {
         return $this->hasMany(VillageProfile::class);
+    }
+
+    // Relasi hasManyThrough untuk mendapatkan file melalui VillageProfileFile
+    public function files()
+    {
+        return $this->hasManyThrough(
+            File::class, // Model yang ingin diakses (File)
+            VillageProfileFile::class, // Model perantara atau pivot (Village Profile File)
+            'village_profile_id', // Foreign Key di VillageProfileFile yang menghubungkan ke Village Profile
+            'id', // Primary Key di File
+            'id', // Primary key di VillageProfile
+            'file_id' // Foreign Key di VillageProfileFile yang menghubungkan ke File
+        );
     }
 }
