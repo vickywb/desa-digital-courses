@@ -6,19 +6,19 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProfileFile extends Model
+class VillageProfileFile extends Model
 {
     use HasUuids;
     
     protected $fillable = [
-        'profile_id',
+        'village_profile_id',
         'file_id',
     ];
 
     // Relasi dengan model Profile
-    public function profile(): BelongsTo
+    public function villageProfile(): BelongsTo
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(VillageProfile::class);
     }
 
     // Relasi dengan model File
