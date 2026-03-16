@@ -27,14 +27,19 @@ class AuthService
      */
     public function registerUser(array $data, ?UploadedFile $profilePicture = null): User
     {
-        return DB::transaction(function () use ($data, $profilePicture) {
-            $uploadedFileId = null;
+        // File info sudah melakukan pengecekan dari file service
+        $fileInfo = $this->fileService->uploadFileToStorage($profilePicture, 'file/profile-photos');
+        $uploadedFilePath   = $fileInfo['file_path'] ?? null;
 
-            try {
-                // 1. Upload profile picture (if exists)
-                if ($profilePicture) {
-                    $fileData = $this->fileService->uploadFile($profilePicture, 'file/profile-photos');
-                    $uploadedFileId = $fileData['id'];
+        try {
+            $user = DB::transaction(function () use ($data, $fileInfo) {
+
+                $uploadedFileId = null;
+
+                // save file record ke DB
+                if ($fileInfo) {
+                    $savedFile      = $this->fileService->saveFileToDB($fileInfo);
+                    $uploadedFileId = $savedFile->id;
                 }
 
                 // 2. Create user account
@@ -57,33 +62,32 @@ class AuthService
                     'phone_number'    => $data['phone_number'] ?? null,
                 ]);
 
-                // 4. Log success
-                LoggerHelper::info('User registered successfully', [
-                    'user_id'  => $user->id,
-                    'username' => $user->username,
-                    'email'    => $user->email,
-                ]);
-
-                // 5. Return user with relations
                 return $user->load('headOfFamily.file');
+            });
 
-            } catch (\Throwable $th) {
-                // Cleanup uploaded file on error
-                if ($uploadedFileId) {
-                    $this->fileService->deleteFile($uploadedFileId);
-                }
+            // 4. Log success setelah transaction commit
+            LoggerHelper::info('User registered successfully', [
+                'user_id'  => $user->id,
+                'username' => $user->username,
+                'email'    => $user->email,
+            ]);
 
-                // Log error with details
-                LoggerHelper::error('Failed to register user', [
-                    'error'    => $th->getMessage(),
-                    'email'    => $data['email'] ?? 'N/A',
-                    'username' => $data['username'] ?? 'N/A',
-                ]);
+            return $user;
 
-                // Re-throw to trigger DB::transaction rollback
-                throw $th;
+        } catch (\Throwable $th) {
+            // 5. Cleanup file jika DB gagal
+            if ($uploadedFilePath) {
+                $this->fileService->deleteFileFromStorage($uploadedFilePath);
             }
-        });
+
+            LoggerHelper::error('Failed to register user', [
+                'error'    => $th->getMessage(),
+                'email'    => $data['email'] ?? 'N/A',
+                'username' => $data['username'] ?? 'N/A',
+            ]);
+
+            throw $th;
+        }
     }
 
     public function login(string $identifier, string $password): array
