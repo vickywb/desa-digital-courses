@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\FileHelpers;
+use App\Models\File;
 use App\Repository\FileRepository;
 use Illuminate\Http\UploadedFile;
 
@@ -13,60 +14,45 @@ class FileService
     ) {}
 
     /**
-     * Upload file and save to database.
+     * Upload file and return file info (without saving to DB). Returns null if no file provided.
      *
      * @param  UploadedFile|null  $file
      * @param  string  $directory
      * @return array|null  ['id' => int, 'path' => string]
      */
-    public function uploadFile(?UploadedFile $file, string $directory): ?array
+    public function uploadFileToStorage(?UploadedFile $file, string $directory): ?array
     {
-        if (!$file) {
-            return null;
-        }
+        if (!$file) return null;
 
-        // Upload to storage
-        $fileInfo = FileHelpers::uploadFile($file, $directory);
-
-        // Save to database
-        $savedFile = $this->fileRepository->create($fileInfo);
-
-        // Return with ID and path
-        return [
-            'id'   => $savedFile->id,
-            'path' => $fileInfo['file_path'],
-        ];
+        return FileHelpers::uploadFile($file, $directory);
     }
 
     /**
-     * Delete file by ID (storage + database).
+     * Save file info to database and return File model.
      *
-     * @param  int  $fileId
-     * @return bool
+     * @param  array  $fileInfo
+     * @return File
      */
+    public function saveFileToDB(array $fileInfo): File
+    {
+        return $this->fileRepository->create($fileInfo);
+    }
+
+    // Delete file from storage (untuk cleanup jika DB gagal setelah upload)
+    public function deleteFileFromStorage(string $filePath): void
+    {
+        FileHelpers::delete($filePath);
+    }
+
+    // Delete file record from DB and file from storage
     public function deleteFile(int $fileId): bool
     {
         $file = $this->fileRepository->findById($fileId);
 
-        if (!$file) {
-            return false;
-        }
+        if (!$file) return false;
 
-        // Delete physical file
         FileHelpers::delete($file->file_path);
 
-        // Delete database record
         return $this->fileRepository->delete($file);
-    }
-
-    /**
-     * Delete file by path (for cleanup on error).
-     *
-     * @param  string  $filePath
-     * @return bool
-     */
-    public function deleteFileByPath(string $filePath): bool
-    {
-        return FileHelpers::delete($filePath);
     }
 }
