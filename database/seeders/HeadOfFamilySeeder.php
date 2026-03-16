@@ -15,13 +15,13 @@ class HeadOfFamilySeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::skip(1)->take(4)->get();
+        $users = User::skip(1)->take(5)->get();
         $faker = Factory::create('id_ID'); // Lokalisasi Indonesia
         foreach ($users as $user) {
 
             HeadOfFamily::create([
                 'user_id' => $user->id,
-                'full_name' => $faker->name(),
+                'full_name' => $user->username,
                 'identity_number' => $faker->nik(),
                 'gender' => 'male',
                 'date_of_birth' => $faker->date(),
