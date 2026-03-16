@@ -18,7 +18,7 @@ class ResponseHelper
     {
         // Jika data adalah ResourceCollection (Pagination)
         if ($data instanceof ResourceCollection) {
-            $dataArray = $data->response()->getData(true);
+            $dataArray = $data->toResponse(request())->getData(true);
             
             return response()->json([
                 'status'  => $status,
