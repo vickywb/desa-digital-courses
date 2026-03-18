@@ -14,6 +14,7 @@ class EventParticipant extends Model
     protected $fillable = [
         'event_id',
         'head_of_family_id',
+        'family_member_id',
         'quantity',
         'total_price',
         'payment_status',
@@ -33,5 +34,11 @@ class EventParticipant extends Model
     public function headOfFamily(): BelongsTo
     {
         return $this->belongsTo(HeadOfFamily::class);
+    }
+
+    // Relasi dengan model FamilyMember
+    public function familyMember(): BelongsTo
+    {
+        return $this->belongsTo(FamilyMember::class);
     }
 }
