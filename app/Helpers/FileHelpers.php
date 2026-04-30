@@ -19,25 +19,32 @@ class FileHelpers
      */
     public static function uploadFile(UploadedFile $file, string $directory): array
     {
+        $extension = strtolower($file->getClientOriginalExtension());
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+        $isImage = in_array($extension, $imageExtensions);
+
         try {
 
-            // Generate random string
-            $filename = Str::random(20) . '.webp';
-            $path = $directory . '/' . $filename;
-
-            // Convert to WebP
-            $encodedImage = Image::read($file)->toWebp(80);
-
-            // Save to storage/app/public
-            Storage::disk('public')->put($path, (string) $encodedImage);
-
+            if ($isImage) {
+                $fileName = Str::random(20) . '.webp';
+                $path = $directory . '/' . $fileName;
+                $encodedImage = Image::make($file)->encode('webp', 80);
+                $fileType = 'image/webp';
+                $fileSize = strlen((string) $encodedImage);
+                Storage::disk('public')->put($path, (string) $encodedImage);
+            } else {
+                $fileName = Str::random(20) . '.' . $extension;
+                $path = $directory . '/' . $fileName;
+                $fileType = $file->getClientMimeType();
+                $fileSize = $file->getSize();
+                Storage::disk('public')->putFileAs($directory, $file, $fileName);
+            }
             // Return file info
             return [
                 'file_name' => $file->getClientOriginalName(),
-                'file_url'  => asset('storage/' . $path),
                 'file_path' => $path,
-                'file_type' => 'image/webp',
-                'file_size' => strlen((string) $encodedImage),
+                'file_type' => $fileType,
+                'file_size' => $fileSize,
             ];
 
         } catch (\Throwable $th) {
