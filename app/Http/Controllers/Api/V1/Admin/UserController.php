@@ -7,7 +7,7 @@ use App\Helpers\LoggerHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
-use App\Http\Resources\UserColletcion;
+use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repository\UserRepository;
@@ -27,7 +27,7 @@ class UserController extends Controller
             'with' => ['headOfFamily']
         ]);
 
-        return ResponseHelper::success('Users retrived successfully', new UserColletcion($users), 200);
+        return ResponseHelper::success('Users retrived successfully', new UserCollection($users), 200);
     }
 
     public function show(string $id)
