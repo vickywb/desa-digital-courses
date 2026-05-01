@@ -12,28 +12,18 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    private $authService;
-
-    public function __construct(AuthService $authService) {
-        $this->authService = $authService;
-    }
+    public function __construct(private AuthService $authService) {}
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
-
-        $identifier = $credentials['identifier'];
-        $password = $credentials['password'];
-
         try {
-        $data = $this->authService->login($identifier, $password);
-        
+            $validated = $request->validated();
+            $data = $this->authService->login($validated['identifier'], $validated['password']);
         } catch (\Throwable $th) {
-           
-            return ResponseHelper::error('Login Failed. Please check your credentials.', null, 401);
+            return ResponseHelper::error('Login failed. Please check your credentials.', null, 401);
         }
         
-        return ResponseHelper::success('Successfully Logged In.', [
+        return ResponseHelper::success('Successfully logged in.', [
             'user' => new UserResource($data['user']),
             'token' => $data['token']
         ])->cookie(
@@ -61,7 +51,7 @@ class AuthController extends Controller
             
         } catch (\Throwable $th) {
 
-            return ResponseHelper::error('Registration Failed. ', null, 500);
+            return ResponseHelper::error('Registration Failed.', null, 500);
         }
 
         return ResponseHelper::success('Successfully Create new Account.', $user, 201);
@@ -73,6 +63,6 @@ class AuthController extends Controller
 
         return ResponseHelper::success('User data retrieved.', [
             'user' => new UserResource($user)
-        ]);
+        ], 200);
     }
 }
