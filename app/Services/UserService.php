@@ -16,12 +16,13 @@ class UserService
 
         return DB::transaction(function () use ($user, $newRole) {
             $user->update(['role' => $newRole->value]);
-            return $user->fresh();
 
             LoggerHelper::info('User role updated successfully.', [
                 'user_id'  => $user->id,
                 'new_role' => $newRole->value,
             ]);
+
+            return $user->fresh();
         });
     }
 
