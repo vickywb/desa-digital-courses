@@ -27,22 +27,15 @@ class AuthService
      */
     public function registerUser(array $data, ?UploadedFile $profilePicture = null): User
     {
-        // File info sudah melakukan pengecekan dari file service
-        $fileInfo = $this->fileService->uploadFileToStorage($profilePicture, 'file/profile-photos');
-        $uploadedFilePath   = $fileInfo['file_path'] ?? null;
-
         try {
-            $user = DB::transaction(function () use ($data, $fileInfo) {
-
+            return DB::transaction(function () use ($data, $profilePicture) {
                 $uploadedFileId = null;
 
-                // save file record ke DB
-                if ($fileInfo) {
-                    $savedFile      = $this->fileService->saveFileToDB($fileInfo);
-                    $uploadedFileId = $savedFile->id;
+                if ($profilePicture) {
+                    $newFile      = $this->fileService->handleUploadAndSave($profilePicture, 'file/profile-photos');
+                    $uploadedFileId = $newFile->id;
                 }
 
-                // 2. Create user account
                 $user = $this->userRepository->save(new User([
                     'username' => $data['username'],
                     'email'    => $data['email'],
@@ -50,7 +43,6 @@ class AuthService
                     'role'     => Role::HeadOfFamily,
                 ]));
 
-                // 3. Create head of family profile
                 $user->headOfFamily()->create([
                     'file_id'         => $uploadedFileId,
                     'full_name'       => $data['full_name'],
@@ -62,24 +54,16 @@ class AuthService
                     'phone_number'    => $data['phone_number'] ?? null,
                 ]);
 
+                LoggerHelper::info('User registered successfully', [
+                    'user_id'  => $user->id,
+                    'username' => $user->username,
+                    'email'    => $user->email,
+                ]);
+
                 return $user->load('headOfFamily.file');
             });
 
-            // 4. Log success setelah transaction commit
-            LoggerHelper::info('User registered successfully', [
-                'user_id'  => $user->id,
-                'username' => $user->username,
-                'email'    => $user->email,
-            ]);
-
-            return $user;
-
         } catch (\Throwable $th) {
-            // 5. Cleanup file jika DB gagal
-            if ($uploadedFilePath) {
-                $this->fileService->deleteFileFromStorage($uploadedFilePath);
-            }
-
             LoggerHelper::error('Failed to register user', [
                 'error'    => $th->getMessage(),
                 'email'    => $data['email'] ?? 'N/A',
@@ -92,50 +76,34 @@ class AuthService
 
     public function login(string $identifier, string $password): array
     {
-        // Find user by username or identity number
-        $user = User::where('username', $identifier)
-            ->orWhereHas('headOfFamily', function ($query) use ($identifier) {
-                $query->where('identity_number', $identifier);
-            })->first();
+        $user = $this->findUserByIdentifier($identifier);
         
-        // Validate User Exists
-        if (!$user) {
-            LoggerHelper::warning('Login Failed. Incorrect userename or password', [
+        if (!$user || !Hash::check($password, $user->password)) {
+            LoggerHelper::warning('Login failed. Incorrect identifier or password', [
                 'identifier' => $identifier,
             ]);
-
             throw new \Exception('Username or password is incorrect.');
         }
 
-        // Validate Password
-        if (!Hash::check($password, $user->password)) {
-            LoggerHelper::warning('Login Failed. Incorrect userename or password', [
-                'identifier' => $identifier,
-                'user_id' => $user->id,
-            ]);
-
-            throw new \Exception('Login Failed. Username or password is incorrect.');
-        }
-
-        // Generate token
         $token = $user->createToken('auth_token', [$user->role])->plainTextToken;
         
-        // Log success
-        LoggerHelper::info('User Successfully Logged In.', [
+        LoggerHelper::info('User successfully logged in.', [
+            'user_id' => $user->id,
             'token' => substr($token, 0, 5) . '...' . substr($token, -5),
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
-            ],
         ]);
         
-        // Load relationships
-        $user->load('headOfFamily.file');
-        
         return [
-            'user' => $user,
+            'user' => $user->load('headOfFamily.file'),
             'token' => $token,
         ];
+    }
+
+    private function findUserByIdentifier(string $identifier): ?User
+    {
+        return User::where('username', $identifier)
+            ->orWhereHas('headOfFamily', function ($query) use ($identifier) {
+                $query->where('identity_number', $identifier);
+            })->first();
     }
 
     public function logout(User $user): bool
@@ -149,9 +117,6 @@ class AuthService
         return true;
     }
 
-    /**
-     * Get authenticated user.
-     */
     public function me(User $user): User
     {
         return $user->load('headOfFamily.file');
