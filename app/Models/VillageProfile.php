@@ -28,7 +28,7 @@ class VillageProfile extends Model
     // Relasi ke ProfileFile
     public function villageProfileFiles()
     {
-        return $this->hasMany(VillageProfile::class);
+        return $this->hasMany(VillageProfileFile::class);
     }
 
     // Relasi hasManyThrough untuk mendapatkan file melalui VillageProfileFile
