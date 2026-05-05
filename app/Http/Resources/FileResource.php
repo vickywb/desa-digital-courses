@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\FileHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,7 @@ class FileResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->file_name,
-            'url' => $this->file_url,
+            'url' => FileHelpers::url($this->file_path),
             'path' => $this->file_path,
             'type' => $this->file_type,
             'size' => $this->file_size,
