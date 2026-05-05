@@ -28,7 +28,7 @@ class FileHelpers
             if ($isImage) {
                 $fileName = Str::random(20) . '.webp';
                 $path = $directory . '/' . $fileName;
-                $encodedImage = Image::make($file)->encode('webp', 80);
+                $encodedImage = Image::read($file)->toWebp(80);
                 $fileType = 'image/webp';
                 $fileSize = strlen((string) $encodedImage);
                 Storage::disk('public')->put($path, (string) $encodedImage);
