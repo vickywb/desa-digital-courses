@@ -15,14 +15,14 @@ class VillageProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this?->id,
             'name' => $this->name,
             'about' => $this->about,
             'headman' => $this->headman,
             'people' => $this->people,
             'agriculture_area' => $this->agriculture_area,
             'total_area' => $this->total_area,
-            'village_photo' => new FileResource($this->whenLoaded('file'))
+            'village_photo' => FileResource::collection($this->whenLoaded('files'))
         ];
     }
 }
