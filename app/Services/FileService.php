@@ -56,7 +56,7 @@ class FileService
     }
 
     // Delete File on databse and storage
-    public function deleteFile(int $fileId): bool
+    public function deleteFile(string $fileId): bool
     {
         $file = $this->fileRepository->findById($fileId);
         if (!$file) return false;
