@@ -19,7 +19,7 @@ class FileRepository
         return $file->fresh();
     }
     
-    public function findById(int $id): ?File
+    public function findById(string $id): ?File
     {
         return $this->file->find($id);
     }
