@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('people');
             $table->decimal('agriculture_area', 16, 2);
             $table->decimal('total_area', 16, 2);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
