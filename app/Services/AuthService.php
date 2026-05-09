@@ -29,12 +29,7 @@ class AuthService
     {
         try {
             return DB::transaction(function () use ($data, $profilePicture) {
-                $uploadedFileId = null;
-
-                if ($profilePicture) {
-                    $newFile      = $this->fileService->handleUploadAndSave($profilePicture, 'file/profile-photos');
-                    $uploadedFileId = $newFile->id;
-                }
+                $uploadedFileId = $this->fileService->handleUploadAndSave($profilePicture, 'file/profile-pictures')?->id;
 
                 $user = $this->userRepository->save(new User([
                     'username' => $data['username'],
