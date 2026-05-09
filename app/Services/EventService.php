@@ -16,15 +16,15 @@ class EventService
         private FileService $fileService
     ) {}
 
-    public function createEvent (array $data, ?UploadedFile $eventFile = null): Event
+    public function createEvent (array $data, ?UploadedFile $image = null): Event
     {
         try {
-            return DB::transaction(function() use ($data, $eventFile) {
-                $imageId = $this->fileService->handleUploadAndSave($eventFile, 'file/events')?->id;
+            return DB::transaction(function() use ($data, $image) {
+                $fileId = $this->fileService->handleUploadAndSave($image, 'file/events')?->id;
 
                 $event = $this->eventRepository->save(new Event([
                     ...$data,
-                    'file_id' => $imageId,
+                    'file_id' => $fileId,
                 ]));
 
                 LoggerHelper::info('Event created successfully', [
