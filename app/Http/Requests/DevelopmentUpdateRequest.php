@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DevelopmentStoreRequest extends FormRequest
+class DevelopmentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,6 +28,7 @@ class DevelopmentStoreRequest extends FormRequest
             'amount' => 'required|numeric',
             'start_date' => 'required|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date_format:Y-m-d H:i:s|after_or_equal:start_date',
+            'status'=> 'required|in:planned,ongoing,completed',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:png,jpg,webp|max:2048'
         ];
