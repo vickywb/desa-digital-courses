@@ -16,23 +16,25 @@ class DevelopmentService
         private FileService $fileService
         ){}
 
-    public function createDevelopment(array $data, ?UploadedFile $image = null)
+    public function createDevelopment(array $data, ?UploadedFile $image = null): Development
     {
         try {
-            return DB::transaction(function () use ($data, $image){
+            $development = DB::transaction(function () use ($data, $image){
                 $fileId = $image ? $this->fileService->handleUploadAndSave($image, 'file/developments')?->id : null;
                 $development = $this->developmentRepository->save(new Development([
                     ...$data,
                     'file_id' => $fileId,
                 ]));
 
-                LoggerHelper::info('Development created successfully', [
-                    'development_id' => $development->id,
-                    'title' => $development->title,
-                ]);
-
-                return $development->fresh();
+                return $development;
             });
+            
+            LoggerHelper::info('Development created successfully', [
+                'development_id' => $development->id,
+                'title' => $development->title,
+            ]);
+
+            return $development->fresh();
 
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to create development', 
@@ -43,10 +45,10 @@ class DevelopmentService
         }
     }
 
-    public function updateDevelopment(array $data, ?UploadedFile $image, Development $development)
+    public function updateDevelopment(array $data, ?UploadedFile $image, Development $development): Development
     {
         try {
-            return DB::transaction(function () use ($data, $image, $development) {
+            $development = DB::transaction(function () use ($data, $image, $development) {
                 $oldFileId = $development->file_id;
                 $newFileId = $image
                     ? $this->fileService->handleUploadAndSave($image, 'file/developments')?->id
@@ -57,13 +59,17 @@ class DevelopmentService
                     'file_id' => $newFileId,
                 ]);
 
-                LoggerHelper::info('Development updated successfully', [
-                    'development_id' => $development->id,
-                    'title' => $development->title,
-                ]);
+                $this->developmentRepository->save($development);
 
-                return $development->save() ? $development->fresh() : null;
+                return $development;
             });
+
+            LoggerHelper::info('Development updated successfully', [
+                'development_id' => $development->id,
+                'title' => $development->title,
+            ]);
+
+            return $development->fresh();
 
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to update development', 
