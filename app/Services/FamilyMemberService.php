@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Repository\FamilyMemberRepository;
 
-class FamilyMemberServices
+class FamilyMemberService
 {
-    public function __construct(private FamilyMemberRepository $familyMemberRepository)
-    {
-    }
+    public function __construct(private FamilyMemberRepository $familyMemberRepository) {}
 }

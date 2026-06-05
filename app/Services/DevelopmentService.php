@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Helpers\LoggerHelper;
 use App\Models\Development;
 use App\Repository\DevelopmentRepository;
-use App\Services\FileService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -14,12 +13,12 @@ class DevelopmentService
     public function __construct(
         private DevelopmentRepository $developmentRepository,
         private FileService $fileService
-        ){}
+    ) {}
 
     public function createDevelopment(array $data, ?UploadedFile $image = null): Development
     {
         try {
-            $development = DB::transaction(function () use ($data, $image){
+            $development = DB::transaction(function () use ($data, $image) {
                 $fileId = $image ? $this->fileService->handleUploadAndSave($image, 'file/developments')?->id : null;
                 $development = $this->developmentRepository->save(new Development([
                     ...$data,
@@ -28,7 +27,7 @@ class DevelopmentService
 
                 return $development;
             });
-            
+
             LoggerHelper::info('Development created successfully', [
                 'development_id' => $development->id,
                 'title' => $development->title,
@@ -37,7 +36,7 @@ class DevelopmentService
             return $development->fresh();
 
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to create development', 
+            LoggerHelper::error('Failed to create development',
                 ['error_message' => $th->getMessage()]
             );
 
@@ -72,7 +71,7 @@ class DevelopmentService
             return $development->fresh();
 
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to update development', 
+            LoggerHelper::error('Failed to update development',
                 ['error_message' => $th->getMessage()]
             );
 
@@ -94,13 +93,14 @@ class DevelopmentService
 
                 LoggerHelper::info('Development deleted successfully', [
                     'development_id' => $development->id,
-                    'title'          => $development->title,
+                    'title' => $development->title,
                 ]);
             });
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to delete development', [
                 'error_message' => $th->getMessage(),
             ]);
+
             throw $th;
         }
     }
