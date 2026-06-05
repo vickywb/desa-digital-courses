@@ -22,15 +22,15 @@ class DevelopmentUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'person_in_charge' => 'required|string|max:255',
-            'amount' => 'required|numeric',
-            'start_date' => 'required|date_format:Y-m-d H:i:s',
-            'end_date' => 'required|date_format:Y-m-d H:i:s|after_or_equal:start_date',
-            'status'=> 'required|in:planned,ongoing,completed',
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'person_in_charge' => 'sometimes|string|max:255',
+            'amount' => 'sometimes|numeric',
+            'start_date' => 'sometimes|date_format:Y-m-d H:i:s',
+            'end_date' => 'sometimes|date_format:Y-m-d H:i:s|after_or_equal:start_date',
+            'status' => 'sometimes|in:planned,ongoing,completed',
             'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048'
+            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048',
         ];
     }
 }

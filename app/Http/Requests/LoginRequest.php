@@ -22,8 +22,17 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'identifier' => 'required|string|min:3',
+            'email' => 'required_without:username|string|email',
+            'username' => 'required_without:email|string|min:3',
             'password' => 'required|string|min:8',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.required_without' => 'The email or username field is required.',
+            'username.required_without' => 'The email or username field is required.',
         ];
     }
 }

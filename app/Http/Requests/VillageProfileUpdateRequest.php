@@ -22,12 +22,12 @@ class VillageProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'about' => 'required|string',
-            'headman' => 'required|string|max:255',
-            'people' => 'required|integer|min:0',
-            'agriculture_area' => 'required|string|max:255',
-            'total_area' => 'required|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'about' => 'sometimes|string',
+            'headman' => 'sometimes|string|max:255',
+            'people' => 'sometimes|integer|min:0',
+            'agriculture_area' => 'sometimes|string|max:255',
+            'total_area' => 'sometimes|string|max:255',
             'images' => 'nullable|array',
             'images.*' => 'file|mimes:jpg,jpeg,png|max:2048',
         ];

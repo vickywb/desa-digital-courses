@@ -28,7 +28,7 @@ class SocialAssistanceStoreRequest extends FormRequest
             'provider' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean',
+            'is_available' => 'boolean',
         ];
     }
 }

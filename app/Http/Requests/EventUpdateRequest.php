@@ -22,12 +22,12 @@ class EventUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'start_date' => 'required|date_format:Y-m-d H:i:s',
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'price' => 'sometimes|numeric',
+            'start_date' => 'sometimes|date_format:Y-m-d H:i:s',
             'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048'
+            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048',
         ];
     }
 }

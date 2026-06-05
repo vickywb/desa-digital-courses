@@ -18,7 +18,7 @@ class FamilyMemberResource extends JsonResource
             'id' => $this->id,
             'full_name' => $this->full_name,
             'email' => $this->email,
-            'indentity_number' => $this->identity_number,
+            'identity_number' => $this->identity_number,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth->format('d-m-Y H:i:s'),
             'phone_number' => $this->phone_number,

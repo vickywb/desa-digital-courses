@@ -22,13 +22,13 @@ class SocialAssistanceUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'amount' => 'required|numeric',
-            'provider' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => 'sometimes|string|max:255',
+            'category' => 'sometimes|string|max:255',
+            'amount' => 'sometimes|numeric',
+            'provider' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean',
+            'is_available' => 'boolean',
         ];
     }
 }

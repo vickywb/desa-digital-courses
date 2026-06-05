@@ -21,7 +21,7 @@ class EventParticipantResource extends JsonResource
             'family_member' => new FamilyMemberResource($this->whenLoaded('familyMember')),
             'quantity' => $this->quantity,
             'total_price' => $this->total_price,
-            'payment_status' => $this->status,
+            'payment_status' => $this->payment_status,
         ];
     }
 }
