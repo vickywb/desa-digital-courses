@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\HeadOfFamily;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -41,7 +45,24 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function createUserWithPassword(string $password = 'Password123!'): User
 {
-    // ..
+    $user = User::factory()->create([
+        'username' => 'johndoe',
+        'email' => 'john@example.com',
+        'password' => Hash::make($password),
+    ]);
+
+    HeadOfFamily::factory()->create([
+        'user_id' => $user->id,
+        'full_name' => 'John Doe',
+        'identity_number' => '1234567890123456',
+        'gender' => 'male',
+        'date_of_birth' => '1990-01-01',
+        'occupation' => 'Developer',
+        'marital_status' => 'single',
+        'phone_number' => '081234567890',
+    ]);
+
+    return $user->fresh('headOfFamily');
 }
