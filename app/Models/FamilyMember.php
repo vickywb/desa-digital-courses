@@ -5,14 +5,14 @@ namespace App\Models;
 use App\Enums\FamilyRelation;
 use App\Enums\Gender;
 use App\Enums\MaritalStatus;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FamilyMember extends Model
 {
-    use SoftDeletes, HasUuids;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'head_of_family_id',
@@ -33,12 +33,18 @@ class FamilyMember extends Model
         'date_of_birth' => 'date',
         'gender' => Gender::class,
         'marital_status' => MaritalStatus::class,
-        'relation' => FamilyRelation::class
+        'relation' => FamilyRelation::class,
     ];
 
     // Relasi dengan model HeadOfFamily
     public function headOfFamily(): BelongsTo
     {
         return $this->belongsTo(HeadOfFamily::class);
+    }
+
+    // Relasi ke file profil anggota keluarga
+    public function file(): BelongsTo
+    {
+        return $this->belongsTo(File::class);
     }
 }
