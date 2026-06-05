@@ -24,7 +24,7 @@ class HeadOfFamilyFactory extends Factory
             'gender' => fake()->randomElement(['male', 'female']),
             'date_of_birth' => fake()->date('Y-m-d', '2000-01-01'),
             'occupation' => fake()->jobTitle(),
-            'marital_status' => fake()->randomElement(['single', 'married', 'divorced', 'widowed']),
+            'marital_status' => fake()->randomElement(['single', 'married', 'widow', 'widower']),
             'phone_number' => fake()->numerify('08##########'),
             'file_id' => null, // Optional
         ];
