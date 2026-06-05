@@ -45,16 +45,16 @@ class LoggerHelper
     private static function formatContext(array $context): array
     {
         $user = auth('sanctum')->user();
-        
+
         return array_merge([
-            'user_id'    => $user?->id,
-            'username'   => $user?->name ?? $user?->email, // Tambah identifier user
-            'role'       => $user?->role,
+            'user_id' => $user?->id,
+            'username' => $user?->username ?? $user?->email,
+            'role' => $user?->role,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-            'url'        => request()->fullUrl(),
-            'method'     => request()->method(),
-            'datetime' => now()->format('d F Y, H:i:s')
+            'url' => request()->fullUrl(),
+            'method' => request()->method(),
+            'datetime' => now()->format('d F Y, H:i:s'),
         ], $context);
     }
 }
