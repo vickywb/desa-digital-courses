@@ -9,15 +9,20 @@ use App\Http\Requests\SocialAssistanceUpdateRequest;
 use App\Http\Resources\SocialAssistanceResource;
 use App\Models\SocialAssistance;
 use App\Services\SocialAssistanceService;
-use Illuminate\Http\Request;
 
 class SocialAssistanceController extends Controller
 {
-    public function __construct(private SocialAssistanceService $socialAssistanceService){}
+    public function __construct(private SocialAssistanceService $socialAssistanceService) {}
 
     public function index()
     {
-        //
+        $socialAssistances = SocialAssistance::with('file')->get();
+
+        return ResponseHelper::success(
+            'Social assistances retrieved successfully',
+            SocialAssistanceResource::collection($socialAssistances),
+            200
+        );
     }
 
     public function store(SocialAssistanceStoreRequest $request)
@@ -25,13 +30,19 @@ class SocialAssistanceController extends Controller
         $socialAssistance = $this->socialAssistanceService->createSocialAssistance($request->validated(), $request->file('image') ?? null);
 
         return ResponseHelper::success('Social assistance created successfully', [
-            new SocialAssistanceResource($socialAssistance)
+            new SocialAssistanceResource($socialAssistance),
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(SocialAssistance $socialAssistance)
     {
-        //
+        $socialAssistance->load('file');
+
+        return ResponseHelper::success(
+            'Social assistance retrieved successfully',
+            new SocialAssistanceResource($socialAssistance),
+            200
+        );
     }
 
     public function update(SocialAssistanceUpdateRequest $request, SocialAssistance $socialAssistance)
@@ -39,7 +50,7 @@ class SocialAssistanceController extends Controller
         $this->socialAssistanceService->updateSocialAssistance($request->validated(), $request->file('image') ?? null, $socialAssistance);
 
         return ResponseHelper::success('Social assistance updated successfully', [
-            new SocialAssistanceResource($socialAssistance->fresh())
+            new SocialAssistanceResource($socialAssistance->fresh()),
         ], 200);
     }
 

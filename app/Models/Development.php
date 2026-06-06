@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Development extends Model
 {
-    use SoftDeletes, HasUuids;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'file_id',
@@ -27,6 +28,12 @@ class Development extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    // Relasi ke File
+    public function file(): BelongsTo
+    {
+        return $this->belongsTo(File::class);
+    }
 
     // Relasi ke DevelopmentApplicant
     public function applicants(): HasMany

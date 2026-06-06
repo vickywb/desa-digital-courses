@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use SoftDeletes, HasUuids;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'file_id',
@@ -18,6 +19,12 @@ class Event extends Model
         'start_date',
         'is_active',
     ];
+
+    // Relasi ke File
+    public function file(): BelongsTo
+    {
+        return $this->belongsTo(File::class);
+    }
 
     // Tambahkan casting untuk tipe data
     protected $casts = [
