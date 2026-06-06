@@ -40,8 +40,8 @@ onMounted(async () => {
     <div class="flex flex-col gap-[14px]">
         <h1 class="font-semibold text-2xl">Desa Statistics</h1>
 
-        <div id="Row-1" class="flex gap-[14px]">
-            <div class="flex flex-col w-[389px] h-[358px] rounded-2xl p-6 gap-6 gradient-vertical">
+        <div id="Row-1" class="flex flex-col lg:flex-row gap-[14px]">
+            <div class="flex flex-col w-full lg:w-[389px] h-auto lg:h-[358px] rounded-2xl p-6 gap-6 gradient-vertical">
                 <img src="/desa-digital/src/assets/images/icons/gift-orange-background.svg" class="flex size-[86px] shrink-0" alt="icon">
                 <div class="flex flex-col gap-3">
                     <p class="font-medium text-sm text-desa-lime">— Bantuan Sosial</p>
@@ -54,7 +54,7 @@ onMounted(async () => {
                 </router-link>
             </div>
 
-            <section id="Statistics" class="grid grid-cols-2 flex-1 shrink-0 gap-[14px]">
+            <section id="Statistics" class="grid grid-cols-1 sm:grid-cols-2 flex-1 gap-[14px]">
                 <div class="card flex flex-col w-full rounded-2xl p-6 gap-3 bg-white">
                     <div class="flex items-center justify-between">
                         <p class="font-medium text-desa-secondary">Jumlah Penduduk</p>
@@ -94,8 +94,8 @@ onMounted(async () => {
             </section>
         </div>
 
-        <div id="Row-2" class="flex gap-[14px]">
-            <router-link to="/social-assistances" class="flex flex-col w-[497px] shrink-0 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
+        <div id="Row-2" class="flex flex-col sm:flex-row gap-[14px]">
+            <router-link to="/social-assistances" class="flex flex-col w-full sm:w-[497px] shrink-0 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Bantuan Sosial</p>
                     <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -114,13 +114,13 @@ onMounted(async () => {
             </router-link>
         </div>
 
-        <div class="flex items-center justify-between h-[125px] rounded-2xl p-8 gap-4 gradient-horizontal">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between h-auto sm:h-[125px] rounded-2xl p-6 sm:p-8 gap-4 gradient-horizontal">
             <div class="flex flex-col gap-[6px]">
                 <p class="font-medium text-sm text-desa-lime">— Unduh Data Desa</p>
                 <p class="font-semibold text-2xl text-white text-nowrap">Data Desa Terkini</p>
                 <p class="text-sm text-desa-lime">Dapatkan laporan lengkap data desa dalam format PDF.</p>
             </div>
-            <button class="flex items-center gap-[10px] rounded-2xl py-4 px-6 bg-white text-desa-dark-green font-medium hover:bg-desa-soft-green hover:text-white transition-setup">
+            <button class="flex items-center gap-[10px] rounded-2xl py-4 px-6 bg-white text-desa-dark-green font-medium hover:bg-desa-soft-green hover:text-white transition-setup shrink-0">
                 <img src="/desa-digital/src/assets/images/icons/document-download-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 Download Laporan
             </button>

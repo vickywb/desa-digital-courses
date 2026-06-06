@@ -13,6 +13,12 @@ import iconBuilding4Inactive from '@/assets/images/icons/building-4-secondary-gr
 import iconCalendarActive from '@/assets/images/icons/calendar-2-dark-green.svg';
 import iconCalendarInactive from '@/assets/images/icons/calendar-2-secondary-green.svg';
 
+defineProps({
+    open: Boolean,
+});
+
+const emit = defineEmits(['close']);
+
 const authStore = useAuthStore();
 const isKD = computed(() => authStore.userRole !== 'head_of_family');
 
@@ -67,22 +73,29 @@ const sidebarItems = computed(() => [
 </script>
 
 <template>
-    <aside id="Sidebar"
-        class="relative flex w-[280px] shrink-0 min-h-screen bg-white border-r border-desa-foreshadow overflow-hidden">
+    <aside
+        id="Sidebar"
+        class="relative flex w-[280px] shrink-0 min-h-screen bg-white border-r border-desa-foreshadow overflow-hidden max-lg:fixed max-lg:z-40 max-lg:transition-transform max-lg:duration-300 max-lg:ease-in-out"
+        :class="open ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'"
+    >
         <div class="fixed top-0 h-full w-[280px] flex shrink-0 flex-1 z-20 bg-white">
             <div class="flex flex-col h-full w-full gap-6 pt-[30px] px-6">
                 <div class="flex items-center justify-between">
                     <img src="@/assets/images/logos/logo-text.svg" class="flex h-[30px] shrink-0" alt="logo">
                     <button
-                        class="flex size-11 items-center justify-center rounded-2xl border border-desa-background hover:border-desa-secondary transition-setup">
-                        <img src="@/assets/images/icons/menu-secondary-green.svg" class="size-6" alt="icon">
+                        class="flex size-11 items-center justify-center rounded-2xl border border-desa-background hover:border-desa-secondary transition-setup lg:hidden"
+                        @click="emit('close')"
+                    >
+                        <svg class="size-6 text-desa-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
                 <div class="flex flex-col flex-1 gap-6 overflow-y-scroll hide-scrollbar">
                     <nav class="flex flex-col gap-2 pb-12">
                         <p class="font-medium text-sm text-desa-secondary">Main Menu</p>
                         <ul class="flex flex-col gap-2">
-                            <SidebarItem v-for="(item, index) in sidebarItems" :key="index" :item="item" />
+                            <SidebarItem v-for="(item, index) in sidebarItems" :key="index" :item="item" @close="emit('close')" />
                         </ul>
                     </nav>
                     <div class="flex items-center justify-between h-[84px] rounded-2xl p-5 mb-4 gap-3 bg-desa-black">
@@ -102,4 +115,10 @@ const sidebarItems = computed(() => [
             </div>
         </div>
     </aside>
+
+    <div
+        v-if="open"
+        class="fixed inset-0 z-30 bg-black/50 lg:hidden"
+        @click="emit('close')"
+    />
 </template>

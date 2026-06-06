@@ -10,6 +10,8 @@ const props = defineProps({
     }
 })
 
+const emit = defineEmits(['close'])
+
 const route = useRoute()
 const isActive = computed(() => route.path === props.item.path)
 
@@ -30,7 +32,8 @@ watch(isChildActive, () => {
 <template>
     <li class="group" :class="{ active: isActive }" v-if="!item.children && can(item.permission)">
         <RouterLink :to="item.path"
-            class=" flex items-center h-14 gap-2 rounded-2xl p-4 group-hover:bg-desa-foreshadow group-[.active]:bg-desa-foreshadow transition-setup">
+            class=" flex items-center h-14 gap-2 rounded-2xl p-4 group-hover:bg-desa-foreshadow group-[.active]:bg-desa-foreshadow transition-setup"
+            @click="emit('close')">
             <div class="relative flex size-6 shrink-0" v-if="item.iconActive && item.iconInactive">
                 <img :src="item.iconActive"
                     class="absolute flex size-6 shrink-0 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100 transition-setup"
@@ -67,7 +70,7 @@ watch(isChildActive, () => {
                 </div>
             </button>
             <ul :id="`accordion-${item.label}`" class="flex flex-col flex-1r pl-[28px]" :class="{ hidden: !isOpen }">
-                <SidebarItem v-for="child in item.children" :key="child.path" :item="child" />
+                <SidebarItem v-for="child in item.children" :key="child.path" :item="child" @close="emit('close')" />
             </ul>
         </div>
     </template>

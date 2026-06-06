@@ -38,20 +38,20 @@ onMounted(async () => {
 
 <template>
     <div class="flex flex-col gap-[14px]">
-        <div class="flex flex-col gap-6 p-8 bg-white rounded-3xl gradient-vertical">
+        <div class="flex flex-col gap-6 p-6 md:p-8 bg-white rounded-3xl gradient-vertical">
             <div class="flex items-center gap-4">
-                <div class="flex size-20 rounded-full overflow-hidden bg-white/20">
+                <div class="flex size-16 md:size-20 rounded-full overflow-hidden bg-white/20 shrink-0">
                     <img src="/desa-digital/src/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="photo">
                 </div>
                 <div class="flex flex-col gap-1 text-white">
                     <p class="font-medium text-sm text-desa-lime">Selamat Datang</p>
-                    <h1 class="font-semibold text-2xl">{{ userName }}</h1>
+                    <h1 class="font-semibold text-xl md:text-2xl truncate">{{ userName }}</h1>
                     <p class="font-medium text-sm opacity-80">Kepala Keluarga</p>
                 </div>
             </div>
         </div>
 
-        <section class="grid grid-cols-2 gap-[14px]">
+        <section class="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
             <router-link to="/family-members" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Anggota Keluarga</p>
