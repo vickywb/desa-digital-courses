@@ -57,6 +57,11 @@ const routes = [
                 component: () => import('../pages/social-assistances/Index.vue'),
             },
             {
+                path: '/social-assistances/:id',
+                name: 'SocialAssistanceDetail',
+                component: () => import('../pages/social-assistances/Detail.vue'),
+            },
+            {
                 path: '/social-assistances/recipients',
                 name: 'SocialAssistanceRecipients',
                 component: () => import('../pages/social-assistances/Recipients.vue'),
@@ -67,9 +72,24 @@ const routes = [
                 component: () => import('../pages/developments/Index.vue'),
             },
             {
+                path: '/developments/:id',
+                name: 'DevelopmentDetail',
+                component: () => import('../pages/developments/Detail.vue'),
+            },
+            {
                 path: '/village-profile',
                 name: 'VillageProfile',
                 component: () => import('../pages/village-profile/Index.vue'),
+            },
+            {
+                path: '/village-profile/create',
+                name: 'VillageProfileCreate',
+                component: () => import('../pages/village-profile/Create.vue'),
+            },
+            {
+                path: '/village-profile/edit',
+                name: 'VillageProfileEdit',
+                component: () => import('../pages/village-profile/Edit.vue'),
             },
         ],
     },

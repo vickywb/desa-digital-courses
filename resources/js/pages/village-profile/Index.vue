@@ -9,7 +9,7 @@ const loading = ref(true);
 
 onMounted(async () => {
     try {
-        const res = await client.get('/village-staff/village-profiles/1');
+        const res = await client.get('/village-staff/village-profiles');
         profile.value = res.data.data ?? null;
     } catch {
         profile.value = null;
