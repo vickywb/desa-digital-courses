@@ -9,15 +9,35 @@ use App\Http\Requests\VillageProfileUpdateRequest;
 use App\Http\Resources\VillageProfileResource;
 use App\Models\VillageProfile;
 use App\Services\VillageProfileService;
-use Illuminate\Http\Request;
 
 class VillageProfileController extends Controller
 {
-    public function __construct(private VillageProfileService $villageProfileService){}
+    public function __construct(private VillageProfileService $villageProfileService) {}
 
     public function index()
     {
-        //
+        $villageProfile = VillageProfile::with('files')->latest()->first();
+
+        if (! $villageProfile) {
+            return ResponseHelper::success('No village profile found', null, 200);
+        }
+
+        return ResponseHelper::success(
+            'Village profile retrieved successfully',
+            new VillageProfileResource($villageProfile),
+            200
+        );
+    }
+
+    public function show(VillageProfile $villageProfile)
+    {
+        $villageProfile->load('files');
+
+        return ResponseHelper::success(
+            'Village profile retrieved successfully',
+            new VillageProfileResource($villageProfile),
+            200
+        );
     }
 
     public function store(VillageProfileStoreRequest $request)
@@ -25,7 +45,7 @@ class VillageProfileController extends Controller
         $villageProfile = $this->villageProfileService->createVillageProfile($request->validated(), $request->file('images', []));
 
         return ResponseHelper::success('Village Profile successfully created', [
-        new VillageProfileResource($villageProfile)
+            new VillageProfileResource($villageProfile),
         ], 201);
     }
 
@@ -34,7 +54,7 @@ class VillageProfileController extends Controller
         $villageProfile = $this->villageProfileService->updateVillageProfile($villageProfile, $request->validated(), $request->file('images', []));
 
         return ResponseHelper::success('Village Profile successfully updated', [
-            new VillageProfileResource($villageProfile)
+            new VillageProfileResource($villageProfile),
         ], 200);
     }
 
@@ -43,7 +63,7 @@ class VillageProfileController extends Controller
         $villageProfile = $this->villageProfileService->deleteVillageProfile($villageProfile);
 
         return ResponseHelper::success('Village Profile successfully deleted', [
-            new VillageProfileResource($villageProfile)
+            new VillageProfileResource($villageProfile),
         ], 200);
     }
 }

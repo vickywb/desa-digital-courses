@@ -27,13 +27,13 @@ class HeadOfFamilyController extends Controller
         // not used for head village
     }
 
-    public function show(HeadOfFamily $headOfFamily)
+    public function show(HeadOfFamily $headFamily)
     {
-        $headOfFamily->load('file');
+        $headFamily->load('file');
 
         return ResponseHelper::success(
             'Head of family retrieved successfully',
-            new HeadOfFamilyResource($headOfFamily),
+            new HeadOfFamilyResource($headFamily),
             200
         );
     }
