@@ -1,39 +1,3 @@
-<template>
-    <div class="space-y-4">
-        <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="border-b border-gray-200 dark:border-gray-700">
-                            <th class="px-4 py-3 font-medium text-gray-900 dark:text-white">Username</th>
-                            <th class="px-4 py-3 font-medium text-gray-900 dark:text-white">Email</th>
-                            <th class="px-4 py-3 font-medium text-gray-900 dark:text-white">Role</th>
-                            <th class="px-4 py-3 font-medium text-gray-900 dark:text-white">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="user in users" :key="user.id" class="border-b border-gray-100 dark:border-gray-800">
-                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ user.username }}</td>
-                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ user.email }}</td>
-                            <td class="px-4 py-3">
-                                <span class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                {{ user.role }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <button class="text-sm text-blue-600 hover:underline dark:text-blue-400">Edit</button>
-                            </td>
-                        </tr>
-                        <tr v-if="!users.length">
-                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">Tidak ada data</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import client from '../../api/client';
@@ -49,3 +13,42 @@ onMounted(async () => {
     }
 });
 </script>
+
+<template>
+    <div class="flex flex-col gap-[14px]">
+        <h1 class="font-semibold text-2xl">Users</h1>
+
+        <div class="rounded-3xl bg-white p-6">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-desa-background">
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Username</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Email</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Role</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users" :key="user.id" class="border-b border-desa-foreshadow last:border-0">
+                            <td class="px-4 py-4 font-semibold leading-5">{{ user.username }}</td>
+                            <td class="px-4 py-4 text-desa-secondary">{{ user.email }}</td>
+                            <td class="px-4 py-4">
+                                <span class="font-medium">{{ user.role }}</span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <button
+                                    class="rounded-2xl px-4 py-[10px] bg-desa-black font-medium leading-5 text-white text-sm hover:bg-desa-dark-green transition-setup">
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                        <tr v-if="!users.length">
+                            <td colspan="4" class="px-4 py-12 text-center text-desa-secondary font-medium">No users data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

@@ -7,6 +7,15 @@ const emit = defineEmits(['toggle-sidebar']);
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 const { logout } = authStore
+import { computed } from 'vue';
+const roleLabel = computed(() => {
+    const role = user.value?.role;
+    if (role === 'admin') return 'Administrator';
+    if (role === 'head_village') return 'Kepala Desa';
+    if (role === 'staff') return 'Staff Desa';
+    if (role === 'head_of_family') return 'Kepala Keluarga';
+    return '';
+});
 </script>
 
 <template>
@@ -51,11 +60,11 @@ const { logout } = authStore
                     <img src="@/assets/images/photos/photo-1.png" class="w-full h-full object-cover" alt="photo"
                         v-if="user?.role === 'admin' || user?.role === 'head_village' || user?.role === 'staff'">
                     <img :src="user?.head_of_family?.profile_picture?.url" class="w-full h-full object-cover" alt="photo"
-                        v-if="user?.role === 'head_of_family'">
+                        v-else>
                 </div>
                 <div class="flex flex-col gap-[6px] max-md:hidden">
                     <p class="font-semibold leading-5 w-[120px] truncate">{{ user?.username }}</p>
-                    <p class="font-medium text-sm text-desa-secondary">{{ user?.role === 'admin' || user?.role === 'head_village' ? 'Kepala Desa' : 'Kepala Keluarga' }}</p>
+                    <p class="font-medium text-sm text-desa-secondary">{{ roleLabel }}</p>
                 </div>
                 <button @click="logout" class="flex size-5 md:size-6 shrink-0 cursor-pointer">
                     <img src="@/assets/images/icons/logout-red.svg" class="size-5 md:size-6" alt="logout">

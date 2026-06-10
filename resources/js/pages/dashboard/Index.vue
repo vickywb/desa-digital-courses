@@ -1,19 +1,13 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../../stores/auth';
+import { ref, onMounted } from 'vue';
 import client from '../../api/client';
 
-const router = useRouter();
-const authStore = useAuthStore();
 const stats = ref({
     totalPopulation: 0,
     totalDevelopments: 0,
     totalHeadFamilies: 0,
     totalEvents: 0,
 });
-
-const isKepalaDesa = computed(() => authStore.userRole === 'head_village' || authStore.userRole === 'staff' || authStore.userRole === 'admin');
 
 onMounted(async () => {
     try {
@@ -24,9 +18,12 @@ onMounted(async () => {
             client.get(`${prefix}/events`),
         ]);
 
+        const families = headF.data.data ?? [];
+        const totalMembers = families.reduce((sum, f) => sum + (f.family_members_count ?? 0), 0);
+
         stats.value = {
-            totalPopulation: 0,
-            totalHeadFamilies: headF.data.data?.length ?? 0,
+            totalPopulation: families.length + totalMembers,
+            totalHeadFamilies: families.length,
             totalDevelopments: dev.data.data?.length ?? 0,
             totalEvents: evt.data.data?.length ?? 0,
         };

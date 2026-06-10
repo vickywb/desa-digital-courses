@@ -13,19 +13,19 @@ const stats = ref({
 const userName = ref('');
 
 onMounted(async () => {
-    try {
-        const me = await client.get('/auth/me');
-        const user = me.data.data.user;
-        userName.value = user.head_of_family?.full_name ?? user.username;
+    const user = authStore.user;
+    userName.value = user?.head_of_family?.full_name ?? user?.username ?? '';
 
-        const [events, bansos, developments] = await Promise.all([
+    try {
+        const [familyRes, events, bansos, developments] = await Promise.all([
+            client.get('/village-resident/family-members'),
             client.get('/village-resident/events'),
             client.get('/village-resident/social-assistances'),
             client.get('/village-resident/developments'),
         ]);
 
         stats.value = {
-            anggota: user.head_of_family?.family_members?.length ?? 0,
+            anggota: familyRes.data.data?.length ?? 0,
             events: events.data.data?.length ?? 0,
             bansos: bansos.data.data?.length ?? 0,
             pembangunan: developments.data.data?.length ?? 0,

@@ -95,7 +95,7 @@ const sidebarItems = computed(() => [
                     <nav class="flex flex-col gap-2 pb-12">
                         <p class="font-medium text-sm text-desa-secondary">Main Menu</p>
                         <ul class="flex flex-col gap-2">
-                            <SidebarItem v-for="(item, index) in sidebarItems" :key="index" :item="item" @close="emit('close')" />
+                            <SidebarItem v-for="item in sidebarItems" :key="item.path || item.label" :item="item" @close="emit('close')" />
                         </ul>
                     </nav>
                     <div class="flex items-center justify-between h-[84px] rounded-2xl p-5 mb-4 gap-3 bg-desa-black">
