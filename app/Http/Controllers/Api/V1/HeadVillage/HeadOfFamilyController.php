@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\HeadOfFamilyUpdateRequest;
+use App\Http\Requests\UpdateHeadOfFamilyRequest;
 use App\Http\Resources\HeadOfFamilyResource;
 use App\Models\HeadOfFamily;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class HeadOfFamilyController extends Controller
 {
     public function index()
     {
-        $headOfFamilies = HeadOfFamily::with('file')->get();
+        $headOfFamilies = HeadOfFamily::with('file')->withCount('familyMembers')->get();
 
         return ResponseHelper::success(
             'Head of families retrieved successfully',
@@ -38,7 +38,7 @@ class HeadOfFamilyController extends Controller
         );
     }
 
-    public function update(HeadOfFamilyUpdateRequest $request, HeadOfFamily $headFamily)
+    public function update(UpdateHeadOfFamilyRequest $request, HeadOfFamily $headFamily)
     {
         $headFamily->update($request->validated());
         $headFamily->refresh()->load('file');
