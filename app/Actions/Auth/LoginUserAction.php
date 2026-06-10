@@ -14,7 +14,7 @@ class LoginUserAction
     {
         $user = $this->findUserByIdentifier($identifier);
 
-        if (! $user || ! Hash::check($password, $user->password)) {
+        if (! $user || $user->is_active === false || ! Hash::check($password, $user->password)) {
             LoggerHelper::warning('Login failed. Incorrect identifier or password', [
                 'identifier' => $identifier,
             ]);
