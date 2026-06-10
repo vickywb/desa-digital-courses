@@ -2,23 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\HeadOfFamily;
 use App\Models\User;
 use Faker\Factory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class HeadOfFamilySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $users = User::skip(1)->take(5)->get();
-        $faker = Factory::create('id_ID'); // Lokalisasi Indonesia
-        foreach ($users as $user) {
+        $users = User::where('role', Role::HeadOfFamily)->get();
+        $faker = Factory::create('id_ID');
 
+        foreach ($users as $user) {
             HeadOfFamily::create([
                 'user_id' => $user->id,
                 'full_name' => $user->username,
@@ -29,7 +26,6 @@ class HeadOfFamilySeeder extends Seeder
                 'occupation' => $faker->jobTitle(),
                 'marital_status' => $faker->randomElement(['married']),
             ]);
-
         }
     }
 }
