@@ -23,7 +23,8 @@ class HeadOfFamilyResource extends JsonResource
             'occupation' => $this->occupation,
             'marital_status' => $this->marital_status,
             'phone_number' => $this->phone_number,
-            'profile_picture' => new FileResource($this->whenLoaded('file'))
+            'family_members_count' => $this->whenCounted('familyMembers'),
+            'profile_picture' => new FileResource($this->whenLoaded('file')),
         ];
     }
 }
