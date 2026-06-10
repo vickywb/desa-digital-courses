@@ -28,15 +28,17 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async logout() {
-            await client.post('/auth/logout');
+            try {
+                await client.post('/auth/logout');
+            } finally {
+                this.user = null;
+                this.token = null;
 
-            this.user = null;
-            this.token = null;
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
 
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-
-            router.push('/login');
+                router.push('/login');
+            }
         },
 
         async fetchMe() {
