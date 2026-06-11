@@ -50,31 +50,92 @@ const routes = [
                 path: '/events',
                 name: 'Events',
                 component: () => import('../pages/events/Index.vue'),
+                meta: { role: 'kd' },
             },
+            {
+                path: '/events',
+                name: 'EventsKK',
+                component: () => import('../pages/events/KKIndex.vue'),
+                meta: { role: 'kk' },
+            },
+            {
+                path: '/events/:id',
+                name: 'EventDetail',
+                component: () => import('../pages/events/Detail.vue'),
+                meta: { role: 'kd' },
+            },
+            {
+                path: '/events/:id',
+                name: 'EventDetailKK',
+                component: () => import('../pages/events/KKDetail.vue'),
+                meta: { role: 'kk' },
+            },
+
             {
                 path: '/social-assistances',
                 name: 'SocialAssistances',
                 component: () => import('../pages/social-assistances/Index.vue'),
+                meta: { role: 'kd' },
+            },
+            {
+                path: '/social-assistances',
+                name: 'SocialAssistancesKK',
+                component: () => import('../pages/social-assistances/KKIndex.vue'),
+                meta: { role: 'kk' },
+            },
+            {
+                path: '/social-assistances/detail/:id',
+                name: 'SocialAssistanceKKApply',
+                component: () => import('../pages/social-assistances/KKApply.vue'),
+                meta: { role: 'kk' },
+            },
+            {
+                path: '/social-assistances/my-recipients',
+                name: 'SocialAssistanceKKRecipients',
+                component: () => import('../pages/social-assistances/KKRecipients.vue'),
+                meta: { role: 'kk' },
+            },
+            {
+                path: '/social-assistances/my-recipients/:id',
+                name: 'SocialAssistanceKKRecipientDetail',
+                component: () => import('../pages/social-assistances/KKRecipientDetail.vue'),
+                meta: { role: 'kk' },
             },
             {
                 path: '/social-assistances/:id',
                 name: 'SocialAssistanceDetail',
                 component: () => import('../pages/social-assistances/Detail.vue'),
+                meta: { role: 'kd' },
             },
             {
                 path: '/social-assistances/recipients',
                 name: 'SocialAssistanceRecipients',
                 component: () => import('../pages/social-assistances/Recipients.vue'),
+                meta: { role: 'kd' },
             },
             {
                 path: '/developments',
                 name: 'Developments',
                 component: () => import('../pages/developments/Index.vue'),
+                meta: { role: 'kd' },
+            },
+            {
+                path: '/developments',
+                name: 'DevelopmentsKK',
+                component: () => import('../pages/developments/KKIndex.vue'),
+                meta: { role: 'kk' },
             },
             {
                 path: '/developments/:id',
                 name: 'DevelopmentDetail',
                 component: () => import('../pages/developments/Detail.vue'),
+                meta: { role: 'kd' },
+            },
+            {
+                path: '/developments/:id',
+                name: 'DevelopmentDetailKK',
+                component: () => import('../pages/developments/KKDetail.vue'),
+                meta: { role: 'kk' },
             },
             {
                 path: '/village-profile',
@@ -119,9 +180,49 @@ router.beforeEach((to, from, next) => {
         return next({ name: 'Dashboard' });
     }
 
+    // Role-based bansos routing
+    if (to.name === 'SocialAssistances' && auth.userRole === 'head_of_family') {
+        return next({ name: 'SocialAssistancesKK' });
+    }
+    if (to.name === 'SocialAssistancesKK' && auth.userRole !== 'head_of_family') {
+        return next({ name: 'SocialAssistances' });
+    }
+
+    // Role-based development/event routing
+    if (to.name === 'Developments' && auth.userRole === 'head_of_family') {
+        return next({ name: 'DevelopmentsKK' });
+    }
+    if (to.name === 'DevelopmentsKK' && auth.userRole !== 'head_of_family') {
+        return next({ name: 'Developments' });
+    }
+    if (to.name === 'DevelopmentDetail' && auth.userRole === 'head_of_family') {
+        return next({ name: 'DevelopmentDetailKK' });
+    }
+    if (to.name === 'DevelopmentDetailKK' && auth.userRole !== 'head_of_family') {
+        return next({ name: 'DevelopmentDetail' });
+    }
+    if (to.name === 'Events' && auth.userRole === 'head_of_family') {
+        return next({ name: 'EventsKK' });
+    }
+    if (to.name === 'EventsKK' && auth.userRole !== 'head_of_family') {
+        return next({ name: 'Events' });
+    }
+    if (to.name === 'EventDetail' && auth.userRole === 'head_of_family') {
+        return next({ name: 'EventDetailKK' });
+    }
+    if (to.name === 'EventDetailKK' && auth.userRole !== 'head_of_family') {
+        return next({ name: 'EventDetail' });
+    }
+
     // Specific role guard
     if (to.meta.role === 'admin' && auth.userRole !== 'admin') {
         return next('/');
+    }
+    if (to.meta.role === 'kk' && auth.userRole !== 'head_of_family') {
+        return next('/');
+    }
+    if (to.meta.role === 'kd' && auth.userRole === 'head_of_family') {
+        return next({ name: 'SocialAssistancesKK' });
     }
 
     next();

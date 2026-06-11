@@ -48,10 +48,15 @@ const sidebarItems = computed(() => [
         path: '',
         iconActive: iconBagActive,
         iconInactive: iconBagInactive,
-        children: [
-            { label: 'List Bansos', path: '/social-assistances' },
-            { label: 'Pengajuan Bansos', path: '/social-assistances/recipients' },
-        ],
+        children: isKD.value
+            ? [
+                { label: 'List Bansos', path: '/social-assistances' },
+                { label: 'Pengajuan Bansos', path: '/social-assistances/recipients' },
+            ]
+            : [
+                { label: 'List Bansos', path: '/social-assistances' },
+                { label: 'Pengajuan Bansos', path: '/social-assistances/my-recipients' },
+            ],
     },
     {
         label: 'Jadwal Desa',
