@@ -26,6 +26,24 @@ class EventParticipantController extends Controller
         );
     }
 
+    public function myParticipations(Request $request)
+    {
+        $headOfFamily = $request->user()->headOfFamily;
+        abort_unless($headOfFamily, 403);
+
+        $participants = EventParticipant::query()
+            ->where('head_of_family_id', $headOfFamily->id)
+            ->with(['event.file', 'headOfFamily', 'familyMember'])
+            ->latest()
+            ->get();
+
+        return ResponseHelper::success(
+            'My event participants retrieved successfully',
+            EventParticipantResource::collection($participants),
+            200
+        );
+    }
+
     public function store(EventParticipantStoreRequest $request, Event $event)
     {
         $headOfFamily = $request->user()->headOfFamily;

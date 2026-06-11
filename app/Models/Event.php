@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
@@ -24,6 +25,12 @@ class Event extends Model
     public function file(): BelongsTo
     {
         return $this->belongsTo(File::class);
+    }
+
+    // Relasi ke EventParticipant
+    public function eventParticipants(): HasMany
+    {
+        return $this->hasMany(EventParticipant::class);
     }
 
     // Tambahkan casting untuk tipe data

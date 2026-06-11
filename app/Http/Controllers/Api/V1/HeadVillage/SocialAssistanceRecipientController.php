@@ -15,13 +15,46 @@ class SocialAssistanceRecipientController extends Controller
 {
     public function index(SocialAssistance $socialAssistance)
     {
-        $recipients = $socialAssistance->socialAssistanceRecipients()
-            ->with(['socialAssistance', 'headOfFamily'])
+        $recipients = $socialAssistance->recipients()
+            ->with(['socialAssistance.file', 'headOfFamily'])
             ->get();
 
         return ResponseHelper::success(
             'Social assistance recipients retrieved successfully',
             SocialAssistanceRecipientResource::collection($recipients),
+            200
+        );
+    }
+
+    public function myRecipients(Request $request)
+    {
+        $headOfFamily = $request->user()->headOfFamily;
+        abort_unless($headOfFamily, 403);
+
+        $recipients = SocialAssistanceRecipient::query()
+            ->where('head_of_family_id', $headOfFamily->id)
+            ->with(['socialAssistance.file', 'headOfFamily'])
+            ->latest()
+            ->get();
+
+        return ResponseHelper::success(
+            'My social assistance recipients retrieved successfully',
+            SocialAssistanceRecipientResource::collection($recipients),
+            200
+        );
+    }
+
+    public function myRecipientDetail(Request $request, SocialAssistanceRecipient $recipient)
+    {
+        $headOfFamily = $request->user()->headOfFamily;
+        abort_unless($headOfFamily, 403);
+        abort_unless($recipient->head_of_family_id === $headOfFamily->id, 403);
+
+        $recipient->load(['socialAssistance.file', 'headOfFamily']);
+
+        return ResponseHelper::success(
+            'Recipient detail retrieved successfully',
+            new SocialAssistanceRecipientResource($recipient),
             200
         );
     }
@@ -38,7 +71,7 @@ class SocialAssistanceRecipientController extends Controller
             'status' => 'pending',
         ]);
 
-        $recipient->load(['socialAssistance', 'headOfFamily']);
+        $recipient->load(['socialAssistance.file', 'headOfFamily']);
 
         return ResponseHelper::success(
             'Social assistance recipient created successfully',
@@ -51,7 +84,7 @@ class SocialAssistanceRecipientController extends Controller
     {
         abort_unless($recipient->social_assistance_id === $socialAssistance->id, 404);
 
-        $recipient->load(['socialAssistance', 'headOfFamily']);
+        $recipient->load(['socialAssistance.file', 'headOfFamily']);
 
         return ResponseHelper::success(
             'Social assistance recipient retrieved successfully',
@@ -66,7 +99,7 @@ class SocialAssistanceRecipientController extends Controller
 
         $recipient->fill($request->validated());
         $recipient->save();
-        $recipient->load(['socialAssistance', 'headOfFamily']);
+        $recipient->load(['socialAssistance.file', 'headOfFamily']);
 
         return ResponseHelper::success(
             'Social assistance recipient updated successfully',

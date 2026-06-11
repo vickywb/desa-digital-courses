@@ -15,14 +15,17 @@ class SocialAssistanceRecipientResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
+            'social_assistance_id' => $this->social_assistance_id,
             'bank' => $this->bank,
             'amount' => $this->amount,
             'account_number' => $this->account_number,
             'reason' => $this->reason,
             'proof' => $this->proof,
             'status' => $this->status,
+            'created_at' => $this->created_at,
             'social_assistance' => new SocialAssistanceResource($this->whenLoaded('socialAssistance')),
-            'head_of_family' => new HeadOfFamilyResource($this->whenLoaded('headOfFamily'))
+            'head_of_family' => new HeadOfFamilyResource($this->whenLoaded('headOfFamily')),
         ];
     }
 }
