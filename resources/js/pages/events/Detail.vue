@@ -266,7 +266,6 @@ function selectClass() {
                     </div>
                 </div>
             </section>
-        </div>
     </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 flex bg-black/50" @click.self="closeModal">

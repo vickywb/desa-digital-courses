@@ -68,7 +68,7 @@ async function save() {
         const res = await client.post('/village-staff/developments', payload, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
-        items.value.unshift(res.data.data ?? {});
+        items.value.unshift(res.data.data?.[0] ?? {});
         closeModal();
     } catch (err) {
         alert(err.response?.data?.message ?? 'Gagal menyimpan');
