@@ -45,7 +45,7 @@ onMounted(async () => {
                     <p class="font-semibold text-2xl text-white text-nowrap">Dari Desa untuk Warga ❤️</p>
                     <p class="text-white">Wujudkan kesejahteraan desa dengan bantuan sosial yang tepat sasaran.</p>
                 </div>
-                <router-link to="/social-assistances" class="flex items-center justify-between rounded-2xl p-4 gap-[10px] bg-white">
+                <router-link to="/staff/social-assistances" class="flex items-center justify-between rounded-2xl p-4 gap-[10px] bg-white">
                     <span class="font-medium text-desa-dark-green leading-5">Bikin Bantuan Sosial</span>
                     <img src="/desa-digital/src/assets/images/icons/add-square-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </router-link>
@@ -92,7 +92,7 @@ onMounted(async () => {
         </div>
 
         <div id="Row-2" class="flex flex-col sm:flex-row gap-[14px]">
-            <router-link to="/social-assistances" class="flex flex-col w-full sm:w-[497px] shrink-0 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
+            <router-link to="/staff/social-assistances" class="flex flex-col w-full sm:w-[497px] shrink-0 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Bantuan Sosial</p>
                     <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -101,7 +101,7 @@ onMounted(async () => {
                 <p class="font-medium text-sm text-desa-secondary">Total kepala keluarga</p>
             </router-link>
 
-            <router-link to="/events" class="flex flex-col flex-1 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
+            <router-link to="/staff/events" class="flex flex-col flex-1 rounded-2xl bg-white p-6 gap-3 hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Events Mendatang</p>
                     <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">

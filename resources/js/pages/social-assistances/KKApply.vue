@@ -54,7 +54,7 @@ async function submitForm() {
             { headers: { 'Content-Type': 'multipart/form-data' } }
         );
 
-        router.push('/social-assistances/my-recipients');
+        router.push('/warga/bansos/pengajuan-saya');
     } catch (err) {
         const data = err.response?.data;
         if (data?.errors) {
@@ -80,7 +80,7 @@ function textareaClass() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/social-assistances" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/warga/bansos" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -96,7 +96,7 @@ function textareaClass() {
 
         <div v-else-if="!item" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Data tidak ditemukan</p>
-            <router-link to="/social-assistances" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
+            <router-link to="/warga/bansos" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
@@ -195,14 +195,15 @@ function textareaClass() {
                 </section>
 
                 <div class="flex gap-3">
-                    <router-link to="/social-assistances"
+                    <router-link to="/warga/bansos"
                         class="flex items-center justify-center h-14 rounded-2xl px-8 border border-desa-background font-semibold text-sm hover:bg-desa-black hover:text-white transition-setup flex-1">
                         Batal
                     </router-link>
                     <button type="submit"
-                        class="flex items-center justify-center h-14 rounded-2xl px-8 bg-desa-black text-white font-semibold text-sm hover:bg-desa-dark-green transition-setup flex-1"
+                        class="flex items-center justify-center h-14 rounded-2xl px-8 font-semibold text-sm transition-setup flex-1"
+                        :class="item.is_available ? 'bg-desa-black text-white hover:bg-desa-dark-green' : 'bg-desa-background text-desa-secondary cursor-not-allowed'"
                         :disabled="saving || !item.is_available">
-                        {{ saving ? 'Mengirim...' : 'Ajukan Bantuan' }}
+                        {{ saving ? 'Mengirim...' : item.is_available ? 'Ajukan Bantuan' : 'Maaf, Bantuan ini Habis' }}
                     </button>
                 </div>
             </form>

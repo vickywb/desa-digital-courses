@@ -41,7 +41,7 @@ onMounted(async () => {
                             </div>
                         </div>
                     </div>
-                    <router-link :to="`/social-assistances/detail/${item.id}`" class="shrink-0">
+                    <router-link :to="`/warga/bansos/detail/${item.id}`" class="shrink-0">
                         <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
                     </router-link>
                 </header>

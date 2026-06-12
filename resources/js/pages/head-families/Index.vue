@@ -49,7 +49,7 @@ onMounted(async () => {
                             <td class="px-4 py-4 text-desa-secondary">{{ item.occupation }}</td>
                             <td class="px-4 py-4">{{ maritalLabel(item.marital_status) }}</td>
                             <td class="px-4 py-4">
-                                <router-link :to="`/head-families/${item.id}/members`"
+                                <router-link :to="`/staff/head-families/${item.id}/members`"
                                     class="rounded-2xl px-6 py-[14px] bg-desa-black font-medium leading-5 text-white text-sm inline-block">
                                     Manage
                                 </router-link>

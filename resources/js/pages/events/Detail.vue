@@ -6,6 +6,7 @@ import client from '../../api/client';
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
+const participants = ref([]);
 const loading = ref(true);
 const showModal = ref(false);
 const saving = ref(false);
@@ -19,6 +20,33 @@ const form = ref({
     image: null,
 });
 
+async function loadParticipants() {
+    try {
+        const res = await client.get(`/village-staff/events/${route.params.id}/participants`);
+        participants.value = res.data.data ?? [];
+    } catch {
+        participants.value = [];
+    }
+}
+
+async function approveParticipant(participant) {
+    if (!confirm(`Terima peserta ${participant.head_of_family?.full_name ?? 'ini'}?`)) return;
+    saving.value = true;
+    try {
+        const res = await client.put(
+            `/village-staff/events/${route.params.id}/participants/${participant.id}`,
+            { payment_status: 'paid' }
+        );
+        const updated = res.data.data;
+        const idx = participants.value.findIndex(p => p.id === updated.id);
+        if (idx >= 0) participants.value[idx] = updated;
+    } catch (err) {
+        alert(err.response?.data?.message ?? 'Gagal menyetujui');
+    } finally {
+        saving.value = false;
+    }
+}
+
 onMounted(async () => {
     try {
         const res = await client.get(`/village-staff/events/${route.params.id}`);
@@ -28,6 +56,8 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
+
+    loadParticipants();
 });
 
 function openEdit() {
@@ -94,7 +124,7 @@ function selectClass() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/events" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/staff/events" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -110,7 +140,7 @@ function selectClass() {
 
         <div v-else-if="!item" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Data tidak ditemukan</p>
-            <router-link to="/events" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
+            <router-link to="/staff/events" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
         </div>
 
         <div v-else class="flex flex-col gap-[14px]">
@@ -195,6 +225,47 @@ function selectClass() {
                     </div>
                 </section>
             </div>
+        </div>
+            <section v-if="item" class="flex flex-col rounded-3xl p-6 gap-4 bg-white">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold text-lg">Peserta ({{ participants.length }})</h2>
+                </div>
+
+                <div v-if="participants.length === 0" class="flex flex-col items-center py-8 gap-2">
+                    <p class="font-medium text-desa-secondary">Belum ada peserta</p>
+                </div>
+
+                <div v-else class="flex flex-col gap-3">
+                    <div v-for="p in participants" :key="p.id"
+                        class="flex items-center justify-between gap-4 rounded-2xl border border-desa-background p-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="flex size-10 rounded-full items-center justify-center bg-desa-foreshadow shrink-0 overflow-hidden">
+                                <svg class="size-5 text-desa-dark-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <p class="font-semibold text-sm leading-5 truncate">{{ p.head_of_family?.full_name ?? '-' }}</p>
+                                <p class="text-xs text-desa-secondary">{{ p.family_member?.full_name ?? 'Kepala Keluarga' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold text-white"
+                                :class="p.payment_status === 'paid' ? 'bg-desa-dark-green' : 'bg-desa-yellow'">
+                                {{ p.payment_status === 'paid' ? 'Dibayar' : 'Pending' }}
+                            </span>
+
+                            <template v-if="p.payment_status === 'pending'">
+                                <button @click="approveParticipant(p)" :disabled="saving"
+                                    class="rounded-lg px-3 py-1.5 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                                    Terima
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 

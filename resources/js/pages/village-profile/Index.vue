@@ -24,11 +24,11 @@ onMounted(async () => {
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <h1 class="font-semibold text-2xl">Profile Desa</h1>
             <div class="flex gap-3 w-full sm:w-auto">
-                <button @click="$router.push('/village-profile/edit')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black flex-1 sm:flex-initial justify-center">
+                <button @click="$router.push('/staff/village-profile/edit')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black flex-1 sm:flex-initial justify-center">
                     <p class="font-medium text-white">Ubah Data</p>
                     <img src="/desa-digital/src/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
                 </button>
-                <button @click="$router.push('/village-profile/create')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green flex-1 sm:flex-initial justify-center">
+                <button @click="$router.push('/staff/village-profile/create')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green flex-1 sm:flex-initial justify-center">
                     <p class="font-medium text-white">Create Profile</p>
                     <img src="/desa-digital/src/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
                 </button>

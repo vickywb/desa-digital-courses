@@ -76,7 +76,7 @@ const myItems = computed(() => items.value.filter(i => myEventIds.value.includes
                     <div class="flex items-center gap-3 shrink-0">
                         <span v-if="myEventIds.includes(item.id)"
                             class="rounded-full py-2 px-4 bg-desa-soft-green text-white font-semibold text-xs">Sudah Ikut</span>
-                        <router-link :to="`/events/${item.id}`">
+                        <router-link :to="`/warga/events/${item.id}`">
                             <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
                         </router-link>
                     </div>

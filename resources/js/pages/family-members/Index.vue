@@ -194,7 +194,7 @@ function selectClass() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/head-families" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/staff/head-families" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>

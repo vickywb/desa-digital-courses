@@ -1,6 +1,6 @@
 <script setup>
 import { ref, provide } from 'vue';
-import Sidebar from '@/components/sidebar/Sidebar.vue';
+import StaffSidebar from '@/components/sidebar/StaffSidebar.vue';
 import Topbar from '@/components/Topbar.vue';
 
 const sidebarOpen = ref(false);
@@ -17,12 +17,9 @@ function closeSidebar() {
 
 <template>
     <div class="flex flex-1 min-h-screen">
-        <Sidebar :open="sidebarOpen" @close="closeSidebar" />
+        <StaffSidebar :open="sidebarOpen" @close="closeSidebar" />
 
-        <div
-            id="Main-Container"
-            class="flex flex-col flex-1 min-w-0"
-        >
+        <div id="Main-Container" class="flex flex-col flex-1 min-w-0">
             <Topbar @toggle-sidebar="toggleSidebar" />
 
             <div id="Content" class="relative flex flex-col flex-1 gap-[14px] p-4 md:p-6 pb-[30px] w-full shrink-0">

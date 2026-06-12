@@ -57,7 +57,7 @@ onMounted(async () => {
             <div v-if="!items.length" class="flex flex-col items-center justify-center py-20 gap-6">
                 <img src="/desa-digital/src/assets/images/icons/bag-cross-secondary.svg" class="size-[52px]" alt="icon">
                 <p class="font-medium text-desa-secondary">Belum ada pengajuan bansos</p>
-                <router-link to="/social-assistances"
+                <router-link to="/warga/bansos"
                     class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white inline-block">
                     Ajukan Bansos
                 </router-link>
@@ -90,7 +90,7 @@ onMounted(async () => {
                         </div>
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
-                        <router-link :to="`/social-assistances/my-recipients/${item.id}`">
+                        <router-link :to="`/warga/bansos/pengajuan-saya/${item.id}`">
                             <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
                         </router-link>
                         <button v-if="item.status === 'pending'" @click="cancelRecipient(item.id)"

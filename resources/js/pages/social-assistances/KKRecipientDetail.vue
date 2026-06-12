@@ -42,7 +42,7 @@ onMounted(async () => {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/social-assistances/my-recipients" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/warga/bansos/pengajuan-saya" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -58,7 +58,7 @@ onMounted(async () => {
 
         <div v-else-if="!item" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Data tidak ditemukan</p>
-            <router-link to="/social-assistances/my-recipients" class="text-desa-dark-green hover:underline font-medium">Kembali</router-link>
+            <router-link to="/warga/bansos/pengajuan-saya" class="text-desa-dark-green hover:underline font-medium">Kembali</router-link>
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
@@ -127,8 +127,8 @@ onMounted(async () => {
                     <hr class="border-desa-background" />
                     <section class="flex flex-col gap-4">
                         <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Bukti Menerima Bansos</h2>
-                        <div v-if="item.proof" class="relative flex justify-center items-center w-full h-[230px] overflow-hidden rounded-2xl bg-desa-foreshadow">
-                            <img :src="item.proof" alt="proof" class="w-full h-full object-cover" />
+                        <div v-if="item.proof_file?.url" class="relative flex justify-center items-center w-full h-[230px] overflow-hidden rounded-2xl bg-desa-foreshadow">
+                            <img :src="item.proof_file.url" alt="proof" class="w-full h-full object-cover" />
                         </div>
                         <div v-else class="flex justify-center items-center w-full h-[230px] rounded-2xl border-2 border-dashed border-desa-background">
                             <p class="text-center w-[240px] font-medium text-xs leading-[19.2px] text-desa-secondary">

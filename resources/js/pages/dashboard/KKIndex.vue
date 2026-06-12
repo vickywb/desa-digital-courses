@@ -52,7 +52,7 @@ onMounted(async () => {
         </div>
 
         <section class="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
-            <router-link to="/family-members" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/family-members" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Anggota Keluarga</p>
                     <img src="/desa-digital/src/assets/images/icons/profil-2user-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -61,7 +61,7 @@ onMounted(async () => {
                 <p class="font-medium text-sm text-desa-secondary">Total anggota keluarga</p>
             </router-link>
 
-            <router-link to="/events" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/events" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Event Desa</p>
                     <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -70,7 +70,7 @@ onMounted(async () => {
                 <p class="font-medium text-sm text-desa-secondary">Event tersedia</p>
             </router-link>
 
-            <router-link to="/social-assistances" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/bansos" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Bantuan Sosial</p>
                     <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -79,7 +79,7 @@ onMounted(async () => {
                 <p class="font-medium text-sm text-desa-secondary">Bansos tersedia</p>
             </router-link>
 
-            <router-link to="/developments" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/pembangunan" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-desa-secondary">Pembangunan</p>
                     <img src="/desa-digital/src/assets/images/icons/buildings-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">

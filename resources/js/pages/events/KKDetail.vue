@@ -82,7 +82,7 @@ async function cancel() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/events" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/warga/events" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -98,7 +98,7 @@ async function cancel() {
 
         <div v-else-if="!item" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Data tidak ditemukan</p>
-            <router-link to="/events" class="text-desa-dark-green hover:underline font-medium">Kembali</router-link>
+            <router-link to="/warga/events" class="text-desa-dark-green hover:underline font-medium">Kembali</router-link>
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">

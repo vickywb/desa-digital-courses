@@ -6,6 +6,7 @@ import client from '../../api/client';
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
+const applicants = ref([]);
 const loading = ref(true);
 const showModal = ref(false);
 const saving = ref(false);
@@ -20,6 +21,71 @@ const form = ref({
     status: '',
     image: null,
 });
+
+const applicantStatusClass = (status) => {
+    const map = {
+        pending: 'bg-desa-yellow',
+        approved: 'bg-desa-dark-green',
+        rejected: 'bg-desa-red',
+    };
+    return map[status] ?? 'bg-desa-grey';
+};
+
+const applicantStatusLabel = (status) => {
+    const map = {
+        pending: 'Menunggu',
+        approved: 'Diterima',
+        rejected: 'Ditolak',
+    };
+    return map[status] ?? status;
+};
+
+async function loadApplicants() {
+    try {
+        const res = await client.get(`/village-staff/developments/${route.params.id}/applicants`);
+        applicants.value = res.data.data ?? [];
+    } catch {
+        applicants.value = [];
+    }
+}
+
+async function approveApplicant(applicant) {
+    if (!confirm(`Terima lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`)) return;
+    saving.value = true;
+    try {
+        const res = await client.put(
+            `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
+            { status: 'approved' }
+        );
+        const updated = res.data.data;
+        const idx = applicants.value.findIndex(a => a.id === updated.id);
+        if (idx >= 0) applicants.value[idx] = updated;
+    } catch (err) {
+        const msg = err.response?.data?.message ?? 'Gagal menyetujui';
+        alert(msg);
+    } finally {
+        saving.value = false;
+    }
+}
+
+async function rejectApplicant(applicant) {
+    if (!confirm(`Tolak lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`)) return;
+    saving.value = true;
+    try {
+        const res = await client.put(
+            `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
+            { status: 'rejected' }
+        );
+        const updated = res.data.data;
+        const idx = applicants.value.findIndex(a => a.id === updated.id);
+        if (idx >= 0) applicants.value[idx] = updated;
+    } catch (err) {
+        const msg = err.response?.data?.message ?? 'Gagal menolak';
+        alert(msg);
+    } finally {
+        saving.value = false;
+    }
+}
 
 const statusOptions = [
     { value: 'planned', label: 'Direncanakan', class: 'bg-desa-yellow' },
@@ -41,6 +107,8 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
+
+    loadApplicants();
 });
 
 function openEdit() {
@@ -129,7 +197,7 @@ function selectClass() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/developments" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/staff/developments" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -145,7 +213,7 @@ function selectClass() {
 
         <div v-else-if="!item" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Data tidak ditemukan</p>
-            <router-link to="/developments" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
+            <router-link to="/staff/developments" class="text-desa-dark-green hover:underline font-medium">Kembali ke daftar</router-link>
         </div>
 
         <div v-else class="flex flex-col gap-[14px]">
@@ -253,6 +321,49 @@ function selectClass() {
                 </section>
             </div>
         </div>
+
+        <section v-if="item" class="flex flex-col rounded-3xl p-6 gap-4 bg-white">
+            <div class="flex items-center justify-between">
+                <h2 class="font-semibold text-lg">Pelamar ({{ applicants.length }})</h2>
+            </div>
+
+            <div v-if="applicants.length === 0" class="flex flex-col items-center py-8 gap-2">
+                <p class="font-medium text-desa-secondary">Belum ada pelamar</p>
+            </div>
+
+            <div v-else class="flex flex-col gap-3">
+                <div v-for="app in applicants" :key="app.id"
+                    class="flex items-center justify-between gap-4 rounded-2xl border border-desa-background p-4">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="flex size-10 rounded-full items-center justify-center bg-desa-foreshadow shrink-0 overflow-hidden">
+                            <svg class="size-5 text-desa-dark-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <p class="font-semibold text-sm leading-5 truncate">{{ app.user?.head_of_family?.full_name ?? app.user?.username ?? '-' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="rounded-full px-3 py-1 text-xs font-semibold text-white" :class="applicantStatusClass(app.status)">
+                            {{ applicantStatusLabel(app.status) }}
+                        </span>
+
+                        <template v-if="app.status === 'pending'">
+                            <button @click="approveApplicant(app)" :disabled="saving"
+                                class="rounded-lg px-3 py-1.5 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                                Terima
+                            </button>
+                            <button @click="rejectApplicant(app)" :disabled="saving"
+                                class="rounded-lg px-3 py-1.5 bg-desa-red text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                                Tolak
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 flex bg-black/50" @click.self="closeModal">

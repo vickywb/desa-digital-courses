@@ -67,7 +67,7 @@ async function save() {
             { headers: { 'Content-Type': 'multipart/form-data' } }
         );
 
-        router.push('/village-profile');
+        router.push('/staff/village-profile');
     } catch (err) {
         const msg = err.response?.data?.message ?? 'Gagal menyimpan data';
         alert(msg);
@@ -88,7 +88,7 @@ function textareaClass() {
 <template>
     <div class="flex flex-col gap-[14px]">
         <div class="flex items-center gap-2">
-            <router-link to="/village-profile" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
+            <router-link to="/staff/village-profile" class="flex items-center gap-1 font-medium text-desa-dark-green hover:underline">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -104,7 +104,7 @@ function textareaClass() {
 
         <div v-else-if="!profile" class="flex flex-col items-center justify-center py-20 gap-4">
             <p class="font-semibold text-lg text-desa-secondary">Belum ada profile desa</p>
-            <router-link to="/village-profile/create" class="text-desa-dark-green hover:underline font-medium">Buat profile baru</router-link>
+            <router-link to="/staff/village-profile/create" class="text-desa-dark-green hover:underline font-medium">Buat profile baru</router-link>
         </div>
 
         <form v-else @submit.prevent="save" class="flex flex-col gap-4 rounded-3xl bg-white p-6 max-w-2xl">
@@ -151,7 +151,7 @@ function textareaClass() {
             </div>
 
             <div class="flex items-center gap-3 pt-2">
-                <button type="button" @click="router.push('/village-profile')"
+                <button type="button" @click="router.push('/staff/village-profile')"
                     class="flex items-center justify-center h-14 rounded-2xl px-8 border border-desa-background font-semibold text-sm hover:bg-desa-black hover:text-white transition-setup flex-1">
                     Batal
                 </button>

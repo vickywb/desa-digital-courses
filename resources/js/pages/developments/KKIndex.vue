@@ -92,7 +92,7 @@ const myItems = computed(() => items.value.filter(i => myApplicantIds.value.incl
                     <div class="flex items-center gap-3 shrink-0">
                         <span v-if="myApplicantIds.includes(item.id)"
                             class="rounded-full py-2 px-4 bg-desa-soft-green text-white font-semibold text-xs">Sudah Melamar</span>
-                        <router-link :to="`/developments/${item.id}`">
+                        <router-link :to="`/warga/pembangunan/${item.id}`">
                             <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
                         </router-link>
                     </div>

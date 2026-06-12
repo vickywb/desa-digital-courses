@@ -1,6 +1,4 @@
 <script setup>
-import { computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
 import SidebarItem from './SidebarItem.vue';
 import iconChartActive from '@/assets/images/icons/chart-square-dark-green.svg';
 import iconChartInactive from '@/assets/images/icons/chart-square-secondary-green.svg';
@@ -12,6 +10,8 @@ import iconBuilding4Active from '@/assets/images/icons/building-4-dark-green.svg
 import iconBuilding4Inactive from '@/assets/images/icons/building-4-secondary-green.svg';
 import iconCalendarActive from '@/assets/images/icons/calendar-2-dark-green.svg';
 import iconCalendarInactive from '@/assets/images/icons/calendar-2-secondary-green.svg';
+import iconUserActive from '@/assets/images/icons/profile-2user-dark-green.svg';
+import iconUserInactive from '@/assets/images/icons/profile-2user-secondary-green.svg';
 
 defineProps({
     open: Boolean,
@@ -19,44 +19,28 @@ defineProps({
 
 const emit = defineEmits(['close']);
 
-const authStore = useAuthStore();
-const isKD = computed(() => authStore.userRole !== 'head_of_family');
-
-const sidebarItems = computed(() => [
+const sidebarItems = [
     {
         label: 'Dashboard',
-        path: '/',
+        path: '/staff/dashboard',
         iconActive: iconChartActive,
         iconInactive: iconChartInactive,
     },
-    ...(isKD.value
-        ? [{
-            label: 'Kepala Rumah',
-            path: '/head-families',
-            iconActive: iconCrownActive,
-            iconInactive: iconCrownInactive,
-        }]
-        : [{
-            label: 'Anggota Keluarga',
-            path: '/family-members',
-            iconActive: iconCrownActive,
-            iconInactive: iconCrownInactive,
-        }]
-    ),
+    {
+        label: 'Kepala Rumah',
+        path: '/staff/head-families',
+        iconActive: iconCrownActive,
+        iconInactive: iconCrownInactive,
+    },
     {
         label: 'Bantuan Sosial',
         path: '',
         iconActive: iconBagActive,
         iconInactive: iconBagInactive,
-        children: isKD.value
-            ? [
-                { label: 'List Bansos', path: '/social-assistances' },
-                { label: 'Pengajuan Bansos', path: '/social-assistances/recipients' },
-            ]
-            : [
-                { label: 'List Bansos', path: '/social-assistances' },
-                { label: 'Pengajuan Bansos', path: '/social-assistances/my-recipients' },
-            ],
+        children: [
+            { label: 'List Bansos', path: '/staff/social-assistances' },
+            { label: 'Pengajuan Bansos', path: '/staff/social-assistances/recipients' },
+        ],
     },
     {
         label: 'Jadwal Desa',
@@ -64,17 +48,23 @@ const sidebarItems = computed(() => [
         iconActive: iconCalendarActive,
         iconInactive: iconCalendarInactive,
         children: [
-            { label: 'Pembangunan', path: '/developments' },
-            { label: 'Event Desa', path: '/events' },
+            { label: 'Pembangunan', path: '/staff/developments' },
+            { label: 'Event Desa', path: '/staff/events' },
         ],
     },
     {
         label: 'Profile Desa',
-        path: '/village-profile',
+        path: '/staff/village-profile',
         iconActive: iconBuilding4Active,
         iconInactive: iconBuilding4Inactive,
     },
-]);
+    {
+        label: 'Users',
+        path: '/staff/users',
+        iconActive: iconUserActive,
+        iconInactive: iconUserInactive,
+    },
+];
 </script>
 
 <template>
