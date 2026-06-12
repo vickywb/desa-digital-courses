@@ -104,11 +104,30 @@ class SocialAssistanceRecipientController extends Controller
 
         $recipient->fill($request->validated());
         $recipient->save();
+
+        if ($request->status === 'approved') {
+            $socialAssistance->update(['is_available' => false]);
+        }
+
         $recipient->load(['socialAssistance.file', 'headOfFamily.file', 'file']);
 
         return ResponseHelper::success(
             'Social assistance recipient updated successfully',
             new SocialAssistanceRecipientResource($recipient),
+            200
+        );
+    }
+
+    public function allRecipients()
+    {
+        $recipients = SocialAssistanceRecipient::query()
+            ->with(['socialAssistance.file', 'headOfFamily.file', 'file'])
+            ->latest()
+            ->paginate(20);
+
+        return ResponseHelper::success(
+            'All recipients retrieved successfully',
+            SocialAssistanceRecipientResource::collection($recipients),
             200
         );
     }
