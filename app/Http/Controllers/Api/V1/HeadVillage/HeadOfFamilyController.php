@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateHeadOfFamilyRequest;
 use App\Http\Resources\HeadOfFamilyResource;
 use App\Models\HeadOfFamily;
-use Illuminate\Http\Request;
 
 class HeadOfFamilyController extends Controller
 {
@@ -20,11 +19,6 @@ class HeadOfFamilyController extends Controller
             HeadOfFamilyResource::collection($headOfFamilies),
             200
         );
-    }
-
-    public function store(Request $request)
-    {
-        // not used for head village
     }
 
     public function show(HeadOfFamily $headFamily)
@@ -48,10 +42,5 @@ class HeadOfFamilyController extends Controller
             new HeadOfFamilyResource($headFamily),
             200
         );
-    }
-
-    public function destroy(string $id)
-    {
-        // not used for head village
     }
 }

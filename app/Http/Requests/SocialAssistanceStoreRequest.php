@@ -23,7 +23,7 @@ class SocialAssistanceStoreRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'category' => 'required|string|in:staple,cash,subsidized fuel,healthcare',
             'amount' => 'required|numeric',
             'provider' => 'required|string|max:255',
             'description' => 'required|string',

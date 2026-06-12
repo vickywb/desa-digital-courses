@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('development_id')->constrained('developments')->onUpdate('cascade')->onDelete('cascade'); // Relasi ke table developments
             $table->foreignUuid('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade'); // Relasi ke table users
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

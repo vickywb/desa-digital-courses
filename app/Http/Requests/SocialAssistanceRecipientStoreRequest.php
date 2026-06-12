@@ -19,7 +19,7 @@ class SocialAssistanceRecipientStoreRequest extends FormRequest
             'amount' => ['required', 'numeric', 'min:0'],
             'account_number' => ['required', 'string', 'max:255', Rule::unique('social_assistance_recipients', 'account_number')],
             'reason' => ['required', 'string'],
-            'proof' => ['nullable', 'string'],
+            'proof' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ];
     }
 }

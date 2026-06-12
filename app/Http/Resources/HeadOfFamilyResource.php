@@ -24,7 +24,7 @@ class HeadOfFamilyResource extends JsonResource
             'marital_status' => $this->marital_status,
             'phone_number' => $this->phone_number,
             'family_members_count' => $this->whenCounted('familyMembers'),
-            'profile_picture' => new FileResource($this->whenLoaded('file')),
+            'profile_picture' => $this->whenLoaded('file', fn () => $this->file ? new FileResource($this->file) : null),
         ];
     }
 }

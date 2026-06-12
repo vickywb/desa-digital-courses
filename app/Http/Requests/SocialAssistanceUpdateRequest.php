@@ -23,7 +23,7 @@ class SocialAssistanceUpdateRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',
-            'category' => 'sometimes|string|max:255',
+            'category' => 'sometimes|string|in:staple,cash,subsidized fuel,healthcare',
             'amount' => 'sometimes|numeric',
             'provider' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',

@@ -24,6 +24,27 @@ class DevelopmentApplicantController extends Controller
         );
     }
 
+    public function update(Request $request, Development $development, DevelopmentApplicant $applicant)
+    {
+        abort_unless($applicant->development_id === $development->id, 404);
+
+        $request->validate([
+            'status' => ['required', 'string', 'in:approved,rejected'],
+        ]);
+
+        $applicant->update([
+            'status' => $request->status,
+        ]);
+
+        $applicant->load(['development.file', 'user.headOfFamily']);
+
+        return ResponseHelper::success(
+            'Development applicant updated successfully',
+            new DevelopmentApplicantResource($applicant),
+            200
+        );
+    }
+
     public function myApplicants(Request $request)
     {
         $applicants = DevelopmentApplicant::query()
@@ -43,6 +64,16 @@ class DevelopmentApplicantController extends Controller
     {
         $headOfFamily = $request->user()->headOfFamily;
         abort_unless($headOfFamily, 403);
+
+        $existing = DevelopmentApplicant::query()
+            ->where('development_id', $development->id)
+            ->where('user_id', $request->user()->id)
+            ->where('status', '!=', 'rejected')
+            ->first();
+
+        abort_if($existing, 409, 'Kamu sudah mendaftar pembangunan ini');
+
+        abort_if($development->status !== 'planned', 422, 'Pembangunan ini sudah tidak menerima pendaftaran');
 
         $applicant = DevelopmentApplicant::create([
             'development_id' => $development->id,

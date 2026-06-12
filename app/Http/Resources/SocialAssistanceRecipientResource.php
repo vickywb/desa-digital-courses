@@ -21,7 +21,7 @@ class SocialAssistanceRecipientResource extends JsonResource
             'amount' => $this->amount,
             'account_number' => $this->account_number,
             'reason' => $this->reason,
-            'proof' => $this->proof,
+            'proof_file' => new FileResource($this->whenLoaded('file')),
             'status' => $this->status,
             'created_at' => $this->created_at,
             'social_assistance' => new SocialAssistanceResource($this->whenLoaded('socialAssistance')),

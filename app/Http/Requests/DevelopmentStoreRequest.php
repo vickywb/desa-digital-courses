@@ -28,8 +28,7 @@ class DevelopmentStoreRequest extends FormRequest
             'amount' => 'required|numeric',
             'start_date' => 'required|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date_format:Y-m-d H:i:s|after_or_equal:start_date',
-            'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048'
+            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048',
         ];
     }
 }

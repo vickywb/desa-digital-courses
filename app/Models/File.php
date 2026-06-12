@@ -24,7 +24,6 @@ class File extends Model
         return $this->hasMany(VillageProfile::class);
     }
 
-
     // Relasi ke HeadOfFamilyFile
     public function headOfFamilyFile(): HasOne
     {
@@ -35,5 +34,11 @@ class File extends Model
     public function familyMemberFile(): HasOne
     {
         return $this->hasOne(FamilyMember::class);
+    }
+
+    // Relasi ke SocialAssistanceRecipientFile
+    public function socialAssistanceRecipientFile(): HasOne
+    {
+        return $this->hasOne(SocialAssistanceRecipient::class);
     }
 }
