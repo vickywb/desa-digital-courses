@@ -2,9 +2,9 @@
 
 // tests/Feature/Auth/LogoutTest.php
 
-use App\Models\User;
-use function Pest\Laravel\{postJson, actingAs};
 use Illuminate\Support\Facades\Auth;
+
+use function Pest\Laravel\postJson;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
@@ -15,12 +15,12 @@ uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 function loginAndGetToken(): array
 {
     $user = createUserWithPassword('Password123!');
-    
-    $response = postJson('/api/v1/auth/login', [
+
+    $response = postJson('/api/v1/login', [
         'email' => $user->email,
         'password' => 'Password123!',
     ]);
-    
+
     return [
         'user' => $user,
         'token' => $response->json('data.token'),
@@ -33,15 +33,15 @@ function loginAndGetToken(): array
 
 it('can logout successfully', function () {
     ['user' => $user] = loginAndGetToken();
-    
+
     $response = $this->actingAs($user, 'sanctum')
-                     ->postJson('/api/v1/auth/logout');
-    
+        ->postJson('/api/v1/auth/logout');
+
     $response->assertStatus(200)
-             ->assertJson([
-                 'status' => 'success',
-                 'message' => 'Successfully logged out.',
-             ]);
+        ->assertJson([
+            'status' => 'success',
+            'message' => 'Successfully logged out.',
+        ]);
 });
 
 it('deletes token after logout', function () {
@@ -51,7 +51,7 @@ it('deletes token after logout', function () {
         'tokenable_id' => $user->id,
     ]);
 
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/v1/auth/logout')
         ->assertStatus(200);
 
@@ -64,9 +64,9 @@ it('cannot access protected routes after logout', function () {
     ['user' => $user, 'token' => $token] = loginAndGetToken();
 
     // 1. Logout dengan token valid
-    $this->withHeader('Authorization', 'Bearer ' . $token)
-         ->postJson('/api/v1/auth/logout')
-         ->assertStatus(200);
+    $this->withHeader('Authorization', 'Bearer '.$token)
+        ->postJson('/api/v1/auth/logout')
+        ->assertStatus(200);
 
     // 2. Hapus Session & State Auth
     $this->flushSession(); // Tambahkan ini untuk membuang cookies session
@@ -86,16 +86,16 @@ it('cannot access protected routes after logout', function () {
 
 it('fails to logout without authentication', function () {
     $response = postJson('/api/v1/auth/logout');
-    
+
     $response->assertStatus(401)
-             ->assertJson([
-                 'message' => 'Unauthenticated.',
-             ]);
+        ->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
 });
 
 it('fails to logout with invalid token', function () {
     $response = $this->withHeader('Authorization', 'Bearer invalid-token-xyz')
-                     ->postJson('/api/v1/auth/logout');
-    
+        ->postJson('/api/v1/auth/logout');
+
     $response->assertStatus(401);
 });

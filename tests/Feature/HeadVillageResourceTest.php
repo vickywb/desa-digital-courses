@@ -7,6 +7,7 @@ use App\Models\HeadOfFamily;
 use App\Models\SocialAssistance;
 use App\Models\SocialAssistanceRecipient;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 
 use function Pest\Laravel\actingAs;
 
@@ -150,12 +151,12 @@ test('head of family can register for social assistance recipient', function () 
     ]);
 
     $response = actingAs($this->headOfFamilyUser, 'sanctum')
-        ->postJson(route('social-assistances.recipients.store', [$socialAssistance]), [
+        ->post(route('social-assistances.recipients.store', [$socialAssistance]), [
             'bank' => 'BCA',
             'amount' => '500000',
             'account_number' => '12345678901',
             'reason' => 'Keluarga kurang mampu',
-            'proof' => 'proof-file.jpg',
+            'proof' => UploadedFile::fake()->image('proof.jpg'),
         ]);
 
     $response->assertStatus(200)

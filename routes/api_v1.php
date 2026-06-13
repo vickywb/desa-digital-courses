@@ -48,10 +48,11 @@ Route::middleware(['auth:sanctum', 'role:admin,head_village,staff'])
         Route::apiResource('developments', DevelopmentController::class)
             ->except(['destroy']);
         Route::apiResource('developments.applicants', DevelopmentApplicantController::class)
-            ->only(['index', 'show']);
+            ->only(['index', 'show', 'update']);
 
         Route::apiResource('social-assistances', SocialAssistanceController::class)
             ->except(['destroy']);
+        Route::get('social-assistances/recipients/all', [SocialAssistanceRecipientController::class, 'allRecipients']);
         Route::apiResource('social-assistances.recipients', SocialAssistanceRecipientController::class)
             ->only(['index', 'show', 'update']);
 
@@ -82,16 +83,20 @@ Route::middleware(['auth:sanctum', 'role:head_of_family'])
             ->only(['index', 'show']);
         Route::apiResource('events.participants', EventParticipantController::class)
             ->only(['store', 'destroy']);
+        Route::get('my-event-participants', [EventParticipantController::class, 'myParticipations']);
 
         Route::apiResource('developments', DevelopmentController::class)
             ->only(['index', 'show']);
         Route::apiResource('developments.applicants', DevelopmentApplicantController::class)
             ->only(['store', 'destroy']);
+        Route::get('my-development-applicants', [DevelopmentApplicantController::class, 'myApplicants']);
 
         Route::apiResource('social-assistances', SocialAssistanceController::class)
             ->only(['index', 'show']);
         Route::apiResource('social-assistances.recipients', SocialAssistanceRecipientController::class)
             ->only(['store', 'destroy']);
+        Route::get('social-assistance-recipients', [SocialAssistanceRecipientController::class, 'myRecipients']);
+        Route::get('social-assistance-recipients/{recipient}', [SocialAssistanceRecipientController::class, 'myRecipientDetail']);
 
         Route::apiResource('family-members', MyFamilyMemberController::class);
     });
