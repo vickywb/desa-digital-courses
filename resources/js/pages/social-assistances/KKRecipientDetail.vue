@@ -62,7 +62,7 @@ onMounted(async () => {
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
-            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-6 flex flex-col gap-6 h-fit">
+            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 h-fit">
                 <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Informasi Bantuan Sosial</h2>
 
                 <section class="flex items-center justify-between">
@@ -116,7 +116,7 @@ onMounted(async () => {
             </div>
 
             <div class="flex-1 flex flex-col gap-[14px]">
-                <div class="rounded-2xl bg-white p-6 flex flex-col gap-6">
+                <div class="rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-4 sm:gap-6">
                     <section class="flex items-center justify-between">
                         <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Status Pengajuan</h2>
                         <span class="rounded-full py-[12px] w-[100px] flex justify-center text-white font-semibold text-xs leading-[15px] shrink-0"
@@ -138,7 +138,7 @@ onMounted(async () => {
                     </section>
                 </div>
 
-                <div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+                <div class="flex flex-col gap-4 sm:gap-6 rounded-2xl bg-white p-4 sm:p-6">
                     <section class="flex flex-col gap-6">
                         <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Detail Pengajuan</h2>
                         <div class="point flex items-center gap-3">
@@ -163,7 +163,7 @@ onMounted(async () => {
                         <hr class="border-desa-background" />
                         <div class="point flex items-center gap-3">
                             <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                                <img src="@/assets/images/icons/bank-secondary-green.svg" alt="icon" class="size-6 shrink-0" />
+                                <img :src="`/desa-digital/src/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <p class="font-semibold text-lg leading-[22.5px]">{{ item.bank }} - {{ item.account_number }}</p>

@@ -100,7 +100,7 @@ function textareaClass() {
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
-            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-6 flex flex-col gap-6 h-fit">
+            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 h-fit">
                 <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Informasi Bantuan Sosial</h2>
 
                 <section class="flex items-center justify-between">
@@ -158,7 +158,7 @@ function textareaClass() {
                     <p class="font-medium text-sm text-desa-red whitespace-pre-line">{{ error }}</p>
                 </div>
 
-                <section class="rounded-2xl bg-white p-6 flex flex-col gap-6">
+                <section class="rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-4 sm:gap-6">
                     <h2 class="font-semibold leading-5">Bank Account Detail</h2>
 
                     <div class="flex flex-col gap-2">

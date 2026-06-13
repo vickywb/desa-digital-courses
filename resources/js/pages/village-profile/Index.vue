@@ -45,7 +45,7 @@ onMounted(async () => {
         </div>
 
         <div v-else class="flex flex-col lg:flex-row gap-[14px]">
-            <section class="flex flex-col w-full lg:w-[565px] shrink-0 h-fit rounded-3xl p-6 gap-6 bg-white">
+            <section class="flex flex-col w-full lg:w-[565px] shrink-0 h-fit rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                 <div class="flex items-center justify-between">
                     <p class="font-medium leading-5 text-desa-secondary">Nama Desa</p>
                     <img src="/desa-digital/src/assets/images/icons/building-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
@@ -63,7 +63,7 @@ onMounted(async () => {
                 </div>
             </section>
 
-            <section class="flex flex-col flex-1 h-fit shrink-0 rounded-3xl p-6 gap-6 bg-white">
+            <section class="flex flex-col flex-1 h-fit shrink-0 rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                 <p class="font-medium leading-5 text-desa-secondary">Detail Desa</p>
                 <div class="flex flex-col gap-[14px]">
                     <div class="flex items-center gap-3 w-full shrink-0">

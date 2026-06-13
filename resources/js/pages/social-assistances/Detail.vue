@@ -131,7 +131,7 @@ function selectClass() {
             </div>
 
             <div class="flex flex-col lg:flex-row gap-[14px]">
-                <section class="flex flex-col w-full lg:w-[400px] shrink-0 rounded-3xl p-6 gap-6 bg-white">
+                <section class="flex flex-col w-full lg:w-[400px] shrink-0 rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                     <div class="flex items-center justify-between">
                         <p class="font-medium leading-5 text-desa-secondary">Status</p>
                         <span class="rounded-full px-4 py-2 text-xs font-semibold text-white"
@@ -177,7 +177,7 @@ function selectClass() {
                     </div>
                 </section>
 
-                <section class="flex flex-col flex-1 rounded-3xl p-6 gap-6 bg-white">
+                <section class="flex flex-col flex-1 rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                     <div v-if="item.social_assistance_file" class="rounded-2xl overflow-hidden bg-desa-foreshadow">
                         <img :src="item.social_assistance_file.url" class="w-full h-48 md:h-64 object-cover" alt="image">
                     </div>

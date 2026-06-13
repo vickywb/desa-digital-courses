@@ -107,7 +107,7 @@ function textareaClass() {
             <router-link to="/staff/village-profile/create" class="text-desa-dark-green hover:underline font-medium">Buat profile baru</router-link>
         </div>
 
-        <form v-else @submit.prevent="save" class="flex flex-col gap-4 rounded-3xl bg-white p-6 max-w-2xl">
+        <form v-else @submit.prevent="save" class="flex flex-col gap-4 rounded-3xl bg-white p-4 sm:p-6 max-w-2xl">
             <h1 class="font-semibold text-2xl">Edit Profile Desa</h1>
 
             <div class="flex flex-col gap-2">

@@ -124,7 +124,7 @@ async function cancelApplication() {
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
-            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-6 flex flex-col gap-6 h-fit">
+            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-6 h-fit">
                 <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Informasi Pembangunan</h2>
 
                 <section class="flex items-center justify-between">
@@ -188,7 +188,7 @@ async function cancelApplication() {
             </div>
 
             <div class="flex-1 flex flex-col gap-[14px]">
-                <div class="rounded-2xl bg-white p-6 flex flex-col gap-6">
+                <div class="rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-6">
                     <template v-if="hasApplied">
                         <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Status Lamaran</h2>
 

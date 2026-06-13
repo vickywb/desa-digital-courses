@@ -63,73 +63,84 @@ onMounted(async () => {
                 </router-link>
             </div>
 
-            <div v-for="item in items" :key="item.id"
-                class="bansos flex flex-col gap-4 p-6 bg-white rounded-3xl">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-[2px]">
-                        <img src="@/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon" />
-                        <p class="font-medium text-sm leading-[17.5px] text-desa-secondary">{{ formatToClientTimezone(item.created_at) }}</p>
+            <router-link v-for="item in items" :key="item.id" :to="`/warga/bansos/pengajuan-saya/${item.id}`"
+                class="bansos flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 bg-white rounded-3xl hover:shadow-md transition-setup">
+                <div class="flex items-start sm:items-center justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <h2 class="font-semibold text-sm sm:text-lg leading-5 sm:leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</h2>
+                        <p class="hidden sm:flex items-center gap-1 mt-1">
+                            <img src="@/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon" />
+                            <span class="font-medium text-xs sm:text-sm text-desa-secondary">{{ formatToClientTimezone(item.created_at) }}</span>
+                        </p>
                     </div>
-                    <span class="rounded-full py-[12px] w-[100px] flex justify-center text-white font-semibold text-xs leading-[15px] shrink-0"
+                    <span class="rounded-full px-3 sm:px-4 py-1.5 sm:py-[12px] flex justify-center text-white font-semibold text-[10px] sm:text-xs leading-[15px] shrink-0"
                         :class="statusClass(item.status)">
                         {{ statusLabel(item.status) }}
                     </span>
                 </div>
-                <hr class="border-desa-background" />
-                <header class="flex items-center gap-[48px] justify-between">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <div class="flex justify-center items-center w-[100px] h-[80px] shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img :src="item.social_assistance?.social_assistance_file?.url" alt="image" class="size-full object-cover" />
-                        </div>
-                        <div class="title flex flex-col gap-[6px] min-w-0">
-                            <h2 class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</h2>
-                            <div class="flex items-center gap-1">
-                                <img src="@/assets/images/icons/profile-secondary-green-bold.svg" class="size-4 shrink-0" alt="icon" />
-                                <p class="font-medium text-sm leading-[17.5px] text-desa-secondary truncate">{{ item.social_assistance?.provider }}</p>
+
+                <div class="flex sm:hidden items-center justify-between gap-2">
+                    <p class="font-semibold text-xs text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
+                    <button v-if="item.status === 'pending'" @click.stop="cancelRecipient(item.id)"
+                        class="rounded-lg px-3 py-1.5 border border-desa-red text-desa-red text-xs font-semibold">
+                        Batal
+                    </button>
+                </div>
+
+                <div class="hidden sm:block">
+                    <hr class="border-desa-background" />
+                    <header class="flex items-center gap-[48px] justify-between py-3">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="flex justify-center items-center w-[100px] h-[80px] shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
+                                <img :src="item.social_assistance?.social_assistance_file?.url" alt="image" class="size-full object-cover" />
+                            </div>
+                            <div class="flex flex-col gap-[6px] min-w-0">
+                                <h2 class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</h2>
+                                <div class="flex items-center gap-1">
+                                    <img src="@/assets/images/icons/profile-secondary-green-bold.svg" class="size-4 shrink-0" alt="icon" />
+                                    <p class="font-medium text-sm leading-[17.5px] text-desa-secondary truncate">{{ item.social_assistance?.provider }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-3 shrink-0">
-                        <router-link :to="`/warga/bansos/pengajuan-saya/${item.id}`">
-                            <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
-                        </router-link>
-                        <button v-if="item.status === 'pending'" @click="cancelRecipient(item.id)"
-                            class="rounded-2xl border border-desa-red py-[18px] px-6 font-medium leading-5 text-desa-red hover:bg-desa-red hover:text-white transition-setup">
-                            Batalkan
-                        </button>
-                    </div>
-                </header>
-                <hr class="border-desa-background" />
-                <section class="points grid grid-cols-3 gap-4">
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                            <img src="@/assets/images/icons/money-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                        <div class="flex items-center gap-3 shrink-0" @click.stop>
+                            <button v-if="item.status === 'pending'" @click="cancelRecipient(item.id)"
+                                class="rounded-2xl border border-desa-red py-[18px] px-6 font-medium leading-5 text-desa-red hover:bg-desa-red hover:text-white transition-setup">
+                                Batalkan
+                            </button>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.social_assistance?.amount) }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">{{ item.social_assistance?.category }}</h3>
+                    </header>
+                    <hr class="border-desa-background" />
+                    <section class="points grid grid-cols-3 gap-4 pt-3">
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
+                                <img src="@/assets/images/icons/money-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.social_assistance?.amount) }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">{{ item.social_assistance?.category }}</h3>
+                            </div>
                         </div>
-                    </div>
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                            <img src="@/assets/images/icons/receive-square-2-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
+                                <img src="@/assets/images/icons/receive-square-2-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Nominal Pengajuan</h3>
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Nominal Pengajuan</h3>
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
+                                <img :src="`/desa-digital/src/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">{{ item.bank }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Bank</h3>
+                            </div>
                         </div>
-                    </div>
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                            <img src="@/assets/images/icons/bank-secondary-green.svg" alt="icon" class="size-6 shrink-0" />
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">{{ item.bank }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Bank</h3>
-                        </div>
-                    </div>
-                </section>
-            </div>
+                    </section>
+                </div>
+            </router-link>
         </section>
     </div>
 </template>

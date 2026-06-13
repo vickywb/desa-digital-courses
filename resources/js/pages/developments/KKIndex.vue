@@ -74,63 +74,65 @@ const myItems = computed(() => items.value.filter(i => myApplicantIds.value.incl
                 <p class="font-medium text-desa-secondary">Belum ada lamaran</p>
             </div>
 
-            <div v-for="item in (activeTab === 'all' ? items : myItems)" :key="item.id"
-                class="flex flex-col gap-6 p-6 bg-white rounded-3xl">
-                <header class="flex items-center justify-between gap-[36px]">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <div class="flex justify-center items-center w-[100px] h-[80px] shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img :src="item.development_file?.url" alt="image" class="size-full object-cover" />
-                        </div>
-                        <div class="title flex flex-col gap-[6px] min-w-0">
-                            <h2 class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.title }}</h2>
-                            <div class="flex items-center gap-1">
-                                <img src="@/assets/images/icons/profile-secondary-green-bold.svg" class="size-4 shrink-0" alt="icon" />
-                                <p class="font-medium text-sm leading-[17.5px] text-desa-secondary truncate">{{ item.person_in_charge }}</p>
+            <router-link v-for="item in (activeTab === 'all' ? items : myItems)" :key="item.id" :to="`/warga/pembangunan/${item.id}`"
+                class="flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 bg-white rounded-3xl hover:shadow-md transition-setup">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <h2 class="font-semibold text-sm sm:text-lg leading-5 sm:leading-[22.5px] line-clamp-1">{{ item.title }}</h2>
+                        <p class="hidden sm:flex items-center gap-1 mt-1 text-xs sm:text-sm text-desa-secondary truncate">{{ item.person_in_charge }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span v-if="myApplicantIds.includes(item.id)"
+                            class="rounded-full px-3 py-1.5 bg-desa-soft-green text-white font-semibold text-[10px] sm:text-xs">Ikut</span>
+                        <span class="rounded-full px-3 py-1.5 text-[10px] sm:text-xs font-semibold text-white shrink-0"
+                            :class="statusClass(item.status)">
+                            {{ statusLabel(item.status) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex sm:hidden items-center gap-2 text-xs text-desa-secondary">
+                    <span>Rp {{ formatRupiah(item.amount) }}</span>
+                    <span>•</span>
+                    <span class="truncate">{{ formatToClientTimezone(item.start_date) }}</span>
+                </div>
+
+                <div class="hidden sm:block">
+                    <hr class="border-desa-background" />
+                    <section class="points grid grid-cols-3 gap-4 pt-3">
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
+                                <img src="@/assets/images/icons/money-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Anggaran</h3>
                             </div>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-3 shrink-0">
-                        <span v-if="myApplicantIds.includes(item.id)"
-                            class="rounded-full py-2 px-4 bg-desa-soft-green text-white font-semibold text-xs">Sudah Melamar</span>
-                        <router-link :to="`/warga/pembangunan/${item.id}`">
-                            <div class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white">Detail</div>
-                        </router-link>
-                    </div>
-                </header>
-                <hr class="border-desa-background" />
-                <section class="points grid grid-cols-3 gap-4">
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                            <img src="@/assets/images/icons/money-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
+                                <img src="@/assets/images/icons/calendar-2-dark-green.svg" alt="icon" class="size-6 shrink-0" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">{{ formatToClientTimezone(item.start_date) }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Mulai</h3>
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Anggaran</h3>
+                        <div class="point flex items-center gap-3">
+                            <div class="p-[14px] shrink-0 rounded-2xl bg-desa-foreshadow">
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white"
+                                    :class="statusClass(item.status)">
+                                    {{ statusLabel(item.status) }}
+                                </span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <p class="font-semibold text-lg leading-[22.5px]">{{ statusLabel(item.status) }}</p>
+                                <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Status</h3>
+                            </div>
                         </div>
-                    </div>
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                            <img src="@/assets/images/icons/calendar-2-dark-green.svg" alt="icon" class="size-6 shrink-0" />
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">{{ formatToClientTimezone(item.start_date) }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Mulai</h3>
-                        </div>
-                    </div>
-                    <div class="point flex items-center gap-3">
-                        <div class="p-[14px] shrink-0 rounded-2xl bg-desa-foreshadow">
-                            <span class="rounded-full px-3 py-1 text-xs font-semibold text-white"
-                                :class="statusClass(item.status)">
-                                {{ statusLabel(item.status) }}
-                            </span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-[22.5px]">{{ statusLabel(item.status) }}</p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Status</h3>
-                        </div>
-                    </div>
-                </section>
-            </div>
+                    </section>
+                </div>
+            </router-link>
         </section>
     </div>
 </template>

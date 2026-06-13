@@ -102,7 +102,7 @@ async function cancel() {
         </div>
 
         <div v-else class="flex gap-[14px] flex-col lg:flex-row">
-            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-6 flex flex-col gap-6 h-fit">
+            <div class="w-full lg:w-[545px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-6 h-fit">
                 <h2 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Informasi Event</h2>
 
                 <section class="flex items-center justify-between">
@@ -159,7 +159,7 @@ async function cancel() {
             </div>
 
             <div class="flex-1 flex flex-col gap-[14px]">
-                <div class="rounded-2xl bg-white p-6 flex flex-col gap-6">
+                <div class="rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-6">
                     <h2 class="font-semibold leading-5">Detail Pembelian</h2>
 
                     <div v-if="hasJoined" class="flex flex-col items-center gap-4 py-6">

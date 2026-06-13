@@ -158,7 +158,7 @@ function selectClass() {
             </div>
 
             <div class="flex flex-col lg:flex-row gap-[14px]">
-                <section class="flex flex-col w-full lg:w-[400px] shrink-0 rounded-3xl p-6 gap-6 bg-white">
+                <section class="flex flex-col w-full lg:w-[400px] shrink-0 rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                     <div class="flex items-center justify-between">
                         <p class="font-medium leading-5 text-desa-secondary">Pendaftaran</p>
                         <span class="rounded-full px-4 py-2 text-xs font-semibold text-white"
@@ -194,7 +194,7 @@ function selectClass() {
                     </div>
                 </section>
 
-                <section class="flex flex-col flex-1 rounded-3xl p-6 gap-6 bg-white">
+                <section class="flex flex-col flex-1 rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                     <div v-if="item.event_file" class="rounded-2xl overflow-hidden bg-desa-foreshadow">
                         <img :src="item.event_file.url" class="w-full h-48 md:h-64 object-cover" alt="image">
                     </div>
@@ -238,20 +238,13 @@ function selectClass() {
                 <div v-else class="flex flex-col gap-3">
                     <div v-for="p in participants" :key="p.id"
                         class="flex items-center justify-between gap-4 rounded-2xl border border-desa-background p-4">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="flex size-10 rounded-full items-center justify-center bg-desa-foreshadow shrink-0 overflow-hidden">
-                                <svg class="size-5 text-desa-dark-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </div>
-                            <div class="flex flex-col min-w-0">
-                                <p class="font-semibold text-sm leading-5 truncate">{{ p.head_of_family?.full_name ?? '-' }}</p>
-                                <p class="text-xs text-desa-secondary">{{ p.family_member?.full_name ?? 'Kepala Keluarga' }}</p>
-                            </div>
+                        <div class="min-w-0">
+                            <p class="font-semibold text-sm leading-5 truncate">{{ p.head_of_family?.full_name ?? '-' }}</p>
+                            <p class="text-xs text-desa-secondary">{{ p.family_member?.full_name ?? 'Kepala Keluarga' }}</p>
                         </div>
 
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="rounded-full px-3 py-1 text-xs font-semibold text-white"
+                            <span class="hidden sm:inline rounded-full px-3 py-1 text-xs font-semibold text-white"
                                 :class="p.payment_status === 'paid' ? 'bg-desa-dark-green' : 'bg-desa-yellow'">
                                 {{ p.payment_status === 'paid' ? 'Dibayar' : 'Pending' }}
                             </span>

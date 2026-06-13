@@ -70,7 +70,7 @@ function fieldClass() {
 
 <template>
     <div class="flex flex-col gap-[14px]">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between flex-wrap gap-2">
             <h1 class="font-semibold text-2xl">Event Desa</h1>
             <button @click="openModal"
                 class="flex items-center gap-2 rounded-2xl px-6 py-3 bg-desa-dark-green text-white font-medium hover:bg-desa-black transition-setup">
@@ -81,8 +81,8 @@ function fieldClass() {
             </button>
         </div>
 
-        <div class="rounded-3xl bg-white p-6">
-            <div class="overflow-x-auto">
+        <div class="rounded-3xl bg-white p-4 sm:p-6">
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-desa-background">
@@ -116,6 +116,21 @@ function fieldClass() {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="flex sm:hidden flex-col gap-3">
+            <router-link v-for="item in items" :key="item.id" :to="`/staff/events/${item.id}`"
+                class="flex items-center justify-between p-4 rounded-2xl border border-desa-background hover:shadow-md transition-setup">
+                <div class="min-w-0 flex-1">
+                    <p class="font-semibold text-sm leading-5 truncate">{{ item.title }}</p>
+                    <p class="text-xs text-desa-secondary mt-1">{{ item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : 'Gratis' }} • {{ item.start_date ? new Date(item.start_date).toLocaleDateString('id-ID') : '-' }}</p>
+                </div>
+                <span class="rounded-full px-3 py-1 text-[10px] font-semibold text-white shrink-0 ml-2"
+                    :class="item.is_active ? 'bg-desa-soft-green' : 'bg-desa-red'">
+                    {{ item.is_active ? 'Open' : 'Closed' }}
+                </span>
+            </router-link>
+            <p v-if="!items.length" class="text-center py-8 text-desa-secondary font-medium text-sm">Belum ada event desa</p>
         </div>
     </div>
 

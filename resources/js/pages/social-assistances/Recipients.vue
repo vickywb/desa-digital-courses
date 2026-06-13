@@ -74,77 +74,95 @@ onMounted(loadRecipients);
         </div>
 
         <template v-else>
-        <div v-for="item in items" :key="item.id" class="card flex flex-col gap-4 rounded-3xl p-6 bg-white">
-            <div class="flex items-center justify-between">
-                <p class="flex items-center gap-1">
-                    <img src="/desa-digital/src/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
-                    <span class="font-medium text-sm text-desa-secondary">{{ formatToClientTimezone(item.created_at) }}</span>
-                </p>
-                <span class="badge rounded-full px-4 py-2 text-xs font-semibold text-white uppercase" :class="statusClass(item.status)">
+        <div v-for="item in items" :key="item.id" class="card flex flex-col gap-3 sm:gap-4 rounded-3xl p-4 sm:p-6 bg-white">
+            <div class="flex items-start sm:items-center justify-between gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 min-w-0 flex-1">
+                    <p class="font-semibold text-sm sm:text-lg leading-5 sm:leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</p>
+                    <p class="hidden sm:flex items-center gap-1 shrink-0">
+                        <img src="/desa-digital/src/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                        <span class="font-medium text-xs sm:text-sm text-desa-secondary whitespace-nowrap">{{ formatToClientTimezone(item.created_at) }}</span>
+                    </p>
+                </div>
+                <span class="badge rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-white uppercase shrink-0" :class="statusClass(item.status)">
                     {{ statusLabel(item.status) }}
                 </span>
             </div>
-            <hr class="border-desa-background">
-            <div class="flex items-center w-full">
-                <div class="flex w-[100px] h-20 shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                    <img :src="item.social_assistance?.social_assistance_file?.url" class="w-full h-full object-cover" alt="photo">
-                </div>
-                <div class="flex flex-col gap-[6px] w-full ml-4 mr-9">
-                    <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</p>
-                    <p class="flex items-center gap-1">
-                        <img src="/desa-digital/src/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
-                        <span class="font-medium text-sm text-desa-secondary">{{ item.social_assistance?.provider }}</span>
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="flex flex-col gap-1 text-right">
-                        <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp {{ formatRupiah(item.social_assistance?.amount) }}</p>
-                        <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
+
+            <div class="flex sm:hidden items-center justify-between gap-2">
+                <p class="font-medium text-xs text-desa-secondary truncate">{{ item.head_of_family?.full_name }}</p>
+                <p class="font-semibold text-xs text-desa-dark-green shrink-0">Rp {{ formatRupiah(item.amount) }}</p>
+            </div>
+
+            <div class="hidden sm:flex flex-col gap-0">
+                <hr class="border-desa-background">
+                <div class="flex items-center w-full gap-3 py-3">
+                    <div class="flex w-[100px] h-20 shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
+                        <img :src="item.social_assistance?.social_assistance_file?.url" class="w-full h-full object-cover" alt="photo">
                     </div>
-                    <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow">
-                        <img src="/desa-digital/src/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                    <div class="flex flex-col gap-[6px] min-w-0 flex-1">
+                        <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</p>
+                        <p class="flex items-center gap-1">
+                            <img src="/desa-digital/src/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                            <span class="font-medium text-sm text-desa-secondary truncate">{{ item.social_assistance?.provider }}</span>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex flex-col gap-1 text-right">
+                            <p class="font-semibold text-lg leading-5 text-desa-dark-green">Rp {{ formatRupiah(item.social_assistance?.amount) }}</p>
+                            <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
+                        </div>
+                        <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow shrink-0">
+                            <img src="/desa-digital/src/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                        </div>
+                    </div>
+                </div>
+                <hr class="border-desa-background">
+                <div class="flex items-center gap-6 justify-between py-3">
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden shrink-0">
+                            <img :src="item.head_of_family?.profile_picture" class="w-full h-full object-cover" alt="icon">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <p class="font-semibold text-lg leading-5 text-desa-black truncate">{{ item.head_of_family?.full_name }}</p>
+                            <p class="flex items-center gap-1">
+                                <img src="/desa-digital/src/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                                <span class="font-medium text-sm text-desa-secondary truncate">{{ item.head_of_family?.occupation }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow shrink-0">
+                            <img src="/desa-digital/src/assets/images/icons/receive-square-2-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <p class="font-semibold text-lg leading-5 text-desa-dark-green truncate">Rp {{ formatRupiah(item.amount) }}</p>
+                            <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 justify-end shrink-0">
+                        <template v-if="item.status === 'pending'">
+                            <button @click="updateStatus(item, 'approved')" :disabled="saving"
+                                class="rounded-lg px-3 py-1.5 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup shrink-0">
+                                Terima
+                            </button>
+                            <button @click="updateStatus(item, 'rejected')" :disabled="saving"
+                                class="rounded-lg px-3 py-1.5 bg-desa-red text-white text-xs font-semibold hover:bg-desa-black transition-setup shrink-0">
+                                Tolak
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>
-            <hr class="border-desa-background">
-            <div class="flex items-center gap-6 justify-between">
-                <div class="flex items-center gap-3 w-[302px] shrink-0">
-                    <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden">
-                        <img :src="item.head_of_family?.profile_picture" class="w-full h-full object-cover" alt="icon">
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <p class="font-semibold text-lg leading-5 text-desa-black">{{ item.head_of_family?.full_name }}</p>
-                        <p class="flex items-center gap-1">
-                            <img src="/desa-digital/src/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
-                            <span class="font-medium text-sm text-desa-secondary">{{ item.head_of_family?.occupation }}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 w-[302px] shrink-0">
-                    <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow">
-                        <img src="/desa-digital/src/assets/images/icons/receive-square-2-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp {{ formatRupiah(item.amount) }}</p>
-                        <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 justify-end shrink-0">
-                    <span class="badge rounded-full px-4 py-2 text-xs font-semibold text-white uppercase" :class="statusClass(item.status)">
-                        {{ statusLabel(item.status) }}
-                    </span>
 
-                    <template v-if="item.status === 'pending'">
-                        <button @click="updateStatus(item, 'approved')" :disabled="saving"
-                            class="rounded-lg px-3 py-1.5 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup">
-                            Terima
-                        </button>
-                        <button @click="updateStatus(item, 'rejected')" :disabled="saving"
-                            class="rounded-lg px-3 py-1.5 bg-desa-red text-white text-xs font-semibold hover:bg-desa-black transition-setup">
-                            Tolak
-                        </button>
-                    </template>
-                </div>
+            <div v-if="item.status === 'pending'" class="flex sm:hidden items-center gap-2 pt-1">
+                <button @click="updateStatus(item, 'approved')" :disabled="saving"
+                    class="flex-1 rounded-lg py-2 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                    Terima
+                </button>
+                <button @click="updateStatus(item, 'rejected')" :disabled="saving"
+                    class="flex-1 rounded-lg py-2 bg-desa-red text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                    Tolak
+                </button>
             </div>
         </div>
 

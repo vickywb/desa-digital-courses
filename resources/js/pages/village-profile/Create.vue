@@ -70,7 +70,7 @@ function textareaClass() {
             <span class="font-medium text-desa-secondary">Buat Profile Desa</span>
         </div>
 
-        <form @submit.prevent="save" class="flex flex-col gap-4 rounded-3xl bg-white p-6 max-w-2xl">
+        <form @submit.prevent="save" class="flex flex-col gap-4 rounded-3xl bg-white p-4 sm:p-6 max-w-2xl">
             <h1 class="font-semibold text-2xl">Buat Profile Desa</h1>
 
             <div class="flex flex-col gap-2">

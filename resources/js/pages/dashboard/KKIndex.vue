@@ -51,41 +51,41 @@ onMounted(async () => {
             </div>
         </div>
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
-            <router-link to="/warga/family-members" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+        <section class="grid grid-cols-2 gap-[10px] sm:gap-[14px]">
+            <router-link to="/warga/family-members" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
-                    <p class="font-medium text-desa-secondary">Anggota Keluarga</p>
-                    <img src="/desa-digital/src/assets/images/icons/profil-2user-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Anggota Keluarga</p>
+                    <img src="/desa-digital/src/assets/images/icons/profil-2user-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
-                <p class="font-semibold text-[32px] leading-10">{{ stats.anggota }}</p>
-                <p class="font-medium text-sm text-desa-secondary">Total anggota keluarga</p>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.anggota }}</p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total anggota</p>
             </router-link>
 
-            <router-link to="/warga/events" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/events" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
-                    <p class="font-medium text-desa-secondary">Event Desa</p>
-                    <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Event Desa</p>
+                    <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
-                <p class="font-semibold text-[32px] leading-10">{{ stats.events }}</p>
-                <p class="font-medium text-sm text-desa-secondary">Event tersedia</p>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.events }}</p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Event tersedia</p>
             </router-link>
 
-            <router-link to="/warga/bansos" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/bansos" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
-                    <p class="font-medium text-desa-secondary">Bantuan Sosial</p>
-                    <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Bantuan Sosial</p>
+                    <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
-                <p class="font-semibold text-[32px] leading-10">{{ stats.bansos }}</p>
-                <p class="font-medium text-sm text-desa-secondary">Bansos tersedia</p>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.bansos }}</p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Bansos tersedia</p>
             </router-link>
 
-            <router-link to="/warga/pembangunan" class="card flex flex-col rounded-2xl p-6 gap-3 bg-white hover:shadow-md transition-setup">
+            <router-link to="/warga/pembangunan" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
-                    <p class="font-medium text-desa-secondary">Pembangunan</p>
-                    <img src="/desa-digital/src/assets/images/icons/buildings-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pembangunan</p>
+                    <img src="/desa-digital/src/assets/images/icons/buildings-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
-                <p class="font-semibold text-[32px] leading-10">{{ stats.pembangunan }}</p>
-                <p class="font-medium text-sm text-desa-secondary">Pembangunan berjalan</p>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.pembangunan }}</p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pembangunan berjalan</p>
             </router-link>
         </section>
     </div>

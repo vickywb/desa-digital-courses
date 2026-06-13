@@ -18,8 +18,8 @@ onMounted(async () => {
     <div class="flex flex-col gap-[14px]">
         <h1 class="font-semibold text-2xl">Users</h1>
 
-        <div class="rounded-3xl bg-white p-6">
-            <div class="overflow-x-auto">
+        <div class="rounded-3xl bg-white p-4 sm:p-6">
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-desa-background">
@@ -48,6 +48,21 @@ onMounted(async () => {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="flex sm:hidden flex-col gap-3">
+                <div v-for="user in users" :key="user.id"
+                    class="flex items-center justify-between p-4 rounded-2xl border border-desa-background">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-semibold text-sm leading-5 truncate">{{ user.username }}</p>
+                        <p class="text-xs text-desa-secondary mt-1 truncate">{{ user.email }}</p>
+                    </div>
+                    <span class="rounded-full px-3 py-1 text-[10px] font-semibold shrink-0 ml-2"
+                        :class="user.role === 'admin' ? 'bg-desa-dark-green text-white' : 'bg-desa-background text-desa-secondary'">
+                        {{ user.role }}
+                    </span>
+                </div>
+                <p v-if="!users.length" class="text-center py-8 text-desa-secondary font-medium text-sm">No users data</p>
             </div>
         </div>
     </div>

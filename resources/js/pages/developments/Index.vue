@@ -88,7 +88,7 @@ function selectClass() {
 
 <template>
     <div class="flex flex-col gap-[14px]">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between flex-wrap gap-2">
             <h1 class="font-semibold text-2xl">Pembangunan Desa</h1>
             <button @click="openModal"
                 class="flex items-center gap-2 rounded-2xl px-6 py-3 bg-desa-dark-green text-white font-medium hover:bg-desa-black transition-setup">
@@ -99,8 +99,8 @@ function selectClass() {
             </button>
         </div>
 
-        <div class="rounded-3xl bg-white p-6">
-            <div class="overflow-x-auto">
+        <div class="rounded-3xl bg-white p-4 sm:p-6">
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-desa-background">
@@ -136,6 +136,20 @@ function selectClass() {
                     </tbody>
                 </table>
             </div>
+
+            <div class="flex sm:hidden flex-col gap-3">
+                <router-link v-for="item in items" :key="item.id" :to="`/staff/developments/${item.id}`"
+                    class="flex items-center justify-between p-4 rounded-2xl border border-desa-background hover:shadow-md transition-setup">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-semibold text-sm leading-5 truncate">{{ item.title }}</p>
+                        <p class="text-xs text-desa-secondary mt-1">{{ item.person_in_charge }} • Rp {{ Number(item.amount ?? 0).toLocaleString('id-ID') }}</p>
+                    </div>
+                    <span class="rounded-full px-3 py-1 text-[10px] font-semibold text-white shrink-0 ml-2" :class="statusClass(item.status)">
+                        {{ item.status }}
+                    </span>
+                </router-link>
+                <p v-if="!items.length" class="text-center py-8 text-desa-secondary font-medium text-sm">Belum ada pembangunan desa</p>
+            </div>
         </div>
     </div>
 
@@ -166,7 +180,7 @@ function selectClass() {
                     <label class="font-medium text-sm text-desa-secondary">Anggaran (Rp)</label>
                     <input v-model="form.amount" type="number" :class="fieldClass()" placeholder="Jumlah anggaran" required>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="flex flex-col gap-2">
                         <label class="font-medium text-sm text-desa-secondary">Tanggal Mulai</label>
                         <input v-model="form.start_date" type="date" :class="fieldClass()" required>
