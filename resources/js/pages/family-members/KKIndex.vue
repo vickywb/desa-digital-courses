@@ -4,8 +4,8 @@ import { useAuthStore } from '../../stores/auth';
 import client from '../../api/client';
 
 const authStore = useAuthStore();
+const items = ref([]);
 const headOfFamily = ref(null);
-const members = ref([]);
 const showModal = ref(false);
 const editMode = ref('');
 const editItem = ref(null);
@@ -40,17 +40,20 @@ const relationOptions = [
     { value: 'head', label: 'Head of Family' },
 ];
 
-const relationLabels = {
-    wife: 'Wife',
-    child: 'Child',
-};
+const relationLabel = (v) => ({ child: 'Child', wife: 'Wife', head: 'Head of Family' })[v] ?? v;
+const maritalLabel = (v) => ({ single: 'Single', married: 'Married', widow: 'Widow', widower: 'Widower' })[v] ?? v;
 
 async function fetchMembers() {
     try {
         const res = await client.get('/village-resident/family-members');
-        members.value = res.data.data ?? [];
+        const members = res.data.data ?? [];
+        items.value = headOfFamily.value
+            ? [{ ...headOfFamily.value, relation: 'head' }, ...members]
+            : members;
     } catch {
-        members.value = [];
+        items.value = headOfFamily.value
+            ? [{ ...headOfFamily.value, relation: 'head' }]
+            : [];
     }
 }
 
@@ -69,19 +72,10 @@ onMounted(async () => {
     }
 });
 
-function groupedByRelation() {
-    const groups = {};
-    for (const m of members.value) {
-        const rel = m.relation || 'other';
-        if (!groups[rel]) groups[rel] = [];
-        groups[rel].push(m);
-    }
-    return groups;
+function detailRoute(item) {
+    if (item.relation === 'head') return '/warga/family-members/head';
+    return `/warga/family-members/${item.id}`;
 }
-
-const relations = ['wife', 'child'];
-
-const relationLabel = (rel) => relationLabels[rel] ?? rel;
 
 function openCreate() {
     editMode.value = 'create';
@@ -101,20 +95,24 @@ function openCreate() {
 }
 
 function openEdit(item) {
-    editMode.value = 'edit';
-    editItem.value = item;
-    form.value = {
-        full_name: item.full_name ?? '',
-        identity_number: item.identity_number ?? '',
-        phone_number: item.phone_number ?? '',
-        occupation: item.occupation ?? '',
-        date_of_birth: item.date_of_birth ? item.date_of_birth.slice(0, 10) : '',
-        gender: item.gender ?? '',
-        marital_status: item.marital_status ?? '',
-        email: item.email ?? '',
-        relation: item.relation ?? '',
-    };
-    showModal.value = true;
+    if (item.relation === 'head') {
+        openEditHeadOfFamily();
+    } else {
+        editMode.value = 'edit';
+        editItem.value = item;
+        form.value = {
+            full_name: item.full_name ?? '',
+            identity_number: item.identity_number ?? '',
+            phone_number: item.phone_number ?? '',
+            occupation: item.occupation ?? '',
+            date_of_birth: item.date_of_birth ? item.date_of_birth.slice(0, 10) : '',
+            gender: item.gender ?? '',
+            marital_status: item.marital_status ?? '',
+            email: item.email ?? '',
+            relation: item.relation ?? '',
+        };
+        showModal.value = true;
+    }
 }
 
 function openEditHeadOfFamily() {
@@ -140,6 +138,18 @@ function closeModal() {
     editItem.value = null;
 }
 
+async function deleteMember(item) {
+    if (!confirm('Delete this family member?')) return;
+
+    try {
+        await client.delete(`/village-resident/family-members/${item.id}`);
+        await fetchMembers();
+    } catch (err) {
+        const msg = err.response?.data?.message ?? 'Failed to delete';
+        alert(msg);
+    }
+}
+
 async function saveMember() {
     saving.value = true;
     try {
@@ -155,36 +165,28 @@ async function saveMember() {
 
         if (editMode.value === 'head_of_family') {
             const res = await client.put('/auth/profile', payload);
+            const updated = { ...res.data.data, relation: 'head' };
             headOfFamily.value = res.data.data;
+            const idx = items.value.findIndex((m) => m.relation === 'head');
+            if (idx !== -1) items.value[idx] = updated;
         } else if (editMode.value === 'edit') {
             payload.email = form.value.email;
             payload.relation = form.value.relation;
             await client.put(`/village-resident/family-members/${editItem.value.id}`, payload);
+            await fetchMembers();
         } else {
             payload.email = form.value.email;
             payload.relation = form.value.relation;
             await client.post('/village-resident/family-members', payload);
+            await fetchMembers();
         }
 
         closeModal();
-        await fetchMembers();
     } catch (err) {
         const msg = err.response?.data?.message ?? 'Failed to save data';
         alert(msg);
     } finally {
         saving.value = false;
-    }
-}
-
-async function deleteMember(item) {
-    if (!confirm('Delete this family member?')) return;
-
-    try {
-        await client.delete(`/village-resident/family-members/${item.id}`);
-        await fetchMembers();
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Failed to delete';
-        alert(msg);
     }
 }
 
@@ -210,189 +212,180 @@ function selectClass() {
             </button>
         </header>
 
-        <section v-if="headOfFamily" class="flex flex-col gap-6 p-6 bg-white rounded-3xl">
-            <h2 class="font-medium leading-5 text-desa-secondary">Head of Family (1)</h2>
-            <div class="data rounded-2xl border border-desa-background p-6 flex justify-between items-center">
-                <div class="name flex items-center gap-3 min-w-[240px]">
-                    <div class="flex size-[64px] shrink-0 rounded-full overflow-hidden bg-desa-foreshadow">
-                        <img :src="headOfFamily.profile_picture?.url ?? '/desa-digital/src/assets/images/no-image.png'" class="w-full h-full object-cover" alt="photo">
-                    </div>
-                    <div class="flex flex-col gap-[6px]">
-                        <h3 class="font-semibold text-lg leading-[22.5px]">{{ headOfFamily.full_name }}</h3>
-                        <p class="flex items-center gap-1">
-                            <img src="/desa-digital/src/assets/images/icons/briefcase-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                            <span class="font-medium leading-5 text-desa-secondary">{{ headOfFamily.occupation }}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="nik flex flex-col gap-[6px] min-w-[155px]">
-                    <div class="flex items-center gap-1">
-                        <img src="/desa-digital/src/assets/images/icons/keyboard-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                        <span class="font-medium text-sm text-desa-secondary">ID Number</span>
-                    </div>
-                    <p class="font-semibold leading-5">{{ headOfFamily.identity_number }}</p>
-                </div>
-                <div class="umur flex flex-col gap-[6px] min-w-[92px]">
-                    <div class="flex items-center gap-1">
-                        <img src="/desa-digital/src/assets/images/icons/timer-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                        <span class="font-medium text-sm text-desa-secondary">Age</span>
-                    </div>
-                    <p class="font-semibold leading-5">{{ headOfFamily.date_of_birth ? new Date().getFullYear() - new Date(headOfFamily.date_of_birth).getFullYear() : '-' }} Years</p>
-                </div>
-                <div class="flex shrink-0">
-                    <button @click="openEditHeadOfFamily"
-                        class="rounded-2xl px-4 py-[10px] bg-desa-black font-medium leading-5 text-white text-sm hover:bg-desa-dark-green transition-setup">
-                        Edit
-                    </button>
-                </div>
+        <div v-if="headOfFamily" class="rounded-3xl bg-white p-4 sm:p-6">
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-desa-background">
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Name</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">ID Number</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Relation</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Gender</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Occupation</th>
+                            <th class="px-4 py-4 font-medium text-desa-secondary text-sm">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in items" :key="item.id" class="border-b border-desa-foreshadow last:border-0">
+                            <td class="px-4 py-4">
+                                <router-link :to="detailRoute(item)"
+                                    class="font-semibold leading-5 text-desa-black hover:text-desa-dark-green transition-setup">
+                                    {{ item.full_name }}
+                                </router-link>
+                            </td>
+                            <td class="px-4 py-4 text-desa-secondary">{{ item.identity_number }}</td>
+                            <td class="px-4 py-4">{{ relationLabel(item.relation) }}</td>
+                            <td class="px-4 py-4">{{ item.gender === 'male' ? 'Male' : 'Female' }}</td>
+                            <td class="px-4 py-4 text-desa-secondary">{{ item.occupation }}</td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-2">
+                                    <router-link :to="detailRoute(item)"
+                                        class="rounded-2xl px-4 py-[10px] border border-desa-dark-green text-desa-dark-green font-medium leading-5 text-sm hover:bg-desa-dark-green hover:text-white transition-setup">
+                                        Detail
+                                    </router-link>
+                                    <button @click="openEdit(item)"
+                                        class="rounded-2xl px-4 py-[10px] bg-desa-black font-medium leading-5 text-white text-sm hover:bg-desa-dark-green transition-setup">
+                                        Edit
+                                    </button>
+                                    <button v-if="item.relation !== 'head'" @click="deleteMember(item)"
+                                        class="rounded-2xl px-4 py-[10px] border border-red-500 text-red-500 font-medium leading-5 text-sm hover:bg-red-500 hover:text-white transition-setup">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items.length">
+                            <td colspan="6" class="px-4 py-12 text-center text-desa-secondary font-medium">No family members yet</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </section>
 
-        <template v-for="rel in relations" :key="rel">
-            <section v-if="groupedByRelation()[rel]?.length" class="flex flex-col gap-6 p-6 bg-white rounded-3xl">
-                <h2 class="font-medium leading-5 text-desa-secondary">{{ relationLabel(rel) }} ({{ groupedByRelation()[rel].length }})</h2>
-                <div v-for="m in groupedByRelation()[rel]" :key="m.id"
-                class="data rounded-2xl border border-desa-background p-6 flex items-center justify-between">
-                <div class="name flex items-center gap-3 min-w-[240px]">
-                    <div class="flex size-[64px] shrink-0 rounded-full overflow-hidden bg-desa-foreshadow">
-                        <img :src="m.family_member_file?.url ?? '/desa-digital/src/assets/images/no-image.png'" class="w-full h-full object-cover" alt="photo">
+            <div class="flex sm:hidden flex-col gap-3">
+                <router-link v-for="item in items" :key="item.id" :to="detailRoute(item)"
+                    class="p-4 rounded-2xl border border-desa-background block hover:shadow-md transition-setup">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-desa-secondary font-medium">{{ relationLabel(item.relation) }}</p>
+                            <p class="font-semibold text-sm leading-5 truncate mt-0.5">{{ item.full_name }}</p>
+                            <p class="text-xs text-desa-secondary mt-0.5 truncate">{{ item.identity_number }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0" @click.stop>
+                            <button @click.stop="openEdit(item)"
+                                class="rounded-lg px-3 py-1.5 bg-desa-black text-white text-xs font-semibold">
+                                Edit
+                            </button>
+                            <button v-if="item.relation !== 'head'" @click.stop="deleteMember(item)"
+                                class="rounded-lg px-3 py-1.5 border border-red-500 text-red-500 text-xs font-semibold">
+                                Del
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex flex-col gap-[6px]">
-                        <h3 class="font-semibold text-lg leading-[22.5px]">{{ m.full_name }}</h3>
-                        <p class="flex items-center gap-1">
-                            <img src="/desa-digital/src/assets/images/icons/briefcase-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                            <span class="font-medium leading-5 text-desa-secondary">{{ m.occupation }}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="nik flex flex-col gap-[6px] min-w-[155px]">
-                    <div class="flex items-center gap-1">
-                        <img src="/desa-digital/src/assets/images/icons/keyboard-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                        <span class="font-medium text-sm text-desa-secondary">ID Number</span>
-                    </div>
-                    <p class="font-semibold leading-5">{{ m.identity_number }}</p>
-                </div>
-                <div class="umur flex flex-col gap-[6px] min-w-[92px]">
-                    <div class="flex items-center gap-1">
-                        <img src="/desa-digital/src/assets/images/icons/timer-secondary-green.svg" alt="icon" class="size-[18px] shrink-0">
-                        <span class="font-medium text-sm text-desa-secondary">Age</span>
-                    </div>
-                    <p class="font-semibold leading-5">{{ m.date_of_birth ? new Date().getFullYear() - new Date(m.date_of_birth).getFullYear() : '-' }} Years</p>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button @click="openEdit(m)"
-                        class="rounded-2xl px-4 py-[10px] bg-desa-black font-medium leading-5 text-white text-sm hover:bg-desa-dark-green transition-setup">
-                        Edit
-                    </button>
-                    <button @click="deleteMember(m)"
-                        class="rounded-2xl px-4 py-[10px] border border-red-500 text-red-500 font-medium leading-5 text-sm hover:bg-red-500 hover:text-white transition-setup">
-                        Delete
-                    </button>
-                </div>
+                </router-link>
+                <p v-if="!items.length" class="text-center py-8 text-desa-secondary font-medium text-sm">No family members yet</p>
             </div>
-        </section>
-    </template>
-
-    <div v-if="!members.length && headOfFamily" class="text-center py-12 text-desa-secondary font-medium">
-        No family members yet
-    </div>
-</div>
-
-<div v-if="showModal" class="fixed inset-0 z-50 flex bg-black/50" @click.self="closeModal">
-    <div class="flex flex-col w-full max-w-lg mx-4 rounded-3xl bg-white max-h-[90vh] overflow-y-auto my-auto">
-        <div class="flex items-center justify-between p-6 pb-0">
-            <h3 class="font-semibold text-lg">
-                {{ editMode === 'head_of_family' ? 'Edit Head of Family' : editMode === 'edit' ? 'Edit Family Member' : 'Add Family Member' }}
-            </h3>
-            <button @click="closeModal" class="flex size-8 items-center justify-center rounded-full hover:bg-desa-background transition-setup">
-                <svg class="size-5 text-desa-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
         </div>
 
-        <form @submit.prevent="saveMember" class="flex flex-col gap-4 p-6">
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Full Name</label>
-                <input v-model="form.full_name" :class="fieldClass()" placeholder="Full name" required>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">ID Number</label>
-                <input v-model="form.identity_number" :class="fieldClass()" placeholder="National ID number" required>
-            </div>
-
-            <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Email</label>
-                <input v-model="form.email" type="email" :class="fieldClass()" placeholder="Email">
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Phone Number</label>
-                <input v-model="form.phone_number" :class="fieldClass()" placeholder="Phone number">
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Occupation</label>
-                <input v-model="form.occupation" :class="fieldClass()" placeholder="Occupation" required>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Date of Birth</label>
-                <input v-model="form.date_of_birth" type="date" :class="fieldClass()" required>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Gender</label>
-                <div class="relative">
-                    <select v-model="form.gender" :class="selectClass()" required>
-                        <option value="" disabled>Select gender</option>
-                        <option v-for="opt in genderOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Marital Status</label>
-                <div class="relative">
-                    <select v-model="form.marital_status" :class="selectClass()" required>
-                        <option value="" disabled>Select status</option>
-                        <option v-for="opt in maritalOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
-
-            <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
-                <label class="font-medium text-sm text-desa-secondary">Relation</label>
-                <div class="relative">
-                    <select v-model="form.relation" :class="selectClass()" required>
-                        <option value="" disabled>Select relation</option>
-                        <option v-for="opt in relationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 pt-2">
-                <button type="button" @click="closeModal"
-                    class="flex items-center justify-center h-14 rounded-2xl px-8 border border-desa-background font-semibold text-sm hover:bg-desa-black hover:text-white transition-setup flex-1">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="flex items-center justify-center h-14 rounded-2xl px-8 bg-desa-dark-green text-white font-semibold text-sm hover:bg-desa-black transition-setup flex-1"
-                    :disabled="saving">
-                    {{ saving ? 'Saving...' : 'Save' }}
-                </button>
-            </div>
-        </form>
+        <div v-if="!headOfFamily" class="text-center py-12 text-desa-secondary font-medium">
+            No family data available
+        </div>
     </div>
-</div>
+
+    <div v-if="showModal" class="fixed inset-0 z-50 flex bg-black/50" @click.self="closeModal">
+        <div class="flex flex-col w-full max-w-lg mx-4 rounded-3xl bg-white max-h-[90vh] overflow-y-auto my-auto">
+            <div class="flex items-center justify-between p-6 pb-0">
+                <h3 class="font-semibold text-lg">
+                    {{ editMode === 'create' ? 'Add Family Member' : editMode === 'head_of_family' ? 'Edit Head of Family' : 'Edit Family Member' }}
+                </h3>
+                <button @click="closeModal" class="flex size-8 items-center justify-center rounded-full hover:bg-desa-background transition-setup">
+                    <svg class="size-5 text-desa-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveMember" class="flex flex-col gap-4 p-6">
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Full Name</label>
+                    <input v-model="form.full_name" :class="fieldClass()" placeholder="Full name" required>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">ID Number</label>
+                    <input v-model="form.identity_number" :class="fieldClass()" placeholder="National ID number">
+                </div>
+
+                <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Email</label>
+                    <input v-model="form.email" type="email" :class="fieldClass()" placeholder="Email">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Phone Number</label>
+                    <input v-model="form.phone_number" :class="fieldClass()" placeholder="Phone number">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Occupation</label>
+                    <input v-model="form.occupation" :class="fieldClass()" placeholder="Occupation">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Date of Birth</label>
+                    <input v-model="form.date_of_birth" type="date" :class="fieldClass()">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Gender</label>
+                    <div class="relative">
+                        <select v-model="form.gender" :class="selectClass()">
+                            <option value="" disabled>Select gender</option>
+                            <option v-for="opt in genderOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                        </select>
+                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Marital Status</label>
+                    <div class="relative">
+                        <select v-model="form.marital_status" :class="selectClass()">
+                            <option value="" disabled>Select status</option>
+                            <option v-for="opt in maritalOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                        </select>
+                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
+                    <label class="font-medium text-sm text-desa-secondary">Relation</label>
+                    <div class="relative">
+                        <select v-model="form.relation" :class="selectClass()">
+                            <option value="" disabled>Select relation</option>
+                            <option v-for="opt in relationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                        </select>
+                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-desa-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" @click="closeModal"
+                        class="flex items-center justify-center h-14 rounded-2xl px-8 border border-desa-background font-semibold text-sm hover:bg-desa-black hover:text-white transition-setup flex-1">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="flex items-center justify-center h-14 rounded-2xl px-8 bg-desa-dark-green text-white font-semibold text-sm hover:bg-desa-black transition-setup flex-1"
+                        :disabled="saving">
+                        {{ saving ? 'Saving...' : 'Save' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </template>

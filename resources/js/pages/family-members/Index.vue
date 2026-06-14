@@ -49,13 +49,34 @@ onMounted(async () => {
             client.get(`/village-staff/head-families/${route.params.id}/members`),
             client.get(`/village-staff/head-families/${route.params.id}`),
         ]);
-        items.value = res.data.data ?? [];
-        headOfFamily.value = hfRes.data.data ?? null;
+        const members = res.data.data ?? [];
+        const hf = hfRes.data.data ?? null;
+        headOfFamily.value = hf;
+        if (hf) {
+            items.value = [{ ...hf, relation: 'head' }, ...members];
+        } else {
+            items.value = members;
+        }
     } catch {
         items.value = [];
         headOfFamily.value = null;
     }
 });
+
+function detailRoute(item) {
+    if (item.relation === 'head') {
+        return `/staff/head-families/${route.params.id}`;
+    }
+    return `/staff/head-families/${route.params.id}/members/${item.id}`;
+}
+
+function openEdit(item) {
+    if (item.relation === 'head') {
+        openEditHeadOfFamily();
+    } else {
+        openEditMember(item);
+    }
+}
 
 function openEditMember(item) {
     editMode.value = 'family_member';
@@ -151,7 +172,10 @@ async function saveEdit() {
             const [res] = await Promise.all([
                 client.get(`/village-staff/head-families/${route.params.id}/members`),
             ]);
-            items.value = res.data.data ?? [];
+            const members = res.data.data ?? [];
+            items.value = headOfFamily.value
+                ? [{ ...headOfFamily.value, relation: 'head' }, ...members]
+                : members;
         } else if (editMode.value === 'family_member') {
             payload.email = form.value.email;
             payload.relation = form.value.relation;
@@ -170,7 +194,10 @@ async function saveEdit() {
                 payload
             );
 
+            const updated = { ...res.data.data, relation: 'head' };
             headOfFamily.value = res.data.data;
+            const idx = items.value.findIndex((m) => m.relation === 'head');
+            if (idx !== -1) items.value[idx] = updated;
         }
 
         closeModal();
@@ -204,45 +231,19 @@ function selectClass() {
             <span class="font-medium text-desa-secondary">Family Members</span>
         </div>
 
-        <div v-if="headOfFamily" class="rounded-3xl bg-white p-6">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="flex size-16 rounded-full overflow-hidden bg-desa-foreshadow shrink-0">
-                        <img :src="headOfFamily.profile_picture?.url ?? '/desa-digital/src/assets/images/icons/crown-foreshadow-background.svg'"
-                            class="w-full h-full object-cover" alt="photo">
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <h2 class="font-semibold text-xl">{{ headOfFamily.full_name }}</h2>
-                        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-desa-secondary">
-                            <span v-if="headOfFamily.identity_number">ID: {{ headOfFamily.identity_number }}</span>
-                            <span v-if="headOfFamily.gender">{{ headOfFamily.gender === 'male' ? 'Male' : 'Female' }}</span>
-                            <span v-if="headOfFamily.occupation">{{ headOfFamily.occupation }}</span>
-                            <span v-if="headOfFamily.marital_status">{{ maritalLabel(headOfFamily.marital_status) }}</span>
-                        </div>
-                    </div>
-                </div>
-                <button @click="openEditHeadOfFamily"
-                    class="flex items-center gap-2 rounded-2xl px-6 py-3 bg-desa-black text-white font-medium hover:bg-desa-dark-green transition-setup shrink-0">
-                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Edit Head of Family
-                </button>
-            </div>
+        <div class="flex items-center justify-between">
+            <h1 class="font-semibold text-2xl">Family Members</h1>
+            <button @click="openCreate"
+                class="flex items-center gap-2 rounded-2xl px-6 py-3 bg-desa-dark-green text-white font-semibold text-sm hover:bg-desa-black transition-setup">
+                <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Member
+            </button>
         </div>
 
-        <div class="rounded-3xl bg-white p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-semibold text-lg">Family Members</h3>
-                <button @click="openCreate"
-                    class="flex items-center gap-2 rounded-2xl px-4 py-[10px] bg-desa-dark-green text-white font-semibold text-sm hover:bg-desa-black transition-setup">
-                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Member
-                </button>
-            </div>
-            <div class="overflow-x-auto">
+        <div v-if="items.length || headOfFamily" class="rounded-3xl bg-white p-4 sm:p-6">
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-desa-background">
@@ -256,18 +257,27 @@ function selectClass() {
                     </thead>
                     <tbody>
                         <tr v-for="item in items" :key="item.id" class="border-b border-desa-foreshadow last:border-0">
-                            <td class="px-4 py-4 font-semibold leading-5">{{ item.full_name }}</td>
+                            <td class="px-4 py-4">
+                                <router-link :to="detailRoute(item)"
+                                    class="font-semibold leading-5 text-desa-black hover:text-desa-dark-green transition-setup">
+                                    {{ item.full_name }}
+                                </router-link>
+                            </td>
                             <td class="px-4 py-4 text-desa-secondary">{{ item.identity_number }}</td>
                             <td class="px-4 py-4">{{ relationLabel(item.relation) }}</td>
                             <td class="px-4 py-4">{{ item.gender === 'male' ? 'Male' : 'Female' }}</td>
                             <td class="px-4 py-4 text-desa-secondary">{{ item.occupation }}</td>
                             <td class="px-4 py-4">
                                 <div class="flex items-center gap-2">
-                                    <button @click="openEditMember(item)"
+                                    <router-link :to="detailRoute(item)"
+                                        class="rounded-2xl px-4 py-[10px] border border-desa-dark-green text-desa-dark-green font-medium leading-5 text-sm hover:bg-desa-dark-green hover:text-white transition-setup">
+                                        Detail
+                                    </router-link>
+                                    <button @click="openEdit(item)"
                                         class="rounded-2xl px-4 py-[10px] bg-desa-black font-medium leading-5 text-white text-sm hover:bg-desa-dark-green transition-setup">
                                         Edit
                                     </button>
-                                    <button @click="deleteMember(item)"
+                                    <button v-if="item.relation !== 'head'" @click="deleteMember(item)"
                                         class="rounded-2xl px-4 py-[10px] border border-red-500 text-red-500 font-medium leading-5 text-sm hover:bg-red-500 hover:text-white transition-setup">
                                         Delete
                                     </button>
@@ -279,6 +289,30 @@ function selectClass() {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="flex sm:hidden flex-col gap-3">
+                <router-link v-for="item in items" :key="item.id" :to="detailRoute(item)"
+                    class="p-4 rounded-2xl border border-desa-background block hover:shadow-md transition-setup">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-desa-secondary font-medium">{{ relationLabel(item.relation) }}</p>
+                            <p class="font-semibold text-sm leading-5 truncate mt-0.5">{{ item.full_name }}</p>
+                            <p class="text-xs text-desa-secondary mt-0.5 truncate">{{ item.identity_number }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0" @click.stop>
+                            <button @click.stop="openEdit(item)"
+                                class="rounded-lg px-3 py-1.5 bg-desa-black text-white text-xs font-semibold">
+                                Edit
+                            </button>
+                            <button v-if="item.relation !== 'head'" @click.stop="deleteMember(item)"
+                                class="rounded-lg px-3 py-1.5 border border-red-500 text-red-500 text-xs font-semibold">
+                                Del
+                            </button>
+                        </div>
+                    </div>
+                </router-link>
+                <p v-if="!items.length" class="text-center py-8 text-desa-secondary font-medium text-sm">No family members yet</p>
             </div>
         </div>
     </div>
