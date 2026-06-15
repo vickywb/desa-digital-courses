@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\VillageProfileFile;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VillageProfile extends Model
 {
-    use SoftDeletes, HasUuids;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -31,7 +30,11 @@ class VillageProfile extends Model
         return $this->hasMany(VillageProfileFile::class);
     }
 
-    // Relasi hasManyThrough untuk mendapatkan file melalui VillageProfileFile
+    public function kas()
+    {
+        return $this->hasOne(Kas::class);
+    }
+
     public function files()
     {
         return $this->hasManyThrough(

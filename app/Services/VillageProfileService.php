@@ -11,7 +11,7 @@ class VillageProfileService
 {
     public function __construct(
         private VillageProfileRepository $villageProfileRepository,
-        private FileService $fileService
+        private FileService $fileService,
     ) {}
 
     public function createVillageProfile(array $data, array $images = [])
@@ -48,17 +48,17 @@ class VillageProfileService
         }
     }
 
-    public function updateVillageProfile(VillageProfile $villageProfile, array $data, array $images = []) 
+    public function updateVillageProfile(VillageProfile $villageProfile, array $data, array $images = [])
     {
         try {
-            return DB::transaction(function () use ($villageProfile, $data, $images){
+            return DB::transaction(function () use ($villageProfile, $data, $images) {
                 $villageProfile->fill($data);
                 $villageProfile = $this->villageProfileRepository->save($villageProfile);
 
                 $oldFileIds = $villageProfile->files()->pluck('files.id')->toArray();
 
                 foreach ($oldFileIds as $oldFileId) {
-                    $this->fileService->deleteFile($oldFileId);    
+                    $this->fileService->deleteFile($oldFileId);
                 }
 
                 $villageProfile->villageProfileFiles()->delete();
@@ -93,7 +93,7 @@ class VillageProfileService
                 $fileIds = $villageProfile->files()->pluck('files.id')->toArray();
 
                 foreach ($fileIds as $fileId) {
-                    $this->fileService->deleteFile($fileId);    
+                    $this->fileService->deleteFile($fileId);
                 }
 
                 $villageProfile->villageProfileFiles()->delete();

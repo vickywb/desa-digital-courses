@@ -16,7 +16,7 @@ class VillageProfileController extends Controller
 
     public function index()
     {
-        $villageProfile = VillageProfile::with('files')->latest()->first();
+        $villageProfile = VillageProfile::with(['files', 'kas'])->latest()->first();
 
         if (! $villageProfile) {
             return ResponseHelper::success('No village profile found', null, 200);
@@ -31,7 +31,7 @@ class VillageProfileController extends Controller
 
     public function show(VillageProfile $villageProfile)
     {
-        $villageProfile->load('files');
+        $villageProfile->load(['files', 'kas']);
 
         return ResponseHelper::success(
             'Village profile retrieved successfully',

@@ -22,7 +22,8 @@ class VillageProfileResource extends JsonResource
             'people' => $this->people,
             'agriculture_area' => $this->agriculture_area,
             'total_area' => $this->total_area,
-            'village_photo' => FileResource::collection($this->whenLoaded('files'))
+            'village_photo' => FileResource::collection($this->whenLoaded('files')),
+            'kas' => new KasResource($this->whenLoaded('kas')),
         ];
     }
 }
