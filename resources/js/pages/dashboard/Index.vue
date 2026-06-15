@@ -9,13 +9,16 @@ const stats = ref({
     totalEvents: 0,
 });
 
+const kas = ref(null);
+
 onMounted(async () => {
     try {
         const prefix = '/village-staff';
-        const [headF, dev, evt] = await Promise.all([
+        const [headF, dev, evt, kasRes] = await Promise.all([
             client.get(`${prefix}/head-families`),
             client.get(`${prefix}/developments`),
             client.get(`${prefix}/events`),
+            client.get(`${prefix}/kas`).catch(() => null),
         ]);
 
         const families = headF.data.data ?? [];
@@ -27,6 +30,8 @@ onMounted(async () => {
             totalDevelopments: dev.data.data?.length ?? 0,
             totalEvents: evt.data.data?.length ?? 0,
         };
+
+        kas.value = kasRes?.data?.data ?? null;
     } catch {
         // Default values
     }
@@ -91,20 +96,42 @@ onMounted(async () => {
             </section>
         </div>
 
-        <div id="Row-2" class="flex flex-col sm:flex-row gap-[14px]">
-            <router-link to="/staff/social-assistances" class="flex flex-col w-full sm:w-[497px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
+        <div id="Row-2" class="grid grid-cols-2 sm:grid-cols-4 gap-[14px]">
+            <router-link to="/staff/village-profile" class="flex flex-col rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
+                <div class="flex items-center justify-between">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total Kas</p>
+                    <img src="/desa-digital/src/assets/images/icons/location-secondary-green.svg" class="flex size-8 sm:size-10 shrink-0" alt="icon">
+                </div>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-dark-green">
+                    {{ kas ? 'Rp ' + Number(kas.total_balance).toLocaleString('id-ID') : '-' }}
+                </p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Kas desa terkini</p>
+            </router-link>
+
+            <router-link to="/staff/village-profile" class="flex flex-col rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
+                <div class="flex items-center justify-between">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pengeluaran Kas</p>
+                    <img src="/desa-digital/src/assets/images/icons/grid-5-dark-green.svg" class="flex size-8 sm:size-10 shrink-0" alt="icon">
+                </div>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-red">
+                    {{ kas ? 'Rp ' + Number(kas.monthly_expense).toLocaleString('id-ID') : '-' }}
+                </p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pengeluaran bulan ini</p>
+            </router-link>
+
+            <router-link to="/staff/social-assistances" class="flex flex-col rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Bantuan Sosial</p>
-                    <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-8 sm:size-10 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.totalHeadFamilies }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total kepala keluarga</p>
             </router-link>
 
-            <router-link to="/staff/events" class="flex flex-col flex-1 rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
+            <router-link to="/staff/events" class="flex flex-col rounded-2xl bg-white p-4 sm:p-6 gap-2 sm:gap-3 hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Events Mendatang</p>
-                    <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-8 sm:size-10 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.totalEvents }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Jadwal desa terbaru</p>

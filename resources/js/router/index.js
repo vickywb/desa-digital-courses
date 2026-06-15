@@ -46,9 +46,19 @@ const routes = [
                 component: () => import('../pages/head-families/Index.vue'),
             },
             {
+                path: 'head-families/:id',
+                name: 'HeadFamilyDetail',
+                component: () => import('../pages/head-families/StaffDetail.vue'),
+            },
+            {
                 path: 'head-families/:id/members',
                 name: 'FamilyMembers',
                 component: () => import('../pages/family-members/Index.vue'),
+            },
+            {
+                path: 'head-families/:headId/members/:memberId',
+                name: 'FamilyMemberDetail',
+                component: () => import('../pages/family-members/StaffDetail.vue'),
             },
             {
                 path: 'events',
@@ -100,6 +110,16 @@ const routes = [
                 name: 'VillageProfileEdit',
                 component: () => import('../pages/village-profile/Edit.vue'),
             },
+            {
+                path: 'kas',
+                name: 'Kas',
+                component: () => import('../pages/kas/Index.vue'),
+            },
+            {
+                path: 'kas/edit',
+                name: 'KasEdit',
+                component: () => import('../pages/kas/Edit.vue'),
+            },
         ],
     },
     {
@@ -119,6 +139,11 @@ const routes = [
                 path: 'family-members',
                 name: 'FamilyMembersKK',
                 component: () => import('../pages/family-members/KKIndex.vue'),
+            },
+            {
+                path: 'family-members/:id',
+                name: 'FamilyMemberDetailKK',
+                component: () => import('../pages/family-members/KKDetail.vue'),
             },
             {
                 path: 'bansos',
@@ -159,6 +184,16 @@ const routes = [
                 path: 'events/:id',
                 name: 'EventDetailKK',
                 component: () => import('../pages/events/KKDetail.vue'),
+            },
+            {
+                path: 'village-profile',
+                name: 'VillageProfileKK',
+                component: () => import('../pages/village-profile/Index.vue'),
+            },
+            {
+                path: 'kas',
+                name: 'KasKK',
+                component: () => import('../pages/kas/Index.vue'),
             },
         ],
     },

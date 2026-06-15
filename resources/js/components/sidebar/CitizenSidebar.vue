@@ -10,6 +10,8 @@ import iconBuilding4Active from '@/assets/images/icons/building-4-dark-green.svg
 import iconBuilding4Inactive from '@/assets/images/icons/building-4-secondary-green.svg';
 import iconCalendarActive from '@/assets/images/icons/calendar-2-dark-green.svg';
 import iconCalendarInactive from '@/assets/images/icons/calendar-2-secondary-green.svg';
+import iconMoneyActive from '@/assets/images/icons/wallet-check-dark-green.svg';
+import iconMoneyInactive from '@/assets/images/icons/wallet-3-secondary-green.svg';
 
 defineProps({
     open: Boolean,
@@ -55,6 +57,12 @@ const sidebarItems = [
         path: '/warga/village-profile',
         iconActive: iconBuilding4Active,
         iconInactive: iconBuilding4Inactive,
+    },
+    {
+        label: 'Kas Desa',
+        path: '/warga/kas',
+        iconActive: iconMoneyActive,
+        iconInactive: iconMoneyInactive,
     },
 ];
 </script>

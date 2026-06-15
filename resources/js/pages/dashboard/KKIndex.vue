@@ -10,6 +10,7 @@ const stats = ref({
     bansos: 0,
     pembangunan: 0,
 });
+const kas = ref(null);
 const userName = ref('');
 
 onMounted(async () => {
@@ -17,11 +18,12 @@ onMounted(async () => {
     userName.value = user?.head_of_family?.full_name ?? user?.username ?? '';
 
     try {
-        const [familyRes, events, bansos, developments] = await Promise.all([
+        const [familyRes, events, bansos, developments, kasRes] = await Promise.all([
             client.get('/village-resident/family-members'),
             client.get('/village-resident/events'),
             client.get('/village-resident/social-assistances'),
             client.get('/village-resident/developments'),
+            client.get('/village-resident/kas').catch(() => null),
         ]);
 
         stats.value = {
@@ -30,6 +32,8 @@ onMounted(async () => {
             bansos: bansos.data.data?.length ?? 0,
             pembangunan: developments.data.data?.length ?? 0,
         };
+
+        kas.value = kasRes?.data?.data ?? null;
     } catch {
         //
     }
@@ -50,6 +54,30 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
+
+        <section class="grid grid-cols-2 gap-[10px] sm:gap-[14px]">
+            <router-link to="/warga/kas" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
+                <div class="flex items-center justify-between">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total Kas</p>
+                    <img src="/desa-digital/src/assets/images/icons/location-secondary-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                </div>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-dark-green">
+                    {{ kas ? 'Rp ' + Number(kas.total_balance).toLocaleString('id-ID') : '-' }}
+                </p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Kas desa terkini</p>
+            </router-link>
+
+            <router-link to="/warga/kas" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
+                <div class="flex items-center justify-between">
+                    <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pengeluaran Kas</p>
+                    <img src="/desa-digital/src/assets/images/icons/grid-5-dark-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                </div>
+                <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-red">
+                    {{ kas ? 'Rp ' + Number(kas.monthly_expense).toLocaleString('id-ID') : '-' }}
+                </p>
+                <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pengeluaran bulan ini</p>
+            </router-link>
+        </section>
 
         <section class="grid grid-cols-2 gap-[10px] sm:gap-[14px]">
             <router-link to="/warga/family-members" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">

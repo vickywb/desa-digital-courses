@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import SidebarItem from './SidebarItem.vue';
 import iconChartActive from '@/assets/images/icons/chart-square-dark-green.svg';
 import iconChartInactive from '@/assets/images/icons/chart-square-secondary-green.svg';
@@ -12,6 +14,8 @@ import iconCalendarActive from '@/assets/images/icons/calendar-2-dark-green.svg'
 import iconCalendarInactive from '@/assets/images/icons/calendar-2-secondary-green.svg';
 import iconUserActive from '@/assets/images/icons/profile-2user-dark-green.svg';
 import iconUserInactive from '@/assets/images/icons/profile-2user-secondary-green.svg';
+import iconMoneyActive from '@/assets/images/icons/wallet-check-dark-green.svg';
+import iconMoneyInactive from '@/assets/images/icons/wallet-3-secondary-green.svg';
 
 defineProps({
     open: Boolean,
@@ -19,52 +23,67 @@ defineProps({
 
 const emit = defineEmits(['close']);
 
-const sidebarItems = [
-    {
-        label: 'Dashboard',
-        path: '/staff/dashboard',
-        iconActive: iconChartActive,
-        iconInactive: iconChartInactive,
-    },
-    {
-        label: 'Kepala Rumah',
-        path: '/staff/head-families',
-        iconActive: iconCrownActive,
-        iconInactive: iconCrownInactive,
-    },
-    {
-        label: 'Bantuan Sosial',
-        path: '',
-        iconActive: iconBagActive,
-        iconInactive: iconBagInactive,
-        children: [
-            { label: 'List Bansos', path: '/staff/social-assistances' },
-            { label: 'Pengajuan Bansos', path: '/staff/social-assistances/recipients' },
-        ],
-    },
-    {
-        label: 'Jadwal Desa',
-        path: '',
-        iconActive: iconCalendarActive,
-        iconInactive: iconCalendarInactive,
-        children: [
-            { label: 'Pembangunan', path: '/staff/developments' },
-            { label: 'Event Desa', path: '/staff/events' },
-        ],
-    },
-    {
-        label: 'Profile Desa',
-        path: '/staff/village-profile',
-        iconActive: iconBuilding4Active,
-        iconInactive: iconBuilding4Inactive,
-    },
-    {
-        label: 'Users',
-        path: '/staff/users',
-        iconActive: iconUserActive,
-        iconInactive: iconUserInactive,
-    },
-];
+const authStore = useAuthStore();
+
+const sidebarItems = computed(() => {
+    const items = [
+        {
+            label: 'Dashboard',
+            path: '/staff/dashboard',
+            iconActive: iconChartActive,
+            iconInactive: iconChartInactive,
+        },
+        {
+            label: 'Kepala Rumah',
+            path: '/staff/head-families',
+            iconActive: iconCrownActive,
+            iconInactive: iconCrownInactive,
+        },
+        {
+            label: 'Bantuan Sosial',
+            path: '',
+            iconActive: iconBagActive,
+            iconInactive: iconBagInactive,
+            children: [
+                { label: 'List Bansos', path: '/staff/social-assistances' },
+                { label: 'Pengajuan Bansos', path: '/staff/social-assistances/recipients' },
+            ],
+        },
+        {
+            label: 'Jadwal Desa',
+            path: '',
+            iconActive: iconCalendarActive,
+            iconInactive: iconCalendarInactive,
+            children: [
+                { label: 'Pembangunan', path: '/staff/developments' },
+                { label: 'Event Desa', path: '/staff/events' },
+            ],
+        },
+        {
+            label: 'Profile Desa',
+            path: '/staff/village-profile',
+            iconActive: iconBuilding4Active,
+            iconInactive: iconBuilding4Inactive,
+        },
+        {
+            label: 'Kas Desa',
+            path: '/staff/kas',
+            iconActive: iconMoneyActive,
+            iconInactive: iconMoneyInactive,
+        },
+    ];
+
+    if (authStore.userRole === 'admin') {
+        items.push({
+            label: 'Users',
+            path: '/staff/users',
+            iconActive: iconUserActive,
+            iconInactive: iconUserInactive,
+        });
+    }
+
+    return items;
+});
 </script>
 
 <template>
