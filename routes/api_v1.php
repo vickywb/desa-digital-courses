@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\HeadVillage\EventController;
 use App\Http\Controllers\Api\V1\HeadVillage\EventParticipantController;
 use App\Http\Controllers\Api\V1\HeadVillage\FamilyMemberController;
 use App\Http\Controllers\Api\V1\HeadVillage\HeadOfFamilyController;
+use App\Http\Controllers\Api\V1\HeadVillage\KasController;
 use App\Http\Controllers\Api\V1\HeadVillage\SocialAssistanceController;
 use App\Http\Controllers\Api\V1\HeadVillage\SocialAssistanceRecipientController;
 use App\Http\Controllers\Api\V1\HeadVillage\VillageProfileController;
@@ -63,6 +64,8 @@ Route::middleware(['auth:sanctum', 'role:admin,head_village,staff'])
 
         Route::apiResource('village-profiles', VillageProfileController::class)
             ->only(['index', 'store', 'show', 'update']);
+        Route::get('kas', [KasController::class, 'index']);
+        Route::put('kas', [KasController::class, 'update']);
     });
 
 // Destroy only — admin & head_village
@@ -99,4 +102,6 @@ Route::middleware(['auth:sanctum', 'role:head_of_family'])
         Route::get('social-assistance-recipients/{recipient}', [SocialAssistanceRecipientController::class, 'myRecipientDetail']);
 
         Route::apiResource('family-members', MyFamilyMemberController::class);
+        Route::get('kas', [KasController::class, 'index']);
+        Route::get('village-profiles', [VillageProfileController::class, 'index']);
     });
