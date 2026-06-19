@@ -25,9 +25,18 @@ class EventStoreRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'start_date' => 'required|date_format:Y-m-d H:i:s',
+            'start_date' => 'required|date',
             'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048'
+            'image' => 'nullable|image|mimes:png,jpg,webp|max:2048',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('start_date')) {
+            $this->merge([
+                'start_date' => str_replace('T', ' ', $this->start_date),
+            ]);
+        }
     }
 }

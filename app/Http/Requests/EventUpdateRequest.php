@@ -25,9 +25,18 @@ class EventUpdateRequest extends FormRequest
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric',
-            'start_date' => 'sometimes|date_format:Y-m-d H:i:s',
+            'start_date' => 'sometimes|date',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:png,jpg,webp|max:2048',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('start_date')) {
+            $this->merge([
+                'start_date' => str_replace('T', ' ', $this->start_date),
+            ]);
+        }
     }
 }
