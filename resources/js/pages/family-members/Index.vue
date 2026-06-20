@@ -341,7 +341,7 @@ function selectClass() {
                     <input v-model="form.identity_number" :class="fieldClass()" placeholder="National ID number">
                 </div>
 
-                <div v-if="editMode === 'family_member'" class="flex flex-col gap-2">
+                <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
                     <label class="font-medium text-sm text-desa-secondary">Email</label>
                     <input v-model="form.email" type="email" :class="fieldClass()" placeholder="Email">
                 </div>
@@ -387,7 +387,7 @@ function selectClass() {
                     </div>
                 </div>
 
-                <div v-if="editMode === 'family_member'" class="flex flex-col gap-2">
+                <div v-if="editMode !== 'head_of_family'" class="flex flex-col gap-2">
                     <label class="font-medium text-sm text-desa-secondary">Relation</label>
                     <div class="relative">
                         <select v-model="form.relation" :class="selectClass()">

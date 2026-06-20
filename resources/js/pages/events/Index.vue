@@ -48,12 +48,10 @@ async function save() {
         payload.append('title', form.value.title);
         payload.append('description', form.value.description);
         payload.append('price', form.value.price);
-        payload.append('start_date', form.value.start_date);
+        payload.append('start_date', form.value.start_date.replace('T', ' ') + ':00');
         payload.append('is_active', form.value.is_active ? '1' : '0');
         if (form.value.image) payload.append('image', form.value.image);
-        const res = await client.post('/village-staff/events', payload, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const res = await client.post('/village-staff/events', payload);
         items.value.unshift(res.data.data?.[0] ?? {});
         closeModal();
     } catch (err) {

@@ -88,7 +88,8 @@ async function saveEdit() {
         payload.append('title', form.value.title);
         payload.append('description', form.value.description);
         payload.append('price', form.value.price);
-        payload.append('start_date', form.value.start_date);
+        const rawDate = form.value.start_date;
+        payload.append('start_date', rawDate.includes('T') ? rawDate.replace('T', ' ') + ':00' : rawDate);
         payload.append('is_active', form.value.is_active ? '1' : '0');
         payload.append('_method', 'PUT');
 
@@ -98,8 +99,7 @@ async function saveEdit() {
 
         const res = await client.post(
             `/village-staff/events/${route.params.id}`,
-            payload,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
+            payload
         );
 
         item.value = res.data.data ?? null;
@@ -237,16 +237,28 @@ function selectClass() {
 
                 <div v-else class="flex flex-col gap-3">
                     <div v-for="p in participants" :key="p.id"
-                        class="flex items-center justify-between gap-4 rounded-2xl border border-desa-background p-4">
-                        <div class="min-w-0">
-                            <p class="font-semibold text-sm leading-5 truncate">{{ p.head_of_family?.full_name ?? '-' }}</p>
-                            <p class="text-xs text-desa-secondary">{{ p.family_member?.full_name ?? 'Kepala Keluarga' }}</p>
+                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-desa-background p-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between sm:hidden mb-2">
+                                <p class="font-semibold text-sm leading-5">{{ p.head_of_family?.full_name ?? '-' }}</p>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white whitespace-nowrap"
+                                    :class="p.payment_status === 'paid' ? 'bg-desa-dark-green' : 'bg-desa-yellow'">
+                                    {{ p.payment_status === 'paid' ? 'Lunas' : 'Pending' }}
+                                </span>
+                            </div>
+                            <p class="hidden sm:block font-semibold text-sm leading-5">{{ p.head_of_family?.full_name ?? '-' }}</p>
+                            <p class="text-xs text-desa-secondary mt-0.5">{{ p.quantity }} tiket</p>
+                            <div v-if="p.members?.length" class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                                <span v-for="m in p.members" :key="m.id" class="text-xs text-desa-secondary">
+                                    {{ m.member_type === 'head_of_family' ? p.head_of_family?.full_name : (m.family_member?.full_name ?? '-') }}
+                                </span>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span class="hidden sm:inline rounded-full px-3 py-1 text-xs font-semibold text-white"
+                        <div class="hidden sm:flex items-center gap-2 shrink-0">
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold text-white whitespace-nowrap"
                                 :class="p.payment_status === 'paid' ? 'bg-desa-dark-green' : 'bg-desa-yellow'">
-                                {{ p.payment_status === 'paid' ? 'Dibayar' : 'Pending' }}
+                                {{ p.payment_status === 'paid' ? 'Lunas' : 'Pending' }}
                             </span>
 
                             <template v-if="p.payment_status === 'pending'">
@@ -255,6 +267,23 @@ function selectClass() {
                                     Terima
                                 </button>
                             </template>
+                            <a v-else-if="p.proof" :href="p.proof.url" target="_blank"
+                                class="rounded-lg px-3 py-1.5 bg-desa-foreshadow text-desa-dark-green text-xs font-semibold hover:bg-desa-soft-green transition-setup">
+                                Bukti
+                            </a>
+                        </div>
+
+                        <div class="flex sm:hidden gap-2 pt-2 border-t border-desa-background">
+                            <template v-if="p.payment_status === 'pending'">
+                                <button @click="approveParticipant(p)" :disabled="saving"
+                                    class="flex-1 rounded-lg py-2.5 bg-desa-dark-green text-white text-xs font-semibold hover:bg-desa-black transition-setup">
+                                    {{ saving ? '...' : 'Terima' }}
+                                </button>
+                            </template>
+                            <a v-if="p.proof" :href="p.proof.url" target="_blank"
+                                class="flex-1 rounded-lg py-2.5 bg-desa-foreshadow text-desa-dark-green text-xs font-semibold text-center hover:bg-desa-soft-green transition-setup">
+                                Bukti
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -330,4 +359,5 @@ function selectClass() {
             </form>
         </div>
     </div>
+
 </template>

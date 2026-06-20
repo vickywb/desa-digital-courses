@@ -12,29 +12,27 @@ const saving = ref(false);
 const hasJoined = ref(false);
 const myParticipation = ref(null);
 
-const quantity = ref(1);
-const ppnRate = 0.12;
+const familyMembers = ref([]);
+const selectedMemberIds = ref([]);
+const proofFile = ref(null);
 
-const totalPrice = computed(() => {
-    if (!item.value?.price || Number(item.value.price) <= 0) return 0;
-    const base = Number(item.value.price) * quantity.value;
-    const ppn = base * ppnRate;
-    return base + ppn;
-});
+const quantity = computed(() => selectedMemberIds.value.length);
 
 onMounted(async () => {
     try {
-        const [eventRes, myRes] = await Promise.all([
+        const [eventRes, myRes, familyRes] = await Promise.all([
             client.get(`/village-resident/events/${route.params.id}`),
             client.get('/village-resident/my-event-participants'),
+            client.get('/village-resident/family-members'),
         ]);
         item.value = eventRes.data.data ?? null;
+        familyMembers.value = familyRes.data.data ?? [];
+
         const myData = myRes.data.data ?? [];
         const found = myData.find(p => p.event?.id === route.params.id);
         if (found) {
             hasJoined.value = true;
             myParticipation.value = found;
-            quantity.value = found.quantity;
         }
     } catch {
         item.value = null;
@@ -43,21 +41,41 @@ onMounted(async () => {
     }
 });
 
+function toggleMember(id) {
+    const idx = selectedMemberIds.value.indexOf(id);
+    if (idx >= 0) {
+        selectedMemberIds.value.splice(idx, 1);
+    } else {
+        selectedMemberIds.value.push(id);
+    }
+}
+
+function onProofChange(e) {
+    proofFile.value = e.target.files[0] ?? null;
+}
+
 async function purchase() {
     saving.value = true;
     try {
-        const payload = {
-            quantity: quantity.value,
-            total_price: String(totalPrice.value),
-            payment_status: Number(item.value.price) > 0 ? 'pending' : 'free',
-        };
+        const payload = new FormData();
+        payload.append('member_ids', JSON.stringify(selectedMemberIds.value));
+        payload.append('quantity', String(quantity.value));
+        payload.append('payment_status', Number(item.value.price) > 0 ? 'pending' : 'free');
+        if (proofFile.value) {
+            payload.append('proof', proofFile.value);
+        }
 
-        await client.post(`/village-resident/events/${route.params.id}/participants`, payload);
+        const res = await client.post(`/village-resident/events/${route.params.id}/participants`, payload);
+
         hasJoined.value = true;
-        quantity.value = 1;
+        myParticipation.value = res.data.data ?? null;
+        selectedMemberIds.value = [];
+        proofFile.value = null;
     } catch (err) {
-        const msg = err.response?.data?.message ?? 'Gagal membeli tiket';
-        alert(msg);
+        const data = err.response?.data;
+        const msg = data?.message ?? 'Gagal mendaftar';
+        const details = data?.errors ? Object.values(data.errors).flat().join('\n') : '';
+        alert(msg + (details ? '\n\n' + details : ''));
     } finally {
         saving.value = false;
     }
@@ -76,6 +94,11 @@ async function cancel() {
     } finally {
         saving.value = false;
     }
+}
+
+function getMemberName(member) {
+    if (member.member_type === 'head_of_family') return 'Kepala Keluarga';
+    return member.family_member?.full_name ?? '-';
 }
 </script>
 
@@ -135,7 +158,7 @@ async function cancel() {
                             <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">
                                 {{ item.price && Number(item.price) > 0 ? 'Rp ' + formatRupiah(item.price) : 'Gratis' }}
                             </p>
-                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Harga</h3>
+                            <h3 class="font-medium text-sm leading-[17.5px] text-desa-secondary">Harga per orang</h3>
                         </div>
                     </div>
                     <hr class="border-desa-background" />
@@ -167,8 +190,16 @@ async function cancel() {
                         <p class="font-semibold text-lg text-desa-dark-green">Kamu Sudah Bergabung</p>
                         <div class="w-full flex flex-col gap-3">
                             <div class="flex justify-between">
+                                <span class="font-medium text-sm text-desa-secondary">Peserta</span>
+                                <span class="font-semibold text-right text-sm">
+                                    <div v-for="m in (myParticipation?.members ?? [])" :key="m.id">
+                                        {{ getMemberName(m) }}
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
                                 <span class="font-medium text-sm text-desa-secondary">Jumlah Tiket</span>
-                                <span class="font-semibold">{{ myParticipation?.quantity ?? quantity }}</span>
+                                <span class="font-semibold">{{ myParticipation?.quantity }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="font-medium text-sm text-desa-secondary">Total</span>
@@ -181,6 +212,12 @@ async function cancel() {
                                     {{ myParticipation?.payment_status === 'paid' ? 'Lunas' : 'Pending' }}
                                 </span>
                             </div>
+                            <div v-if="myParticipation?.proof" class="flex flex-col gap-2">
+                                <span class="font-medium text-sm text-desa-secondary">Bukti Bayar</span>
+                                <a :href="myParticipation.proof.url" target="_blank" class="text-desa-dark-green underline text-sm">
+                                    Lihat Bukti
+                                </a>
+                            </div>
                         </div>
                         <button @click="cancel" :disabled="saving"
                             class="rounded-2xl border border-desa-red py-[18px] px-6 font-medium leading-5 text-desa-red hover:bg-desa-red hover:text-white transition-setup w-full mt-2">
@@ -191,30 +228,35 @@ async function cancel() {
                     <div v-else>
                         <div class="flex flex-col gap-4">
                             <div class="flex justify-between items-center">
-                                <span class="font-medium text-sm text-desa-secondary">Harga Tiket</span>
+                                <span class="font-medium text-sm text-desa-secondary">Harga per Orang</span>
                                 <span class="font-semibold">
                                     {{ item.price && Number(item.price) > 0 ? 'Rp ' + formatRupiah(item.price) : 'Gratis' }}
                                 </span>
                             </div>
 
-                            <div v-if="item.price && Number(item.price) > 0" class="flex justify-between items-center">
-                                <span class="font-medium text-sm text-desa-secondary">Jumlah</span>
-                                <div class="flex items-center gap-3">
-                                    <button @click="quantity = Math.max(1, quantity - 1)" :disabled="quantity <= 1"
-                                        class="flex size-8 items-center justify-center rounded-full border border-desa-background hover:bg-desa-foreshadow disabled:opacity-50">
-                                        -
-                                    </button>
-                                    <span class="font-semibold w-8 text-center">{{ quantity }}</span>
-                                    <button @click="quantity++"
-                                        class="flex size-8 items-center justify-center rounded-full border border-desa-background hover:bg-desa-foreshadow">
-                                        +
-                                    </button>
+                            <div class="flex flex-col gap-2">
+                                <span class="font-medium text-sm text-desa-secondary">Pilih Peserta</span>
+                                <div v-if="familyMembers.length" class="flex flex-col gap-2 max-h-48 overflow-y-auto">
+                                    <label class="flex items-center gap-3 p-3 rounded-2xl border border-desa-background cursor-pointer hover:bg-desa-foreshadow transition-setup"
+                                        :class="{ 'border-desa-dark-green bg-desa-soft-green/10': selectedMemberIds.includes('head') }">
+                                        <input type="checkbox" :checked="selectedMemberIds.includes('head')"
+                                            @change="toggleMember('head')" class="accent-desa-dark-green size-4 shrink-0">
+                                        <span class="font-medium text-sm">Kepala Keluarga</span>
+                                    </label>
+                                    <label v-for="fm in familyMembers" :key="fm.id"
+                                        class="flex items-center gap-3 p-3 rounded-2xl border border-desa-background cursor-pointer hover:bg-desa-foreshadow transition-setup"
+                                        :class="{ 'border-desa-dark-green bg-desa-soft-green/10': selectedMemberIds.includes(fm.id) }">
+                                        <input type="checkbox" :checked="selectedMemberIds.includes(fm.id)"
+                                            @change="toggleMember(fm.id)" class="accent-desa-dark-green size-4 shrink-0">
+                                        <span class="font-medium text-sm">{{ fm.full_name }}</span>
+                                    </label>
                                 </div>
+                                <p v-else class="text-sm text-desa-secondary">Tidak ada anggota keluarga</p>
                             </div>
 
-                            <div v-if="item.price && Number(item.price) > 0" class="flex justify-between items-center">
-                                <span class="font-medium text-sm text-desa-secondary">PPN 12%</span>
-                                <span class="font-semibold">Rp {{ formatRupiah(Number(item.price) * quantity * ppnRate) }}</span>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-sm text-desa-secondary">Jumlah Peserta</span>
+                                <span class="font-semibold">{{ quantity || 0 }} orang</span>
                             </div>
 
                             <hr class="border-desa-background" />
@@ -222,13 +264,20 @@ async function cancel() {
                             <div class="flex justify-between items-center">
                                 <span class="font-semibold">Total</span>
                                 <span class="font-semibold text-desa-dark-green text-lg">
-                                    {{ item.price && Number(item.price) > 0 ? 'Rp ' + formatRupiah(totalPrice) : 'Gratis' }}
+                                    {{ item.price && Number(item.price) > 0 ? 'Rp ' + formatRupiah(Number(item.price) * quantity) : 'Gratis' }}
                                 </span>
                             </div>
 
-                            <button @click="purchase" :disabled="saving || !item.is_active"
+                            <div v-if="Number(item.price) > 0" class="flex flex-col gap-2">
+                                <span class="font-medium text-sm text-desa-secondary">Upload Bukti Bayar</span>
+                                <p class="text-xs text-desa-secondary">Scan QRIS atau transfer ke rekening desa, lalu upload bukti pembayaran</p>
+                                <input type="file" accept="image/*" @change="onProofChange"
+                                    class="w-full text-sm text-desa-secondary file:mr-4 file:py-2 file:px-4 file:rounded-2xl file:border-0 file:bg-desa-foreshadow file:font-medium file:text-desa-dark-green hover:file:bg-desa-soft-green transition-setup">
+                            </div>
+
+                            <button @click="purchase" :disabled="saving || !item.is_active || !quantity"
                                 class="bg-desa-black rounded-2xl w-full py-[18px] flex justify-center items-center font-medium leading-5 text-white text-center hover:bg-desa-dark-green transition-setup mt-2 disabled:opacity-50">
-                                {{ saving ? 'Memproses...' : (Number(item.price) > 0 ? 'Beli Tiket' : 'Daftar Gratis') }}
+                                {{ saving ? 'Memproses...' : (Number(item.price) > 0 ? 'Daftar & Upload Bukti' : 'Daftar Gratis') }}
                             </button>
                         </div>
                     </div>
