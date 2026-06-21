@@ -7,11 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class EventParticipantResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
@@ -22,6 +17,8 @@ class EventParticipantResource extends JsonResource
             'quantity' => $this->quantity,
             'total_price' => $this->total_price,
             'payment_status' => $this->payment_status,
+            'members' => EventParticipantMemberResource::collection($this->whenLoaded('members')),
+            'proof' => new FileResource($this->whenLoaded('file')),
         ];
     }
 }
