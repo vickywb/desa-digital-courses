@@ -123,15 +123,14 @@ test('head of family can register for an event participant', function () {
 
     $response = actingAs($this->headOfFamilyUser, 'sanctum')
         ->postJson(route('events.participants.store', [$event]), [
-            'family_member_id' => $member->id,
-            'quantity' => 1,
-            'total_price' => '0',
+            'member_ids' => ['head', $member->id],
+            'quantity' => 2,
             'payment_status' => 'pending',
         ]);
 
     $response->assertStatus(200)
         ->assertJsonPath('data.payment_status', 'pending')
-        ->assertJsonPath('data.quantity', 1);
+        ->assertJsonPath('data.quantity', 2);
 
     expect(
         App\Models\EventParticipant::where('event_id', $event->id)
