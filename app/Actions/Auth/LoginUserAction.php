@@ -21,7 +21,7 @@ class LoginUserAction
             throw new \Exception('Username or password is incorrect.');
         }
 
-        $token = $user->createToken('auth_token', [$user->role])->plainTextToken;
+        $token = $user->createToken('auth_token', [$user->role->value])->plainTextToken;
 
         LoggerHelper::info('User successfully logged in.', [
             'user_id' => $user->id,
