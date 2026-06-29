@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->booted(function (): void {
         RateLimiter::for('login', function (Request $request) {
-            $key = $request->input('email') ?? $request->input('username') ?? $request->ip();
+            $key = $request->input('email') ?? $request->input('username') ?? $request->input('identity_number') ?? $request->ip();
 
             return Limit::perMinute(5)->by($key);
         });
