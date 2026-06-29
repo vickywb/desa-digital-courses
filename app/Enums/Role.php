@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum Role: string
@@ -11,10 +13,11 @@ enum Role: string
 
     public function maxQuota(): ?int
     {
-        return match($this) {
-           Role::HeadVillage => 1,
-           Role::Staff => 3,
-           Role::HeadOfFamily => null
+        return match ($this) {
+            Role::Admin => 1,
+            Role::HeadVillage => 1,
+            Role::Staff => 3,
+            Role::HeadOfFamily => null,
         };
     }
 }
