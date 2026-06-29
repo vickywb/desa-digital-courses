@@ -1,8 +1,8 @@
 # Bug Report & Code Audit
 
 > **Project:** Desa Digital Courses  
-> **Audit Date:** 28 Juni 2026  
-> **Status:** Semua critical & high bugs telah diperbaiki  
+> **Audit Date:** 29 Juni 2026  
+> **Status:** Semua critical & high bugs telah diperbaiki. Security hardening & code quality improvements telah diterapkan.  
 
 ---
 
@@ -25,7 +25,9 @@
 | 🟠 High | 4 | 4 |
 | 🟡 Medium | 5 | 5 |
 | ⚪ Low | 6 | 6 |
-| **Total** | **18** | **18** |
+| 🛡️ Security Hardening | 3 | 3 |
+| 🧹 Code Quality | 10+ | 10+ |
+| **Total** | **31+** | **31+** |
 
 ---
 
@@ -216,26 +218,65 @@ abort_if($existing, 409, 'Kamu sudah mendaftar bantuan sosial ini');
 
 ## Perbaikan yang Dilakukan
 
-### Daftar file yang dimodifikasi
+### Round 1 — Daftar file yang dimodifikasi
 
 | File | Perubahan |
 |------|-----------|
 | `app/Http/Middleware/RoleMiddleware.php` | Nullsafe operator, `declare(strict_types=1)` |
 | `app/Actions/Auth/LoginUserAction.php` | `$user->role->value` (enum ke string) |
 | `app/Services/VillageProfileService.php` | Guard `!empty($images)`, `declare(strict_types=1)` |
-| `app/Http/Controllers/Api/V1/HeadVillage/EventParticipantController.php` | Validasi member_ids ownership, destroy ownership check, `declare(strict_types=1)` |
-| `app/Http/Controllers/Api/V1/HeadVillage/SocialAssistanceRecipientController.php` | Hapus auto `is_available=false`, cek duplikasi, `declare(strict_types=1)` |
+| `app/Http/Controllers/Api/V1/HeadVillage/EventParticipantController.php` | Validasi member_ids ownership, destroy ownership check |
+| `app/Http/Controllers/Api/V1/HeadVillage/SocialAssistanceRecipientController.php` | Hapus auto `is_available=false`, cek duplikasi |
 | `app/Http/Controllers/Api/V1/Auth/AuthController.php` | Support `identity_number` identifier |
-| `app/Http/Controllers/Api/V1/Admin/UserController.php` | Implementasi `show()`, `declare(strict_types=1)` |
-| `app/Http/Requests/LoginRequest.php` | Tambah field `identity_number`, `declare(strict_types=1)` |
-| `app/Http/Resources/FamilyMemberResource.php` | Nullsafe `date_of_birth`, `declare(strict_types=1)` |
-| `app/Repository/EventParticipantRepository.php` | Tambah `->fresh()`, `declare(strict_types=1)` |
-| `app/Enums/Role.php` | Tambah case `Admin`, `declare(strict_types=1)` |
+| `app/Http/Controllers/Api/V1/Admin/UserController.php` | Implementasi `show()`, typo fix |
+| `app/Http/Requests/LoginRequest.php` | Tambah field `identity_number` |
+| `app/Http/Resources/FamilyMemberResource.php` | Nullsafe `date_of_birth` |
+| `app/Repository/EventParticipantRepository.php` | Tambah `->fresh()` |
+| `app/Enums/Role.php` | Tambah case `Admin` |
 | `routes/api_v1.php` | Throttle register |
 | `bootstrap/app.php` | Rate limiter key + identity_number |
 
-### Hasil test
+### Round 2 — Security & Code Quality (29 Juni 2026)
+
+| File | Perubahan |
+|------|-----------|
+| `app/Actions/Auth/LoginUserAction.php` | Hapus log token/identifier, ubah token abilities, optimasi query |
+| `app/Services/EventParticipantService.php` | **Baru** — service untuk logic participant |
+| `app/Http/Requests/UpdateProfileRequest.php` | **Baru** — FormRequest update profile |
+| `app/Helpers/LoggerHelper.php` | Return types `: void`, nullsafe request calls |
+| `app/Services/SocialAssistanceService.php` | Fix log message salah |
+| `app/Http/Controllers/Api/V1/Auth/AuthController.php` | Pakai UpdateProfileRequest |
+| `app/Models/EventParticipant.php` | Cast `total_price` → `decimal:2`, method `casts()` |
+| `app/Http/Controllers/Api/V1/HeadVillage/EventController.php` | Response format konsisten |
+| `app/Http/Controllers/Api/V1/HeadVillage/DevelopmentController.php` | Response format konsisten |
+| `app\Models\User.php` | Tambah `declare(strict_types=1)` |
+| `app\Models\File.php` | Tambah `declare(strict_types=1)` |
+| `app\Models\EventParticipant.php` | Tambah `declare(strict_types=1)` |
+| `app\Models\EventParticipantMember.php` | Tambah `declare(strict_types=1)` |
+| `app\Helpers\ResponseHelper.php` | Tambah `declare(strict_types=1)` |
+| `app\Services\EventService.php` | Tambah `declare(strict_types=1)` |
+| `app\Services\KasService.php` | Tambah `declare(strict_types=1)` |
+| `app\Services\SocialAssistanceService.php` | Tambah `declare(strict_types=1)` |
+| `app\Services\DevelopmentService.php` | Tambah `declare(strict_types=1)` |
+| `app\Http\Requests\EventParticipantStoreRequest.php` | Tambah `declare(strict_types=1)` |
+
+### Round 2 — Perbaikan keamanan & code quality (29 Juni 2026)
+
+| # | File | Perubahan |
+|---|------|-----------|
+| 🛡️ | `app/Actions/Auth/LoginUserAction.php` | Hapus log token (even partial) & identifier. Token abilities diubah ke default. Query login dioptimasi sequential `first()`. |
+| 🆕 | `app/Services/EventParticipantService.php` | Service baru — bisnis logic dari controller dipindah ke sini. |
+| 🆕 | `app/Http/Requests/UpdateProfileRequest.php` | FormRequest baru — ganti inline validation di AuthController. |
+| 🛡️ | `app/Helpers/LoggerHelper.php` | Return type `: void` di semua method. `->ip()`, `->userAgent()`, `->fullUrl()`, `->method()` pakai nullsafe. |
+| 🔧 | `app/Services/SocialAssistanceService.php` | Fix log message "Development" → "Social assistance". |
+| 🔧 | `app/Http/Controllers/Api/V1/Admin/UserController.php` | Fix typo "retrived" → "retrieved". |
+| 🔧 | `app/Models/EventParticipant.php` | Cast `total_price` dari `string` → `decimal:2`. Method `casts()` proper. |
+| 🧹 | 10 file lainnya | Tambah `declare(strict_types=1)` yang konsisten. |
+| 🧹 | `EventController`, `DevelopmentController` | Response format konsisten (direct resource, tidak di-array-wrap). |
+
+### Final test result
 
 ```
 Tests:  36 passed (147 assertions)
+Pint:   PASS (42 files, 0 issues)
 ```

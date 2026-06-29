@@ -7,22 +7,33 @@
 [![Pest](https://img.shields.io/badge/Pest-4-CB2B6E?logo=pest)](https://pestphp.com)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**Desa Digital** adalah aplikasi web berbasis **Single Page Application (SPA)** untuk digitalisasi administrasi desa. Dibangun menggunakan Laravel 12 sebagai backend API dan Vue 3 sebagai frontend, aplikasi ini membantu perangkat desa mengelola data kependudukan, bantuan sosial, pembangunan desa, kegiatan desa, dan kas desa secara terpusat dan efisien.
+**Desa Digital** adalah aplikasi web berbasis **Single Page Application (SPA)** untuk digitalisasi administrasi desa maupun tata kelola lingkungan perumahan. Dibangun menggunakan Laravel 12 sebagai backend API dan Vue 3 sebagai frontend, aplikasi ini membantu perangkat desa atau pengurus lingkungan mengelola data kependudukan, bantuan sosial, pembangunan, kegiatan, dan keuangan secara terpusat.
+
+Berbeda dengan proyek _course_ standar, aplikasi ini telah dimodifikasi dan dioptimalkan untuk kebutuhan riil di lapangan dengan mengeliminasi integrasi _payment gateway_ pihak ketiga. Langkah ini diambil secara sengaja untuk menghindari beban pajak atau biaya admin tambahan (_tax-free_) bagi warga, menggantinya dengan sistem pencatatan _cash_ mandiri yang sistematis serta instruksi transfer bank langsung yang transparan.
+
+---
+
+## 💡 Filosofi Desain & Modifikasi Proyek
+
+Aplikasi ini dikembangkan dengan pendekatan _cost-efficiency_ dan _user-centric design_ untuk skala komunitas/perumahan:
+
+- **Eliminasi Payment Gateway:** Berdasarkan analisis kebutuhan warga, integrasi _payment gateway_ pihak ketiga sengaja ditiadakan untuk menghindari _transaction fee_ atau _tax_ tambahan yang dibebankan kepada warga.
+- **Alur Keuangan Mandiri:** Sistem menyediakan modul pengisian nomor rekening pengelola untuk instruksi transfer bank langsung secara manual, di samping pencatatan pembayaran _cash_ tradisional yang langsung terintegrasi ke saldo Kas utama.
 
 ---
 
 ## Fitur Utama
 
-| Modul | Deskripsi |
-|-------|-----------|
-| **Manajemen Penduduk** | Kelola data Kepala Keluarga (KK) dan Anggota Keluarga dengan relasi lengkap |
-| **Bantuan Sosial** | Kelola program bantuan dan pencairan (sembako, tunai, BBM, kesehatan) |
-| **Pembangunan Desa** | Catat, pantau proyek pembangunan, dan kelola pendaftaran pekerja |
-| **Kegiatan Desa** | Kelola event desa dan partisipasi warga (dengan pembayaran) |
-| **Kas Desa** | Pantau saldo, pemasukan rutin, dan pengeluaran bulanan |
-| **Profil Desa** | Informasi desa, data luas wilayah, jumlah penduduk |
-| **Sistem Upload** | Upload file dengan konversi otomatis ke WebP |
-| **Dashboard Berbasis Role** | 4 role dengan tampilan dan akses berbeda |
+| Modul                       | Deskripsi                                                                   |
+| --------------------------- | --------------------------------------------------------------------------- |
+| **Manajemen Penduduk**      | Kelola data Kepala Keluarga (KK) dan Anggota Keluarga dengan relasi lengkap |
+| **Bantuan Sosial**          | Kelola program bantuan dan pencairan (sembako, tunai, BBM, kesehatan)       |
+| **Pembangunan Desa**        | Catat, pantau proyek pembangunan, dan kelola pendaftaran pekerja            |
+| **Kegiatan Desa**           | Kelola event desa dan partisipasi warga (dengan pembayaran)                 |
+| **Kas Desa**                | Pantau saldo, pemasukan rutin, dan pengeluaran bulanan                      |
+| **Profil Desa**             | Informasi desa, data luas wilayah, jumlah penduduk                          |
+| **Sistem Upload**           | Upload file dengan konversi otomatis ke WebP                                |
+| **Dashboard Berbasis Role** | 4 role dengan tampilan dan akses berbeda                                    |
 
 ---
 
@@ -40,12 +51,13 @@ Request → Controller → Action/Service → Repository → Model → Database
                           JSON Response
 ```
 
-- **Actions** — Kelas invocable single-responsibility (RegisterUserAction, LoginUserAction)
-- **Services** — Orchestrasi logika bisnis (AuthService, DevelopmentService, dll)
-- **Repositories** — Abstraksi akses data (12 repository)
-- **Form Requests** — Validasi terpusat (20 kelas)
-- **API Resources** — Transformasi respons (13 resource)
-- **Policies** — Otorisasi berbasis kebijakan (6 policy)
+- **Actions** — 3 kelas single-responsibility (RegisterUserAction, LoginUserAction, LogoutUserAction)
+- **Services** — 12 service untuk orchestration bisnis logic
+- **Repositories** — 12 repository untuk akses data
+- **Form Requests** — 21 kelas validasi terpusat
+- **API Resources** — 14 resource untuk transformasi respons
+- **Policies** — 6 authorization policies
+- **Models** — 14 Eloquent models (UUID + SoftDeletes)
 
 > Detail arsitektur lengkap lihat [`ARCHITECTURE.md`](ARCHITECTURE.md)
 
@@ -53,28 +65,28 @@ Request → Controller → Action/Service → Repository → Model → Database
 
 Tabel inti:
 
-| Tabel | Relasi Utama |
-|-------|-------------|
-| `users` | `1:1` → `head_of_families` |
-| `head_of_families` | `1:N` → `family_members` |
-| `events` | `1:N` → `event_participants` (`head_of_families`) |
-| `developments` | `1:N` → `development_applicants` (`users`) |
+| Tabel                | Relasi Utama                                                |
+| -------------------- | ----------------------------------------------------------- |
+| `users`              | `1:1` → `head_of_families`                                  |
+| `head_of_families`   | `1:N` → `family_members`                                    |
+| `events`             | `1:N` → `event_participants` (`head_of_families`)           |
+| `developments`       | `1:N` → `development_applicants` (`users`)                  |
 | `social_assistances` | `1:N` → `social_assistance_recipients` (`head_of_families`) |
-| `village_profiles` | `1:1` → `kas` |
-| `files` | Polymorphic ke berbagai entitas |
+| `village_profiles`   | `1:1` → `kas`                                               |
+| `files`              | Polymorphic ke berbagai entitas                             |
 
 > Semua primary key menggunakan UUID. Seluruh tabel utama menggunakan soft deletes.
 
 ### API Endpoints
 
-| Prefix | Role | Endpoint |
-|--------|------|----------|
-| `POST /api/v1/login` | Publik | Autentikasi (rate limit: 5/menit) |
-| `POST /api/v1/register` | Publik | Registrasi |
-| `/api/v1/auth/*` | Terautentikasi | Profile, logout |
-| `/api/v1/admin/*` | `admin` | Manajemen pengguna |
-| `/api/v1/village-staff/*` | `admin, head_village, staff` | CRUD data desa |
-| `/api/v1/village-resident/*` | `head_of_family` | Dashboard warga |
+| Prefix                       | Role                         | Endpoint                          |
+| ---------------------------- | ---------------------------- | --------------------------------- |
+| `POST /api/v1/login`         | Publik                       | Autentikasi (rate limit: 5/menit) |
+| `POST /api/v1/register`      | Publik                       | Registrasi                        |
+| `/api/v1/auth/*`             | Terautentikasi               | Profile, logout                   |
+| `/api/v1/admin/*`            | `admin`                      | Manajemen pengguna                |
+| `/api/v1/village-staff/*`    | `admin, head_village, staff` | CRUD data desa                    |
+| `/api/v1/village-resident/*` | `head_of_family`             | Dashboard warga                   |
 
 ### Struktur Folder
 
@@ -86,12 +98,12 @@ app/
 ├── Http/
 │   ├── Controllers/Api/V1/  # Auth, Admin, HeadVillage, FamilyMember
 │   ├── Middleware/           # RoleMiddleware
-│   ├── Requests/            # 20 Form Request validasi
-│   └── Resources/           # 13 API Resource
-├── Models/          # 13 Eloquent models (UUID, SoftDeletes)
+│   ├── Requests/            # 21 Form Request validasi
+│   └── Resources/           # 14 API Resource
+├── Models/          # 14 Eloquent models (UUID, SoftDeletes)
 ├── Policies/        # 6 authorization policies
 ├── Repository/      # 12 data access repositories
-└── Services/        # 11 business logic services
+└── Services/        # 12 business logic services
 
 resources/js/
 ├── api/client.js    # Axios + Bearer interceptor
@@ -106,12 +118,12 @@ resources/js/
 
 ## Role Pengguna
 
-| Role | Prefix API | Dashboard | Kuota |
-|------|-----------|-----------|-------|
-| `admin` | `/admin/*`, `/village-staff/*` | Manajemen pengguna & sistem | ∞ |
-| `head_village` | `/village-staff/*` | CRUD semua data desa | 1 |
-| `staff` | `/village-staff/*` | Kelola data kependudukan | 3 |
-| `head_of_family` | `/village-resident/*` | Dashboard warga | ∞ |
+| Role             | Prefix API                     | Dashboard                   | Kuota |
+| ---------------- | ------------------------------ | --------------------------- | ----- |
+| `admin`          | `/admin/*`, `/village-staff/*` | Manajemen pengguna & sistem | ∞     |
+| `head_village`   | `/village-staff/*`             | CRUD semua data desa        | 1     |
+| `staff`          | `/village-staff/*`             | Kelola data kependudukan    | 3     |
+| `head_of_family` | `/village-resident/*`          | Dashboard warga             | ∞     |
 
 ---
 
@@ -169,14 +181,14 @@ npm run dev         # Terminal 2
 
 Setelah `migrate --seed`, akun berikut tersedia:
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@test.com` | `admin123` |
-| Kepala Desa | `kades@test.com` | `kades123` |
-| Staff 1 | `staff1@test.com` | `staff123` |
-| Staff 2 | `staff2@test.com` | `staff123` |
-| Staff 3 | `staff3@test.com` | `staff123` |
-| Warga | `slamet@test.com` | `warga123` |
+| Role        | Email             | Password   |
+| ----------- | ----------------- | ---------- |
+| Admin       | `admin@test.com`  | `admin123` |
+| Kepala Desa | `kades@test.com`  | `kades123` |
+| Staff 1     | `staff1@test.com` | `staff123` |
+| Staff 2     | `staff2@test.com` | `staff123` |
+| Staff 3     | `staff3@test.com` | `staff123` |
+| Warga       | `slamet@test.com` | `warga123` |
 
 ---
 
@@ -196,15 +208,15 @@ Framework testing: **Pest 4** dengan SQLite in-memory.
 
 ## Tech Stack
 
-| Layer | Teknologi |
-|-------|-----------|
-| **Backend** | Laravel 12, PHP 8.5, Sanctum |
+| Layer        | Teknologi                                  |
+| ------------ | ------------------------------------------ |
+| **Backend**  | Laravel 12, PHP 8.5, Sanctum               |
 | **Frontend** | Vue 3 (Composition API), Vue Router, Pinia |
-| **Styling** | Tailwind CSS v4 |
-| **Build** | Vite 7 |
-| **Database** | MySQL / MariaDB |
-| **Testing** | Pest 4, Mockery |
-| **Tools** | Laravel Pint, Laravel Sail, Laravel Pail |
+| **Styling**  | Tailwind CSS v4                            |
+| **Build**    | Vite 7                                     |
+| **Database** | MySQL / MariaDB                            |
+| **Testing**  | Pest 4, Mockery                            |
+| **Tools**    | Laravel Pint, Laravel Sail, Laravel Pail   |
 
 ---
 

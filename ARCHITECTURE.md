@@ -27,15 +27,15 @@ desa-digital-courses/
 │   │       └── LogoutUserAction.php
 │   │
 │   ├── Enums/                      # PHP 8 Enums
-│   │   ├── Role.php
+│   │   ├── Role.php                # Admin, HeadVillage, Staff, HeadOfFamily
 │   │   ├── Gender.php
 │   │   ├── MaritalStatus.php
 │   │   └── FamilyRelation.php
 │   │
-│   ├── Helpers/                    # Utility Helpers
+│   ├── Helpers/                    # Utility Helpers (all with strict_types & return types)
 │   │   ├── ResponseHelper.php      # Standard JSON response
 │   │   ├── FileHelpers.php         # File upload utilities
-│   │   └── LoggerHelper.php        # Logging with context
+│   │   └── LoggerHelper.php        # Secure logging (no tokens/credentials logged)
 │   │
 │   ├── Http/
 │   │   ├── Controllers/
@@ -51,8 +51,17 @@ desa-digital-courses/
 │   │
 │   ├── Models/                     # Eloquent Models
 │   ├── Providers/
-│   ├── Repository/                 # Data access layer
-│   └── Services/                   # Business logic layer
+│   ├── Repository/                 # Data access layer (12 repos)
+│   └── Services/                   # Business logic layer (12 services)
+│       ├── EventService.php
+│       ├── EventParticipantService.php
+│       ├── DevelopmentService.php
+│       ├── KasService.php
+│       ├── SocialAssistanceService.php
+│       ├── VillageProfileService.php
+│       ├── FileService.php
+│       ├── UserService.php
+│       └── ...
 │
 ├── resources/                      # Vue 3 Frontend
 │   ├── js/
@@ -157,14 +166,19 @@ Browser → Vue Router → Page Component → API Client (Axios)
                                          Laravel API
                                      (auth:sanctum)
                                               ↓
-                                     Controller → Action/Service → Repository → Model → DB
-                                              ↓
-                                     ResponseHelper + API Resource
+                          ┌──────────────────────────────┐
+                          │  Controller (thin)            │
+                          │    → FormRequest (validation) │
+                          │    → Action/Service (logic)    │
+                          │    → ResponseHelper + Resource │
+                          └──────────────────────────────┘
                                               ↓
                                           JSON Response
                                               ↓
                                      Vue Component → Render
 ```
+
+> **Security:** Token abilities tidak digunakan untuk authorization — semua akses dikontrol via `RoleMiddleware` + role enum. Token tidak pernah di-log, bahkan secara parsial.
 
 ---
 

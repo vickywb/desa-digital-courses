@@ -2,8 +2,7 @@
     "agents": [
         "opencode"
     ],
-    "editors": [
-        "vscode"
-    ],
-    "guidelines": []
+    "herd_mcp": false,
+    "mcp": true,
+    "sail": false
 }
