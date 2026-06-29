@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class File extends Model
@@ -18,10 +20,10 @@ class File extends Model
         'file_size',
     ];
 
-    // Relasi ke ProfileImage
-    public function villageProfiles(): HasMany
+    // Relasi ke VillageProfile melalui tabel pivot village_profile_files
+    public function villageProfiles(): BelongsToMany
     {
-        return $this->hasMany(VillageProfile::class);
+        return $this->belongsToMany(VillageProfile::class, 'village_profile_files', 'file_id', 'village_profile_id');
     }
 
     // Relasi ke HeadOfFamilyFile

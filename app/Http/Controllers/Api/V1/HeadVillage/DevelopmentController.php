@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -18,7 +20,7 @@ class DevelopmentController extends Controller
 
     public function index()
     {
-        $developments = Development::with('file')->get();
+        $developments = Development::with('file')->paginate(20);
 
         return ResponseHelper::success(
             'Developments retrieved successfully',
@@ -31,9 +33,7 @@ class DevelopmentController extends Controller
     {
         $development = $this->developmentService->createDevelopment($request->validated(), $request->file('image') ?? null);
 
-        return ResponseHelper::success('Development created successfully', [
-            new DevelopmentResource($development),
-        ], 201);
+        return ResponseHelper::success('Development created successfully', new DevelopmentResource($development), 201);
     }
 
     public function show(Development $development)
@@ -49,11 +49,9 @@ class DevelopmentController extends Controller
 
     public function update(DevelopmentUpdateRequest $request, Development $development)
     {
-        $this->developmentService->updateDevelopment($request->validated(), $request->file('image') ?? null, $development);
+        $development = $this->developmentService->updateDevelopment($request->validated(), $request->file('image') ?? null, $development);
 
-        return ResponseHelper::success('Development updated successfully', [
-            new DevelopmentResource($development->fresh()),
-        ], 200);
+        return ResponseHelper::success('Development updated successfully', new DevelopmentResource($development), 200);
     }
 
     public function destroy(Development $development)

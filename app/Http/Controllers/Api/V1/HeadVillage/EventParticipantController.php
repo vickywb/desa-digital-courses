@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -9,19 +11,18 @@ use App\Http\Requests\EventParticipantUpdateRequest;
 use App\Http\Resources\EventParticipantResource;
 use App\Models\Event;
 use App\Models\EventParticipant;
-use App\Services\FileService;
+use App\Services\EventParticipantService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class EventParticipantController extends Controller
 {
-    public function __construct(private FileService $fileService) {}
+    public function __construct(
+        private EventParticipantService $eventParticipantService,
+    ) {}
 
     public function index(Event $event)
     {
-        $participants = $event->eventParticipants()
-            ->with(['event', 'headOfFamily', 'familyMember', 'members.familyMember', 'file'])
-            ->get();
+        $participants = $this->eventParticipantService->getParticipantByEvent($event);
 
         return ResponseHelper::success(
             'Event participants retrieved successfully',
@@ -35,11 +36,7 @@ class EventParticipantController extends Controller
         $headOfFamily = $request->user()->headOfFamily;
         abort_unless($headOfFamily, 403);
 
-        $participants = EventParticipant::query()
-            ->where('head_of_family_id', $headOfFamily->id)
-            ->with(['event.file', 'headOfFamily', 'familyMember', 'members.familyMember', 'file'])
-            ->latest()
-            ->get();
+        $participants = $this->eventParticipantService->getMyParticipations($headOfFamily);
 
         return ResponseHelper::success(
             'My event participants retrieved successfully',
@@ -57,40 +54,21 @@ class EventParticipantController extends Controller
         $memberIds = $data['member_ids'];
         unset($data['member_ids']);
 
-        $participant = DB::transaction(function () use ($data, $memberIds, $event, $headOfFamily, $request) {
-            $fileId = $request->hasFile('proof')
-                ? $this->fileService->handleUploadAndSave($request->file('proof'), 'file/event-proof')?->id
-                : null;
-
-            $firstFamilyMemberId = null;
-            foreach ($memberIds as $mid) {
-                if ($mid !== 'head') {
-                    $firstFamilyMemberId = $mid;
-                    break;
-                }
+        // Validasi bahwa semua member_ids milik keluarga yang sedang login
+        $familyMemberIds = $headOfFamily->familyMembers()->pluck('id')->toArray();
+        foreach ($memberIds as $mid) {
+            if ($mid !== 'head' && ! in_array($mid, $familyMemberIds)) {
+                abort(422, 'Salah satu anggota keluarga tidak valid.');
             }
+        }
 
-            $totalPrice = (float) $event->price * (int) $data['quantity'];
-
-            $participant = EventParticipant::create([
-                'event_id' => $event->id,
-                'head_of_family_id' => $headOfFamily->id,
-                'family_member_id' => $firstFamilyMemberId,
-                'file_id' => $fileId,
-                'quantity' => $data['quantity'],
-                'total_price' => $totalPrice,
-                'payment_status' => $data['payment_status'],
-            ]);
-
-            foreach ($memberIds as $mid) {
-                $participant->members()->create([
-                    'member_type' => $mid === 'head' ? 'head_of_family' : 'family_member',
-                    'family_member_id' => $mid === 'head' ? null : $mid,
-                ]);
-            }
-
-            return $participant;
-        });
+        $participant = $this->eventParticipantService->store(
+            $event,
+            $headOfFamily,
+            $data,
+            $memberIds,
+            $request->hasFile('proof') ? $request->file('proof') : null,
+        );
 
         $participant->load(['event', 'headOfFamily', 'familyMember', 'members.familyMember', 'file']);
 
@@ -118,8 +96,7 @@ class EventParticipantController extends Controller
     {
         abort_unless($participant->event_id === $event->id, 404);
 
-        $participant->fill($request->validated());
-        $participant->save();
+        $participant = $this->eventParticipantService->update($request->validated(), $participant);
         $participant->load(['event', 'headOfFamily', 'familyMember', 'members.familyMember', 'file']);
 
         return ResponseHelper::success(
@@ -129,17 +106,17 @@ class EventParticipantController extends Controller
         );
     }
 
-    public function destroy(Event $event, EventParticipant $participant)
+    public function destroy(Request $request, Event $event, EventParticipant $participant)
     {
         abort_unless($participant->event_id === $event->id, 404);
 
-        DB::transaction(function () use ($participant) {
-            $fileId = $participant->file_id;
-            $participant->delete();
-            if ($fileId) {
-                $this->fileService->deleteFile($fileId);
-            }
-        });
+        // Jika diakses oleh head_of_family, pastikan miliknya sendiri
+        $headOfFamily = $request->user()->headOfFamily;
+        if ($headOfFamily) {
+            abort_unless($participant->head_of_family_id === $headOfFamily->id, 403);
+        }
+
+        $this->eventParticipantService->destroy($participant);
 
         return ResponseHelper::success(
             'Event participant cancelled successfully',

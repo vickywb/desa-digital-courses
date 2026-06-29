@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -12,7 +14,7 @@ class HeadOfFamilyController extends Controller
 {
     public function index()
     {
-        $headOfFamilies = HeadOfFamily::with('file')->withCount('familyMembers')->get();
+        $headOfFamilies = HeadOfFamily::with('file')->withCount('familyMembers')->paginate(20);
 
         return ResponseHelper::success(
             'Head of families retrieved successfully',
@@ -35,7 +37,7 @@ class HeadOfFamilyController extends Controller
     public function update(UpdateHeadOfFamilyRequest $request, HeadOfFamily $headFamily)
     {
         $headFamily->update($request->validated());
-        $headFamily->refresh()->load('file');
+        $headFamily = $headFamily->fresh('file');
 
         return ResponseHelper::success(
             'Head of family updated successfully',

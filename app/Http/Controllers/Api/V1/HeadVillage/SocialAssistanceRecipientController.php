@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -11,6 +13,7 @@ use App\Models\SocialAssistance;
 use App\Models\SocialAssistanceRecipient;
 use App\Services\SocialAssistanceRecipientService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SocialAssistanceRecipientController extends Controller
 {
@@ -22,7 +25,7 @@ class SocialAssistanceRecipientController extends Controller
     {
         $recipients = $socialAssistance->recipients()
             ->with(['socialAssistance.file', 'headOfFamily.file', 'file'])
-            ->get();
+            ->paginate(20);
 
         return ResponseHelper::success(
             'Social assistance recipients retrieved successfully',
@@ -40,7 +43,7 @@ class SocialAssistanceRecipientController extends Controller
             ->where('head_of_family_id', $headOfFamily->id)
             ->with(['socialAssistance.file', 'headOfFamily.file', 'file'])
             ->latest()
-            ->get();
+            ->paginate(20);
 
         return ResponseHelper::success(
             'My social assistance recipients retrieved successfully',
@@ -69,14 +72,28 @@ class SocialAssistanceRecipientController extends Controller
         $headOfFamily = $request->user()->headOfFamily;
         abort_unless($headOfFamily, 403);
 
-        abort_if(! $socialAssistance->is_available, 422, 'Bantuan sosial ini sudah habis');
+        $recipient = DB::transaction(function () use ($request, $socialAssistance, $headOfFamily) {
+            $lockedAssistance = SocialAssistance::where('id', $socialAssistance->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $recipient = $this->socialAssistanceRecipientService->createRecipient(
-            $request->validated(),
-            $socialAssistance,
-            $headOfFamily->id,
-            $request->file('proof'),
-        );
+            abort_if(! $lockedAssistance->is_available, 422, 'Bantuan sosial ini sudah habis');
+
+            $existing = SocialAssistanceRecipient::query()
+                ->where('social_assistance_id', $lockedAssistance->id)
+                ->where('head_of_family_id', $headOfFamily->id)
+                ->lockForUpdate()
+                ->exists();
+
+            abort_if($existing, 409, 'Kamu sudah mendaftar bantuan sosial ini');
+
+            return $this->socialAssistanceRecipientService->createRecipient(
+                $request->validated(),
+                $lockedAssistance,
+                $headOfFamily->id,
+                $request->file('proof'),
+            );
+        });
 
         return ResponseHelper::success(
             'Social assistance recipient created successfully',
@@ -104,10 +121,6 @@ class SocialAssistanceRecipientController extends Controller
 
         $recipient->fill($request->validated());
         $recipient->save();
-
-        if ($request->status === 'approved') {
-            $socialAssistance->update(['is_available' => false]);
-        }
 
         $recipient->load(['socialAssistance.file', 'headOfFamily.file', 'file']);
 

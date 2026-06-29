@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,8 +24,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required_without:username|string|email',
-            'username' => 'required_without:email|string|min:3',
+            'email' => 'required_without_all:username,identity_number|string|email',
+            'username' => 'required_without_all:email,identity_number|string|min:3',
+            'identity_number' => 'required_without_all:email,username|string|max:50',
             'password' => 'required|string|min:8',
         ];
     }
@@ -31,8 +34,9 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required_without' => 'The email or username field is required.',
-            'username.required_without' => 'The email or username field is required.',
+            'email.required_without_all' => 'The email, username, or identity number field is required.',
+            'username.required_without_all' => 'The email, username, or identity number field is required.',
+            'identity_number.required_without_all' => 'The email, username, or identity number field is required.',
         ];
     }
 }

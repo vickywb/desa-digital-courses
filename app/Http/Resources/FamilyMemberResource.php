@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -20,7 +22,7 @@ class FamilyMemberResource extends JsonResource
             'email' => $this->email,
             'identity_number' => $this->identity_number,
             'gender' => $this->gender,
-            'date_of_birth' => $this->date_of_birth->format('d-m-Y H:i:s'),
+            'date_of_birth' => $this->date_of_birth?->format('d-m-Y H:i:s'),
             'phone_number' => $this->phone_number,
             'occupation' => $this->occupation,
             'marital_status' => $this->marital_status,

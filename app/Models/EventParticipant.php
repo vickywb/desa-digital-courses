@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -22,9 +24,12 @@ class EventParticipant extends Model
         'payment_status',
     ];
 
-    protected $casts = [
-        'total_price' => 'string',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'total_price' => 'decimal:2',
+        ];
+    }
 
     public function event(): BelongsTo
     {

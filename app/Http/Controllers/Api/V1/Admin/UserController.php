@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\Role;
@@ -18,21 +20,29 @@ class UserController extends Controller
     public function __construct(
         private UserService $userService,
         private UserRepository $userRepository
-    )
-    {}
+    ) {}
 
     public function index()
     {
         $users = $this->userRepository->get([
-            'with' => ['headOfFamily']
-        ]);
+            'with' => ['headOfFamily'],
+        ], 20);
 
-        return ResponseHelper::success('Users retrived successfully', new UserCollection($users), 200);
+        return ResponseHelper::success('Users retrieved successfully', new UserCollection($users), 200);
     }
 
     public function show(string $id)
     {
-        //
+        $user = $this->userRepository->get([
+            'with' => ['headOfFamily'],
+            'id' => $id,
+        ])->first();
+
+        if (! $user) {
+            return ResponseHelper::error('User not found.', null, 404);
+        }
+
+        return ResponseHelper::success('User retrieved successfully', new UserResource($user), 200);
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -43,9 +53,15 @@ class UserController extends Controller
                 Role::from($request->validated('role'))
             );
 
-            LoggerHelper::info('User role updated successfully.', [
-                'user_id'  => $user->id,
+            if ($request->has('is_active')) {
+                $updatedUser->update(['is_active' => $request->boolean('is_active')]);
+                $updatedUser = $updatedUser->fresh();
+            }
+
+            LoggerHelper::info('User updated successfully.', [
+                'user_id' => $user->id,
                 'new_role' => $updatedUser->role->value,
+                'is_active' => $updatedUser->is_active,
             ]);
 
             return ResponseHelper::success(
@@ -55,13 +71,13 @@ class UserController extends Controller
             );
 
         } catch (\Throwable $e) {
-            
-            LoggerHelper::error('Failed to update user role.', [
-                'error'   => $e->getMessage(),
+
+            LoggerHelper::error('Failed to update user.', [
+                'error' => $e->getMessage(),
                 'user_id' => $user->id,
             ]);
 
-            return ResponseHelper::error('Failed to update user role.', null, 500);
+            return ResponseHelper::error('Failed to update user.', null, 500);
         }
     }
 }

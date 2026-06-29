@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -18,7 +20,7 @@ class EventController extends Controller
 
     public function index()
     {
-        $events = Event::with('file')->get();
+        $events = Event::with('file')->paginate(20);
 
         return ResponseHelper::success(
             'Events retrieved successfully',
@@ -31,9 +33,7 @@ class EventController extends Controller
     {
         $event = $this->eventService->createEvent($request->validated(), $request->file('image') ?? null);
 
-        return ResponseHelper::success('Event created successfully', [
-            new EventResource($event),
-        ], 201);
+        return ResponseHelper::success('Event created successfully', new EventResource($event), 201);
     }
 
     public function show(Event $event)
@@ -49,11 +49,9 @@ class EventController extends Controller
 
     public function update(EventUpdateRequest $request, Event $event)
     {
-        $this->eventService->updateEvent($request->validated(), $request->file('image') ?? null, $event);
+        $event = $this->eventService->updateEvent($request->validated(), $request->file('image') ?? null, $event);
 
-        return ResponseHelper::success('Event updated successfully', [
-            new EventResource($event->fresh()),
-        ], 200);
+        return ResponseHelper::success('Event updated successfully', new EventResource($event), 200);
     }
 
     public function destroy(Event $event)

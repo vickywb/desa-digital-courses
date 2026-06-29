@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Models\EventParticipant;
@@ -11,6 +13,7 @@ class EventParticipantRepository
     public function save(EventParticipant $eventParticipant)
     {
         $eventParticipant->save();
-        return $eventParticipant;
+
+        return $eventParticipant->fresh();
     }
 }

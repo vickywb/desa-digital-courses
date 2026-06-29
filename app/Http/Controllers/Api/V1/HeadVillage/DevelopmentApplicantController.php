@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -8,6 +10,7 @@ use App\Http\Resources\DevelopmentApplicantResource;
 use App\Models\Development;
 use App\Models\DevelopmentApplicant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DevelopmentApplicantController extends Controller
 {
@@ -15,7 +18,7 @@ class DevelopmentApplicantController extends Controller
     {
         $applicants = $development->applicants()
             ->with(['development.file', 'user.headOfFamily'])
-            ->get();
+            ->paginate(20);
 
         return ResponseHelper::success(
             'Development applicants retrieved successfully',
@@ -51,7 +54,7 @@ class DevelopmentApplicantController extends Controller
             ->where('user_id', $request->user()->id)
             ->with(['development.file', 'user'])
             ->latest()
-            ->get();
+            ->paginate(20);
 
         return ResponseHelper::success(
             'My development applicants retrieved successfully',
@@ -65,21 +68,30 @@ class DevelopmentApplicantController extends Controller
         $headOfFamily = $request->user()->headOfFamily;
         abort_unless($headOfFamily, 403);
 
-        $existing = DevelopmentApplicant::query()
-            ->where('development_id', $development->id)
-            ->where('user_id', $request->user()->id)
-            ->where('status', '!=', 'rejected')
-            ->first();
+        $applicant = DB::transaction(function () use ($request, $development) {
+            $lockedDevelopment = Development::where('id', $development->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        abort_if($existing, 409, 'Kamu sudah mendaftar pembangunan ini');
+            abort_if($lockedDevelopment->status !== 'planned', 422, 'Pembangunan ini sudah tidak menerima pendaftaran');
 
-        abort_if($development->status !== 'planned', 422, 'Pembangunan ini sudah tidak menerima pendaftaran');
+            $existing = DevelopmentApplicant::query()
+                ->where('development_id', $lockedDevelopment->id)
+                ->where('user_id', $request->user()->id)
+                ->where('status', '!=', 'rejected')
+                ->lockForUpdate()
+                ->exists();
 
-        $applicant = DevelopmentApplicant::create([
-            'development_id' => $development->id,
-            'user_id' => $request->user()->id,
-            'status' => 'pending',
-        ]);
+            abort_if($existing, 409, 'Kamu sudah mendaftar pembangunan ini');
+
+            $applicant = DevelopmentApplicant::create([
+                'development_id' => $lockedDevelopment->id,
+                'user_id' => $request->user()->id,
+                'status' => 'pending',
+            ]);
+
+            return $applicant;
+        });
 
         $applicant->load(['development.file', 'user']);
 

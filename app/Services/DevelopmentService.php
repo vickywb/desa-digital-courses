@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Helpers\LoggerHelper;
@@ -33,7 +35,7 @@ class DevelopmentService
                 'title' => $development->title,
             ]);
 
-            return $development->fresh();
+            return $development;
 
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to create development',
@@ -58,7 +60,7 @@ class DevelopmentService
                     'file_id' => $newFileId,
                 ]);
 
-                $this->developmentRepository->save($development);
+                $development = $this->developmentRepository->save($development);
 
                 return $development;
             });
@@ -68,7 +70,7 @@ class DevelopmentService
                 'title' => $development->title,
             ]);
 
-            return $development->fresh();
+            return $development;
 
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to update development',

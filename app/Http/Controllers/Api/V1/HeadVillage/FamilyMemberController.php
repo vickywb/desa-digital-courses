@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -16,7 +18,7 @@ class FamilyMemberController extends Controller
     {
         $members = $headFamily->familyMembers()
             ->with(['file', 'headOfFamily'])
-            ->get();
+            ->paginate(20);
 
         return ResponseHelper::success(
             'Family members retrieved successfully',
@@ -55,7 +57,7 @@ class FamilyMemberController extends Controller
         abort_unless($member->head_of_family_id === $headFamily->id, 404);
 
         $member->update($request->validated());
-        $member->refresh()->load(['file', 'headOfFamily']);
+        $member = $member->fresh(['file', 'headOfFamily']);
 
         return ResponseHelper::success(
             'Family member updated successfully',

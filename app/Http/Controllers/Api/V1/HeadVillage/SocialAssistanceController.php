@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\HeadVillage;
 
 use App\Helpers\ResponseHelper;
@@ -16,7 +18,7 @@ class SocialAssistanceController extends Controller
 
     public function index()
     {
-        $socialAssistances = SocialAssistance::with('file')->get();
+        $socialAssistances = SocialAssistance::with('file')->paginate(20);
 
         return ResponseHelper::success(
             'Social assistances retrieved successfully',
@@ -47,10 +49,10 @@ class SocialAssistanceController extends Controller
 
     public function update(SocialAssistanceUpdateRequest $request, SocialAssistance $socialAssistance)
     {
-        $this->socialAssistanceService->updateSocialAssistance($request->validated(), $request->file('image') ?? null, $socialAssistance);
+        $socialAssistance = $this->socialAssistanceService->updateSocialAssistance($request->validated(), $request->file('image') ?? null, $socialAssistance);
 
         return ResponseHelper::success('Social assistance updated successfully', [
-            new SocialAssistanceResource($socialAssistance->fresh()),
+            new SocialAssistanceResource($socialAssistance),
         ], 200);
     }
 
