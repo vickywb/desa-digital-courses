@@ -14,18 +14,15 @@ class LoginUserAction
     {
         $user = $this->findUserByIdentifier($identifier);
 
-        if (! $user || $user->is_active === false || ! Hash::check($password, $user->password)) {
-            LoggerHelper::warning('Login failed. Incorrect identifier or password', [
-                'identifier' => $identifier,
-            ]);
+        if (! $user || ! $user->is_active || ! Hash::check($password, $user->password)) {
+            LoggerHelper::warning('Login failed. Incorrect credentials.');
             throw new \Exception('Username or password is incorrect.');
         }
 
-        $token = $user->createToken('auth_token', [$user->role->value])->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         LoggerHelper::info('User successfully logged in.', [
             'user_id' => $user->id,
-            'token' => substr($token, 0, 5).'...'.substr($token, -5),
         ]);
 
         return [
@@ -36,10 +33,18 @@ class LoginUserAction
 
     private function findUserByIdentifier(string $identifier): ?User
     {
-        return User::where('email', $identifier)
-            ->orWhere('username', $identifier)
-            ->orWhereHas('headOfFamily', function ($query) use ($identifier) {
+        $user = User::where('email', $identifier)->first();
+
+        if (! $user) {
+            $user = User::where('username', $identifier)->first();
+        }
+
+        if (! $user) {
+            $user = User::whereHas('headOfFamily', function ($query) use ($identifier) {
                 $query->where('identity_number', $identifier);
             })->first();
+        }
+
+        return $user;
     }
 }
