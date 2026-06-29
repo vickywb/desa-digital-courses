@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             DevelopmentSeeder::class,
             DevelopmentApplicantSeeder::class,
             VillageProfileSeeder::class,
+            KasSeeder::class,
         ]);
     }
 }
