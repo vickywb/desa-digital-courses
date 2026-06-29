@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
-Route::post('register', [AuthController::class, 'register']);
+Route::post('register', [AuthController::class, 'register'])->middleware('throttle:6,60');
 
 // Auth routes (semua role) — protected
 Route::middleware('auth:sanctum')
