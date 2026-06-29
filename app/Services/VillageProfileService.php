@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Helpers\LoggerHelper;
@@ -55,17 +57,24 @@ class VillageProfileService
                 $villageProfile->fill($data);
                 $villageProfile = $this->villageProfileRepository->save($villageProfile);
 
-                $oldFileIds = $villageProfile->files()->pluck('files.id')->toArray();
+                if (! empty($images)) {
+                    $oldFileIds = $villageProfile->files()->pluck('files.id')->toArray();
 
-                foreach ($oldFileIds as $oldFileId) {
-                    $this->fileService->deleteFile($oldFileId);
-                }
+                    // Upload file baru dulu sebelum hapus yang lama
+                    $newFileIds = [];
+                    foreach ($images as $image) {
+                        $fileId = $this->fileService->handleUploadAndSave($image, 'file/village-profiles')?->id;
+                        if ($fileId) {
+                            $newFileIds[] = $fileId;
+                            $villageProfile->villageProfileFiles()->create(['file_id' => $fileId]);
+                        }
+                    }
 
-                $villageProfile->villageProfileFiles()->delete();
-
-                foreach ($images as $image) {
-                    $fileId = $this->fileService->handleUploadAndSave($image, 'file/village-profiles')?->id;
-                    $villageProfile->villageProfileFiles()->create(['file_id' => $fileId]);
+                    // Hapus pivot & file lama setelah upload sukses
+                    $villageProfile->villageProfileFiles()->whereIn('file_id', $oldFileIds)->delete();
+                    foreach ($oldFileIds as $oldFileId) {
+                        $this->fileService->deleteFile($oldFileId);
+                    }
                 }
 
                 LoggerHelper::info('Village profile updated successfully', [
@@ -103,6 +112,8 @@ class VillageProfileService
                     'village_profile_id' => $villageProfile?->id,
                     'name' => $villageProfile->name,
                 ]);
+
+                return $villageProfile;
             });
         } catch (\Throwable $th) {
             LoggerHelper::error('Failed to delete village profile', [

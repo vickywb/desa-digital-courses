@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Helpers\LoggerHelper;
@@ -44,7 +46,7 @@ class KasService
                 ]);
             }
 
-            return $kas->fresh();
+            return $kas;
         });
     }
 }

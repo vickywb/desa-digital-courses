@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Helpers\LoggerHelper;
 use App\Models\Event;
 use App\Repository\EventRepository;
-use App\Services\FileService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -16,10 +17,10 @@ class EventService
         private FileService $fileService
     ) {}
 
-    public function createEvent (array $data, ?UploadedFile $image = null): Event
+    public function createEvent(array $data, ?UploadedFile $image = null): Event
     {
         try {
-            return DB::transaction(function() use ($data, $image) {
+            return DB::transaction(function () use ($data, $image) {
                 $fileId = $this->fileService->handleUploadAndSave($image, 'file/events')?->id;
 
                 $event = $this->eventRepository->save(new Event([
@@ -31,12 +32,12 @@ class EventService
                     'event_id' => $event->id,
                     'title' => $event->title,
                 ]);
-                
-                return $event->fresh();
+
+                return $event;
             });
 
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to create event', 
+            LoggerHelper::error('Failed to create event',
                 ['error_message' => $th->getMessage()]
             );
 
@@ -54,8 +55,8 @@ class EventService
                     : $oldFileId;
 
                 $event->fill([
-                    ...$data, 
-                    'file_id' => $newFileId
+                    ...$data,
+                    'file_id' => $newFileId,
                 ]);
 
                 $event = $this->eventRepository->save($event);
@@ -66,20 +67,20 @@ class EventService
 
                 LoggerHelper::info('Event updated successfully', [
                     'event_id' => $event->id,
-                    'title'    => $event->title,
+                    'title' => $event->title,
                 ]);
 
-                return $event->fresh();
+                return $event;
             });
 
-            } catch (\Throwable $th) {
-                LoggerHelper::error('Failed to update event', [
-                    'event_id' => $event->id,
-                    'error_message' => $th->getMessage(),
-                ]);
+        } catch (\Throwable $th) {
+            LoggerHelper::error('Failed to update event', [
+                'event_id' => $event->id,
+                'error_message' => $th->getMessage(),
+            ]);
 
-                throw $th;
-            }
+            throw $th;
+        }
     }
 
     public function deleteEvent(Event $event): void

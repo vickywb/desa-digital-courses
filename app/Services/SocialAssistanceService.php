@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Helpers\LoggerHelper;
@@ -18,13 +20,13 @@ class SocialAssistanceService
     public function createSocialAssistance(array $data, ?UploadedFile $image = null): SocialAssistance
     {
         try {
-            $socialAssistance = DB::transaction(function () use ($data, $image){
+            $socialAssistance = DB::transaction(function () use ($data, $image) {
                 $fileId = $image ? $this->fileService->handleUploadAndSave($image, 'file/social-assistance')?->id : null;
                 $socialAssistance = $this->socialAssistanceRepository->save(new SocialAssistance([
                     ...$data,
                     'file_id' => $fileId,
                 ]));
-                
+
                 return $socialAssistance;
             });
 
@@ -33,10 +35,10 @@ class SocialAssistanceService
                 'title' => $socialAssistance->title,
             ]);
 
-            return $socialAssistance->fresh();
+            return $socialAssistance;
 
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to create social assistance', 
+            LoggerHelper::error('Failed to create social assistance',
                 ['error_message' => $th->getMessage()]
             );
 
@@ -58,7 +60,7 @@ class SocialAssistanceService
                     'file_id' => $newFileId,
                 ]);
 
-                $this->socialAssistanceRepository->save($socialAssistance);
+                $socialAssistance = $this->socialAssistanceRepository->save($socialAssistance);
 
                 return $socialAssistance;
             });
@@ -68,10 +70,10 @@ class SocialAssistanceService
                 'title' => $socialAssistance->title,
             ]);
 
-            return $socialAssistance->fresh();
+            return $socialAssistance;
 
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to update social assistance', 
+            LoggerHelper::error('Failed to update social assistance',
                 ['error_message' => $th->getMessage()]
             );
 
@@ -81,7 +83,7 @@ class SocialAssistanceService
 
     public function deleteSocialAssistance(SocialAssistance $socialAssistance): void
     {
-       try {
+        try {
             DB::transaction(function () use ($socialAssistance) {
                 $fileId = $socialAssistance->file_id;
 
@@ -91,13 +93,13 @@ class SocialAssistanceService
                     $this->fileService->deleteFile($fileId);
                 }
 
-                LoggerHelper::info('Development deleted successfully', [
-                    'development_id' => $socialAssistance->id,
-                    'title'          => $socialAssistance->title,
+                LoggerHelper::info('Social assistance deleted successfully', [
+                    'social_assistance_id' => $socialAssistance->id,
+                    'title' => $socialAssistance->title,
                 ]);
             });
         } catch (\Throwable $th) {
-            LoggerHelper::error('Failed to delete development', [
+            LoggerHelper::error('Failed to delete social assistance', [
                 'error_message' => $th->getMessage(),
             ]);
             throw $th;
