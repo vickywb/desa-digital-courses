@@ -112,19 +112,6 @@ const sidebarItems = computed(() => {
                             <SidebarItem v-for="item in sidebarItems" :key="item.path || item.label" :item="item" @close="emit('close')" />
                         </ul>
                     </nav>
-                    <div class="flex items-center justify-between h-[84px] rounded-2xl p-5 mb-4 gap-3 bg-desa-black">
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold leading-5 text-white">Beralih ke Pro</p>
-                            <a href="#"
-                                class="flex items-center font-medium text-sm hover:underline text-desa-soft-green">
-                                Upgrade Plan
-                                <img src="@/assets/images/icons/arrow-right-soft-green.png"
-                                    class="flex size-3 shrink-0 ml-0.5" alt="icon">
-                            </a>
-                        </div>
-                        <img src="@/assets/images/icons/crown-soft-green-background.svg" class="flex size-11 shrink-0"
-                            alt="icon">
-                    </div>
                 </div>
             </div>
         </div>
