@@ -85,7 +85,7 @@ async function handleLogin() {
             >
                 <header class="flex flex-col gap-[32px] items-center">
                     <img
-                        src="/desa-digital/src/assets/images/logos/logo-text.svg"
+                        src="/assets/images/logos/logo-text.svg"
                         alt="icon"
                         class="shrink-0 h-[38px] w-[197px]"
                     />
@@ -131,7 +131,7 @@ async function handleLogin() {
                         </p>
                         <div class="relative">
                             <img
-                                src="/desa-digital/src/assets/images/icons/crown-secondary-green.svg"
+                                src="/assets/images/icons/crown-secondary-green.svg"
                                 alt="icon"
                                 class="shrink-0 h-[24px] w-[24px] absolute transition-all duration-300"
                                 :class="
@@ -141,7 +141,7 @@ async function handleLogin() {
                                 "
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/crown-dark-green.svg"
+                                src="/assets/images/icons/crown-dark-green.svg"
                                 alt="icon"
                                 class="shrink-0 h-[24px] w-[24px] transition-all duration-300"
                                 :class="
@@ -180,7 +180,7 @@ async function handleLogin() {
                         </p>
                         <div class="relative">
                             <img
-                                src="/desa-digital/src/assets/images/icons/profile-circle-secondary-green.svg"
+                                src="/assets/images/icons/profile-circle-secondary-green.svg"
                                 alt="icon"
                                 class="shrink-0 h-[24px] w-[24px] absolute transition-all duration-300"
                                 :class="
@@ -190,7 +190,7 @@ async function handleLogin() {
                                 "
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/profile-circle-dark-green.svg"
+                                src="/assets/images/icons/profile-circle-dark-green.svg"
                                 alt="icon"
                                 class="shrink-0 h-[24px] w-[24px] transition-all duration-300"
                                 :class="
@@ -219,12 +219,12 @@ async function handleLogin() {
                                 class="peer w-full h-[56px] rounded-2xl pl-[48px] pr-4 border-[1.5px] border-desa-background font-medium leading-5 focus:ring-[1.5px] focus:ring-desa-dark-green focus:outline-none placeholder:leading-5 placeholder:text-desa-secondary placeholder:font-medium transition-all duration-303"
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/user-secondary-green.svg"
+                                src="/assets/images/icons/user-secondary-green.svg"
                                 alt="icon"
                                 class="absolute shrink-0 size-6 top-1/2 left-4 -translate-y-1/2 opacity-0 peer-placeholder-shown:opacity-100 transition-all duration-300"
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/user-black.svg"
+                                src="/assets/images/icons/user-black.svg"
                                 alt="icon"
                                 class="absolute shrink-0 size-6 top-1/2 left-4 -translate-y-1/2 opacity-100 peer-placeholder-shown:opacity-0 transition-all duration-300"
                             />
@@ -249,12 +249,12 @@ async function handleLogin() {
                                 class="peer w-full h-[56px] rounded-2xl pl-[48px] pr-4 border-[1.5px] border-desa-background font-medium leading-5 focus:ring-[1.5px] focus:ring-desa-dark-green focus:outline-none placeholder:leading-5 placeholder:text-desa-secondary placeholder:font-medium transition-all duration-300 tracking-[0.25rem] placeholder-shown:tracking-normal"
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/key-secondary-green.svg"
+                                src="/assets/images/icons/key-secondary-green.svg"
                                 alt="icon"
                                 class="absolute shrink-0 size-6 top-1/2 left-4 -translate-y-1/2 opacity-0 peer-placeholder-shown:opacity-100 transition-all duration-300"
                             />
                             <img
-                                src="/desa-digital/src/assets/images/icons/key-black.svg"
+                                src="/assets/images/icons/key-black.svg"
                                 alt="icon"
                                 class="absolute shrink-0 size-6 top-1/2 left-4 -translate-y-1/2 opacity-100 peer-placeholder-shown:opacity-0 transition-all duration-300"
                             />
@@ -287,7 +287,7 @@ async function handleLogin() {
                     class="h-full w-[622px] rounded-3xl gradient-vertical pt-[59px] pb-[60px]"
                 >
                     <img
-                        src="/desa-digital/src/assets/images/backgrounds/bg-signin.png"
+                        src="/assets/images/backgrounds/bg-signin.png"
                         class="h-full w-[542px] object-contain mx-auto"
                         alt="banner"
                     />

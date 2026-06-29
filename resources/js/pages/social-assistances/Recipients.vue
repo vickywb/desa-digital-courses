@@ -65,7 +65,7 @@ onMounted(loadRecipients);
         <h1 class="font-semibold text-2xl">Pengajuan Bantuan Sosial</h1>
 
         <div v-if="!items.length" class="flex flex-col items-center justify-center py-20 gap-6">
-            <img src="/desa-digital/src/assets/images/icons/bag-cross-secondary.svg" class="size-[52px]" alt="icon">
+            <img src="/assets/images/icons/bag-cross-secondary.svg" class="size-[52px]" alt="icon">
             <p class="font-medium text-desa-secondary">Belum ada pengajuan bansos</p>
         </div>
 
@@ -79,7 +79,7 @@ onMounted(loadRecipients);
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 min-w-0 flex-1">
                     <p class="font-semibold text-sm sm:text-lg leading-5 sm:leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</p>
                     <p class="hidden sm:flex items-center gap-1 shrink-0">
-                        <img src="/desa-digital/src/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                        <img src="/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
                         <span class="font-medium text-xs sm:text-sm text-desa-secondary whitespace-nowrap">{{ formatToClientTimezone(item.created_at) }}</span>
                     </p>
                 </div>
@@ -102,7 +102,7 @@ onMounted(loadRecipients);
                     <div class="flex flex-col gap-[6px] min-w-0 flex-1">
                         <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.title }}</p>
                         <p class="flex items-center gap-1">
-                            <img src="/desa-digital/src/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                            <img src="/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
                             <span class="font-medium text-sm text-desa-secondary truncate">{{ item.social_assistance?.provider }}</span>
                         </p>
                     </div>
@@ -112,7 +112,7 @@ onMounted(loadRecipients);
                             <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
                         </div>
                         <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow shrink-0">
-                            <img src="/desa-digital/src/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                            <img src="/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                         </div>
                     </div>
                 </div>
@@ -125,14 +125,14 @@ onMounted(loadRecipients);
                         <div class="flex flex-col gap-1">
                             <p class="font-semibold text-lg leading-5 text-desa-black truncate">{{ item.head_of_family?.full_name }}</p>
                             <p class="flex items-center gap-1">
-                                <img src="/desa-digital/src/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
+                                <img src="/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0" alt="icon">
                                 <span class="font-medium text-sm text-desa-secondary truncate">{{ item.head_of_family?.occupation }}</span>
                             </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
                         <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow shrink-0">
-                            <img src="/desa-digital/src/assets/images/icons/receive-square-2-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                            <img src="/assets/images/icons/receive-square-2-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
                             <p class="font-semibold text-lg leading-5 text-desa-dark-green truncate">Rp {{ formatRupiah(item.amount) }}</p>

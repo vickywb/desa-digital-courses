@@ -78,7 +78,7 @@ onMounted(async () => {
                                         <img
                                             :src="
                                                 item.profile_picture?.url ??
-                                                '/desa-digital/src/assets/images/no-image.png'
+                                                '/assets/images/no-image.png'
                                             "
                                             class="w-full h-full object-cover"
                                             alt="photo"
@@ -136,7 +136,7 @@ onMounted(async () => {
                             <img
                                 :src="
                                     item.profile_picture?.url ??
-                                    '/desa-digital/src/assets/images/no-image.png'
+                                    '/assets/images/no-image.png'
                                 "
                                 class="w-full h-full object-cover"
                                 alt="photo"

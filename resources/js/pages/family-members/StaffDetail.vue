@@ -63,7 +63,7 @@ async function deleteMember() {
             <div class="w-full lg:w-[400px] shrink-0 rounded-2xl bg-white p-4 sm:p-6 flex flex-col gap-6 h-fit">
                 <div class="flex flex-col items-center gap-4">
                     <div class="flex size-24 sm:size-28 rounded-full overflow-hidden bg-desa-foreshadow">
-                        <img :src="item.family_member_file?.url ?? '/desa-digital/src/assets/images/no-image.png'"
+                        <img :src="item.family_member_file?.url ?? '/assets/images/no-image.png'"
                             class="w-full h-full object-cover" alt="photo" />
                     </div>
                     <div class="text-center">

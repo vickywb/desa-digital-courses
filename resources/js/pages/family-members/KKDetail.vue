@@ -115,7 +115,7 @@ async function deleteMember() {
                         <img
                             :src="
                                 item.family_member_file?.url ??
-                                '/desa-digital/src/assets/images/no-image.png'
+                                '/assets/images/no-image.png'
                             "
                             class="w-full h-full object-cover"
                             alt="photo"

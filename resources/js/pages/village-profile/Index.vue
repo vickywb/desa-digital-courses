@@ -31,11 +31,11 @@ onMounted(async () => {
             <div v-if="isStaff" class="flex gap-3 w-full sm:w-auto">
                 <button @click="$router.push('/staff/village-profile/edit')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black flex-1 sm:flex-initial justify-center">
                     <p class="font-medium text-white">Ubah Data</p>
-                    <img src="/desa-digital/src/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
                 </button>
                 <button @click="$router.push('/staff/village-profile/create')" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green flex-1 sm:flex-initial justify-center">
                     <p class="font-medium text-white">Create Profile</p>
-                    <img src="/desa-digital/src/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
                 </button>
             </div>
         </div>
@@ -45,7 +45,7 @@ onMounted(async () => {
         </div>
 
         <div v-else-if="!profile" class="flex flex-col flex-1 items-center justify-center gap-6 py-20">
-            <img src="/desa-digital/src/assets/images/icons/user-remove-secondary-green.svg" class="size-20 object-cover" alt="icon">
+            <img src="/assets/images/icons/user-remove-secondary-green.svg" class="size-20 object-cover" alt="icon">
             <p class="font-semibold text-lg text-desa-secondary text-center px-4">Ops, Saat ini kamu belum membuat profile desa</p>
         </div>
 
@@ -54,12 +54,12 @@ onMounted(async () => {
                 <section class="flex flex-col w-full lg:w-[565px] shrink-0 h-fit rounded-3xl p-4 sm:p-6 gap-4 sm:gap-6 bg-white">
                     <div class="flex items-center justify-between">
                         <p class="font-medium leading-5 text-desa-secondary">Nama Desa</p>
-                        <img src="/desa-digital/src/assets/images/icons/building-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
+                        <img src="/assets/images/icons/building-foreshadow-background.svg" class="flex size-12 shrink-0" alt="icon">
                     </div>
                     <div class="flex flex-col gap-[6px]">
                         <h1 class="font-bold text-[32px] leading-10 break-words">{{ profile.name }}</h1>
                         <div class="flex items-center gap-0.5">
-                            <img src="/desa-digital/src/assets/images/icons/location-secondary-green.svg" class="flex size-6 shrink-0" alt="icon">
+                            <img src="/assets/images/icons/location-secondary-green.svg" class="flex size-6 shrink-0" alt="icon">
                             <span class="font-medium text-sm text-desa-secondary">{{ profile.headman }}</span>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ onMounted(async () => {
                     <div class="flex flex-col gap-[14px]">
                         <div class="flex items-center gap-3 w-full shrink-0">
                             <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden shrink-0">
-                                <img src="/desa-digital/src/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="icon">
+                                <img src="/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="icon">
                             </div>
                             <div class="flex flex-col gap-1 min-w-0">
                                 <p class="font-semibold text-lg leading-5 text-desa-black truncate">{{ profile.headman }}</p>
@@ -86,7 +86,7 @@ onMounted(async () => {
                         <hr class="border-desa-background">
                         <div class="flex items-center gap-3">
                             <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow overflow-hidden shrink-0">
-                                <img src="/desa-digital/src/assets/images/icons/profile-2user-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                                <img src="/assets/images/icons/profile-2user-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                             </div>
                             <div class="flex flex-col gap-1 min-w-0">
                                 <p class="font-semibold text-lg leading-5 truncate">{{ profile.people }}</p>
@@ -96,7 +96,7 @@ onMounted(async () => {
                         <hr class="border-desa-background">
                         <div class="flex items-center gap-3">
                             <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow overflow-hidden shrink-0">
-                                <img src="/desa-digital/src/assets/images/icons/tree-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                                <img src="/assets/images/icons/tree-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                             </div>
                             <div class="flex flex-col gap-1 min-w-0">
                                 <p class="font-semibold text-lg leading-5 truncate">{{ profile.agriculture_area }}</p>
@@ -106,7 +106,7 @@ onMounted(async () => {
                         <hr class="border-desa-background">
                         <div class="flex items-center gap-3">
                             <div class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow overflow-hidden shrink-0">
-                                <img src="/desa-digital/src/assets/images/icons/grid-5-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                                <img src="/assets/images/icons/grid-5-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                             </div>
                             <div class="flex flex-col gap-1 min-w-0">
                                 <p class="font-semibold text-lg leading-5 truncate">{{ profile.total_area }}</p>

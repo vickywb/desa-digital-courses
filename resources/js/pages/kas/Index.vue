@@ -37,7 +37,7 @@ function formatRupiah(value) {
             <button v-if="!isCitizen" @click="router.push(`${basePath}/kas/edit`)"
                 class="flex items-center rounded-2xl py-3 px-5 gap-2 bg-desa-dark-green hover:bg-desa-black transition-setup">
                 <p class="font-medium text-white">{{ kas ? 'Edit Kas' : 'Buat Kas' }}</p>
-                <img src="/desa-digital/src/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
+                <img src="/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
             </button>
         </div>
 
@@ -46,7 +46,7 @@ function formatRupiah(value) {
         </div>
 
         <div v-else-if="!kas" class="flex flex-col items-center justify-center gap-6 py-20">
-            <img src="/desa-digital/src/assets/images/icons/wallet-remove-secondary-green.svg" class="size-20 object-cover" alt="icon">
+            <img src="/assets/images/icons/wallet-remove-secondary-green.svg" class="size-20 object-cover" alt="icon">
             <p class="font-semibold text-lg text-desa-secondary text-center px-4">Belum ada data kas desa</p>
         </div>
 
@@ -54,7 +54,7 @@ function formatRupiah(value) {
             <div class="rounded-3xl p-6 sm:p-8 gradient-vertical flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div class="flex size-[72px] sm:size-[86px] rounded-2xl items-center justify-center bg-white/20">
-                        <img src="/desa-digital/src/assets/images/icons/wallet-check-dark-green.svg" class="flex size-10 sm:size-12 shrink-0" alt="icon">
+                        <img src="/assets/images/icons/wallet-check-dark-green.svg" class="flex size-10 sm:size-12 shrink-0" alt="icon">
                     </div>
                     <div class="flex flex-col gap-1 text-white">
                         <p class="font-medium text-sm text-desa-lime">— Total Kas Desa</p>
@@ -72,7 +72,7 @@ function formatRupiah(value) {
                 <div class="rounded-3xl bg-white p-4 sm:p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-3">
                         <div class="flex size-[44px] rounded-2xl items-center justify-center bg-desa-foreshadow">
-                            <img src="/desa-digital/src/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
+                            <img src="/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                         </div>
                         <p class="font-semibold text-lg">Iuran Per Bulan</p>
                     </div>
@@ -115,7 +115,7 @@ function formatRupiah(value) {
                 <div class="rounded-3xl bg-white p-4 sm:p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-3">
                         <div class="flex size-[44px] rounded-2xl items-center justify-center bg-desa-foreshadow">
-                            <img src="/desa-digital/src/assets/images/icons/wallet-3-secondary-green.svg" class="flex size-6 shrink-0" alt="icon">
+                            <img src="/assets/images/icons/wallet-3-secondary-green.svg" class="flex size-6 shrink-0" alt="icon">
                         </div>
                         <p class="font-semibold text-lg">Pengeluaran</p>
                     </div>

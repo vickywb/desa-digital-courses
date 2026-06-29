@@ -45,7 +45,7 @@ onMounted(async () => {
         <div class="flex flex-col gap-6 p-6 md:p-8 bg-white rounded-3xl gradient-vertical">
             <div class="flex items-center gap-4">
                 <div class="flex size-16 md:size-20 rounded-full overflow-hidden bg-white/20 shrink-0">
-                    <img src="/desa-digital/src/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="photo">
+                    <img src="/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="photo">
                 </div>
                 <div class="flex flex-col gap-1 text-white">
                     <p class="font-medium text-sm text-desa-lime">Selamat Datang</p>
@@ -59,7 +59,7 @@ onMounted(async () => {
             <router-link to="/warga/kas" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total Kas</p>
-                    <img src="/desa-digital/src/assets/images/icons/location-secondary-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/location-secondary-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-dark-green">
                     {{ kas ? 'Rp ' + Number(kas.total_balance).toLocaleString('id-ID') : '-' }}
@@ -70,7 +70,7 @@ onMounted(async () => {
             <router-link to="/warga/kas" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pengeluaran Kas</p>
-                    <img src="/desa-digital/src/assets/images/icons/grid-5-dark-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/grid-5-dark-green.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10 text-desa-red">
                     {{ kas ? 'Rp ' + Number(kas.monthly_expense).toLocaleString('id-ID') : '-' }}
@@ -83,7 +83,7 @@ onMounted(async () => {
             <router-link to="/warga/family-members" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Anggota Keluarga</p>
-                    <img src="/desa-digital/src/assets/images/icons/profil-2user-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/profil-2user-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.anggota }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Total anggota</p>
@@ -92,7 +92,7 @@ onMounted(async () => {
             <router-link to="/warga/events" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Event Desa</p>
-                    <img src="/desa-digital/src/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/calendar-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.events }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Event tersedia</p>
@@ -101,7 +101,7 @@ onMounted(async () => {
             <router-link to="/warga/bansos" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Bantuan Sosial</p>
-                    <img src="/desa-digital/src/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/bag-2-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.bansos }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Bansos tersedia</p>
@@ -110,7 +110,7 @@ onMounted(async () => {
             <router-link to="/warga/pembangunan" class="card flex flex-col rounded-2xl p-3 sm:p-6 gap-2 sm:gap-3 bg-white hover:shadow-md transition-setup">
                 <div class="flex items-center justify-between">
                     <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pembangunan</p>
-                    <img src="/desa-digital/src/assets/images/icons/buildings-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
+                    <img src="/assets/images/icons/buildings-foreshadow-background.svg" class="flex size-8 sm:size-12 shrink-0" alt="icon">
                 </div>
                 <p class="font-semibold text-xl sm:text-[32px] leading-7 sm:leading-10">{{ stats.pembangunan }}</p>
                 <p class="font-medium text-xs sm:text-sm text-desa-secondary">Pembangunan berjalan</p>

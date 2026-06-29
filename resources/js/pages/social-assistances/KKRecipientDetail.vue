@@ -163,7 +163,7 @@ onMounted(async () => {
                         <hr class="border-desa-background" />
                         <div class="point flex items-center gap-3">
                             <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                                <img :src="`/desa-digital/src/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
+                                <img :src="`/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <p class="font-semibold text-lg leading-[22.5px]">{{ item.bank }} - {{ item.account_number }}</p>

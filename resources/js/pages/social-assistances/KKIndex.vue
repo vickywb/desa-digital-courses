@@ -70,7 +70,7 @@ onMounted(async () => {
                         </div>
                         <div class="point flex items-center gap-3">
                             <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                                <img :src="item.is_available ? '/desa-digital/src/assets/images/icons/tick-square-dark-green.svg' : '/desa-digital/src/assets/images/icons/minus-square-red.svg'" alt="icon" class="size-6 shrink-0" />
+                                <img :src="item.is_available ? '/assets/images/icons/tick-square-dark-green.svg' : '/assets/images/icons/minus-square-red.svg'" alt="icon" class="size-6 shrink-0" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <p class="font-semibold text-lg leading-[22.5px]" :class="item.is_available ? 'text-desa-dark-green' : 'text-desa-red'">

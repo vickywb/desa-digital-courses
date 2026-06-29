@@ -55,7 +55,7 @@ onMounted(async () => {
 
         <section id="List-Pengajuan-Bansos" class="flex flex-col gap-[14px]">
             <div v-if="!items.length" class="flex flex-col items-center justify-center py-20 gap-6">
-                <img src="/desa-digital/src/assets/images/icons/bag-cross-secondary.svg" class="size-[52px]" alt="icon">
+                <img src="/assets/images/icons/bag-cross-secondary.svg" class="size-[52px]" alt="icon">
                 <p class="font-medium text-desa-secondary">Belum ada pengajuan bansos</p>
                 <router-link to="/warga/bansos"
                     class="rounded-2xl bg-desa-black py-[18px] px-6 font-medium leading-5 text-white inline-block">
@@ -131,7 +131,7 @@ onMounted(async () => {
                         </div>
                         <div class="point flex items-center gap-3">
                             <div class="p-[14px] shrink-0 bg-desa-foreshadow rounded-2xl">
-                                <img :src="`/desa-digital/src/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
+                                <img :src="`/assets/images/logos/kk-${item.bank.toLowerCase()}.png`" alt="icon" class="size-6 shrink-0" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">{{ item.bank }}</p>
