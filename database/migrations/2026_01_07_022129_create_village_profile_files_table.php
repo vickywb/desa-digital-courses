@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('village_profile_files', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('village_profile_id')->constrained('village_profiles')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table profiles
-            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade'); //Relasi ke table files
+            $table->foreignUuid('village_profile_id')->constrained('village_profiles')->onUpdate('cascade')->onDelete('cascade'); // Relasi ke table profiles
+            $table->foreignUuid('file_id')->constrained('files')->onUpdate('cascade')->onDelete('cascade'); // Relasi ke table files
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profile_files');
+        Schema::dropIfExists('village_profile_files');
     }
 };
