@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Helpers;
 
 use Illuminate\Http\JsonResponse;
@@ -14,26 +17,25 @@ class ResponseHelper
         array|object|null $data = null,
         int $statusCode = 200,
         string $status = 'success'
-    ): JsonResponse 
-    {
+    ): JsonResponse {
         // Jika data adalah ResourceCollection (Pagination)
         if ($data instanceof ResourceCollection) {
             $dataArray = $data->toResponse(request())->getData(true);
-            
+
             return response()->json([
-                'status'  => $status,
+                'status' => $status,
                 'message' => $message,
-                'data'    => $dataArray['data'],
-                'meta'    => $dataArray['meta'] ?? null,
-                'links'   => $dataArray['links'] ?? null,
+                'data' => $dataArray['data'],
+                'meta' => $dataArray['meta'] ?? null,
+                'links' => $dataArray['links'] ?? null,
             ], $statusCode);
         }
-        
+
         // Response biasa (non-paginated)
         return response()->json([
-            'status'  => $status,
+            'status' => $status,
             'message' => $message,
-            'data'    => $data,
+            'data' => $data,
         ], $statusCode);
     }
 
@@ -45,12 +47,11 @@ class ResponseHelper
         array|object|null $data = null,
         int $statusCode = 500,
         string $status = 'error'
-    ): JsonResponse 
-    {
+    ): JsonResponse {
         return response()->json([
-            'status'  => $status,
+            'status' => $status,
             'message' => $message,
-            'data'    => $data,
+            'data' => $data,
         ], $statusCode);
     }
 
@@ -60,8 +61,7 @@ class ResponseHelper
     public static function validationError(
         string $message = 'Validation failed',
         array $errors = []
-    ): JsonResponse 
-    {
+    ): JsonResponse {
         return self::error($message, $errors, 422, 'Validation Error');
     }
 
@@ -70,8 +70,7 @@ class ResponseHelper
      */
     public static function unauthorized(
         string $message = 'Unauthorized'
-    ): JsonResponse 
-    {
+    ): JsonResponse {
         return self::error($message, null, 401, 'Unauthorized');
     }
 
@@ -80,8 +79,7 @@ class ResponseHelper
      */
     public static function forbidden(
         string $message = 'Access Denied'
-    ): JsonResponse 
-    {
+    ): JsonResponse {
         return self::error($message, null, 403, 'Forbidden');
     }
 }
