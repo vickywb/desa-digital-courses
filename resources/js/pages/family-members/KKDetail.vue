@@ -2,11 +2,18 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import client from "../../api/client";
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
 const loading = ref(true);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
+
 const isHead = computed(() => route.params.id === "head");
 
 const relationLabel = (rel) => {
@@ -47,16 +54,22 @@ onMounted(async () => {
     }
 });
 
-async function deleteMember() {
-    if (!confirm(`Yakin ingin menghapus ${item.value.full_name}?`)) return;
-    try {
-        await client.delete(
-            `/village-resident/family-members/${item.value.id}`,
-        );
-        router.push("/warga/family-members");
-    } catch {
-        alert("Gagal menghapus anggota keluarga");
-    }
+function deleteMember() {
+    openConfirm(
+        'Hapus Anggota',
+        `Yakin ingin menghapus ${item.value.full_name}?`,
+        'danger',
+        async () => {
+            try {
+                await client.delete(
+                    `/village-resident/family-members/${item.value.id}`,
+                );
+                router.push("/warga/family-members");
+            } catch {
+                alert("Gagal menghapus anggota keluarga");
+            }
+        }
+    );
 }
 </script>
 
@@ -242,4 +255,14 @@ async function deleteMember() {
             </div>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="false"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

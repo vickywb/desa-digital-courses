@@ -3,12 +3,19 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import client from '../../api/client';
 import { formatRupiah, formatToClientTimezone } from '../../helpers/format';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
 const loading = ref(true);
 const saving = ref(false);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
+
 const hasJoined = ref(false);
 const myParticipation = ref(null);
 
@@ -81,19 +88,25 @@ async function purchase() {
     }
 }
 
-async function cancel() {
-    if (!confirm('Yakin ingin membatalkan partisipasi?')) return;
-    saving.value = true;
-    try {
-        await client.delete(`/village-resident/events/${route.params.id}/participants/${myParticipation.value.id}`);
-        hasJoined.value = false;
-        myParticipation.value = null;
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Gagal membatalkan';
-        alert(msg);
-    } finally {
-        saving.value = false;
-    }
+function cancel() {
+    openConfirm(
+        'Batalkan Partisipasi',
+        'Yakin ingin membatalkan partisipasi?',
+        'danger',
+        async () => {
+            saving.value = true;
+            try {
+                await client.delete(`/village-resident/events/${route.params.id}/participants/${myParticipation.value.id}`);
+                hasJoined.value = false;
+                myParticipation.value = null;
+            } catch (err) {
+                const msg = err.response?.data?.message ?? 'Gagal membatalkan';
+                alert(msg);
+            } finally {
+                saving.value = false;
+            }
+        }
+    );
 }
 
 function getMemberName(member) {
@@ -285,4 +298,14 @@ function getMemberName(member) {
             </div>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="saving"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

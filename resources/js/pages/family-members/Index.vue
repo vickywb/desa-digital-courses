@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import client from '../../api/client';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const items = ref([]);
@@ -10,6 +11,12 @@ const showModal = ref(false);
 const editMode = ref(''); // 'head_of_family' | 'family_member'
 const editItem = ref(null);
 const saving = ref(false);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
+
 const form = ref({
     full_name: '',
     identity_number: '',
@@ -135,16 +142,21 @@ function closeModal() {
     editItem.value = null;
 }
 
-async function deleteMember(item) {
-    if (!confirm('Delete this family member?')) return;
-
-    try {
-        await client.delete(`/village-staff/head-families/${route.params.id}/members/${item.id}`);
-        items.value = items.value.filter((m) => m.id !== item.id);
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Failed to delete';
-        alert(msg);
-    }
+function deleteMember(item) {
+    openConfirm(
+        'Hapus Anggota',
+        `Yakin ingin menghapus ${item.full_name}?`,
+        'danger',
+        async () => {
+            try {
+                await client.delete(`/village-staff/head-families/${route.params.id}/members/${item.id}`);
+                items.value = items.value.filter((m) => m.id !== item.id);
+            } catch (err) {
+                const msg = err.response?.data?.message ?? 'Failed to delete';
+                alert(msg);
+            }
+        }
+    );
 }
 
 async function saveEdit() {
@@ -414,4 +426,14 @@ function selectClass() {
             </form>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="false"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

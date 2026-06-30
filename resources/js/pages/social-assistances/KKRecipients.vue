@@ -2,8 +2,14 @@
 import { ref, onMounted } from 'vue';
 import client from '../../api/client';
 import { formatRupiah, formatToClientTimezone } from '../../helpers/format';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const items = ref([]);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
 
 const statusClass = (status) => {
     const map = {
@@ -23,18 +29,23 @@ const statusLabel = (status) => {
     return map[status] ?? status;
 };
 
-async function cancelRecipient(id) {
-    if (!confirm('Yakin ingin membatalkan pengajuan ini?')) return;
+function cancelRecipient(id) {
+    const item = items.value.find(i => i.id === id);
+    if (!item) return;
 
-    try {
-        const item = items.value.find(i => i.id === id);
-        if (!item) return;
-
-        await client.delete(`/village-resident/social-assistances/${item.social_assistance_id}/recipients/${id}`);
-        items.value = items.value.filter(i => i.id !== id);
-    } catch {
-        alert('Gagal membatalkan pengajuan');
-    }
+    openConfirm(
+        'Batalkan Pengajuan',
+        'Yakin ingin membatalkan pengajuan ini?',
+        'danger',
+        async () => {
+            try {
+                await client.delete(`/village-resident/social-assistances/${item.social_assistance_id}/recipients/${id}`);
+                items.value = items.value.filter(i => i.id !== id);
+            } catch {
+                alert('Gagal membatalkan pengajuan');
+            }
+        }
+    );
 }
 
 onMounted(async () => {
@@ -143,4 +154,14 @@ onMounted(async () => {
             </router-link>
         </section>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="false"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

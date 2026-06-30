@@ -2,12 +2,19 @@
 import { ref, onMounted } from 'vue';
 import client from '../../api/client';
 import { formatRupiah, formatToClientTimezone } from '../../helpers/format';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const items = ref([]);
 const meta = ref(null);
 const currentPage = ref(1);
 const saving = ref(false);
 const loading = ref(false);
+
+const confirmState = ref({ show: false, title: '', message: '', variant: 'primary', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
 
 const statusClass = (status) => {
     const map = {
@@ -37,24 +44,31 @@ async function loadRecipients(page = 1) {
     loading.value = false;
 }
 
-async function updateStatus(item, status) {
+function updateStatus(item, status) {
     const label = status === 'approved' ? 'Terima' : 'Tolak';
-    if (!confirm(`${label} pengajuan dari ${item.head_of_family?.full_name ?? 'warga'}?`)) return;
-    saving.value = true;
-    try {
-        const res = await client.put(
-            `/village-staff/social-assistances/${item.social_assistance_id}/recipients/${item.id}`,
-            { status }
-        );
-        const idx = items.value.findIndex(i => i.id === item.id);
-        if (idx >= 0) {
-            items.value[idx] = res.data.data;
+    const variant = status === 'approved' ? 'primary' : 'danger';
+    openConfirm(
+        `${label} Pengajuan`,
+        `${label} pengajuan dari ${item.head_of_family?.full_name ?? 'warga'}?`,
+        variant,
+        async () => {
+            saving.value = true;
+            try {
+                const res = await client.put(
+                    `/village-staff/social-assistances/${item.social_assistance_id}/recipients/${item.id}`,
+                    { status }
+                );
+                const idx = items.value.findIndex(i => i.id === item.id);
+                if (idx >= 0) {
+                    items.value[idx] = res.data.data;
+                }
+            } catch (err) {
+                alert(err.response?.data?.message ?? 'Gagal memperbarui');
+            } finally {
+                saving.value = false;
+            }
         }
-    } catch (err) {
-        alert(err.response?.data?.message ?? 'Gagal memperbarui');
-    } finally {
-        saving.value = false;
-    }
+    );
 }
 
 onMounted(loadRecipients);
@@ -181,4 +195,14 @@ onMounted(loadRecipients);
         </div>
         </template>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="saving"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import client from '../../api/client';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -10,6 +11,12 @@ const applicants = ref([]);
 const loading = ref(true);
 const showModal = ref(false);
 const saving = ref(false);
+
+const confirmState = ref({ show: false, title: '', message: '', variant: 'primary', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
 
 const form = ref({
     title: '',
@@ -49,42 +56,54 @@ async function loadApplicants() {
     }
 }
 
-async function approveApplicant(applicant) {
-    if (!confirm(`Terima lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`)) return;
-    saving.value = true;
-    try {
-        const res = await client.put(
-            `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
-            { status: 'approved' }
-        );
-        const updated = res.data.data;
-        const idx = applicants.value.findIndex(a => a.id === updated.id);
-        if (idx >= 0) applicants.value[idx] = updated;
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Gagal menyetujui';
-        alert(msg);
-    } finally {
-        saving.value = false;
-    }
+function approveApplicant(applicant) {
+    openConfirm(
+        'Terima Lamaran',
+        `Terima lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`,
+        'primary',
+        async () => {
+            saving.value = true;
+            try {
+                const res = await client.put(
+                    `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
+                    { status: 'approved' }
+                );
+                const updated = res.data.data;
+                const idx = applicants.value.findIndex(a => a.id === updated.id);
+                if (idx >= 0) applicants.value[idx] = updated;
+            } catch (err) {
+                const msg = err.response?.data?.message ?? 'Gagal menyetujui';
+                alert(msg);
+            } finally {
+                saving.value = false;
+            }
+        }
+    );
 }
 
-async function rejectApplicant(applicant) {
-    if (!confirm(`Tolak lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`)) return;
-    saving.value = true;
-    try {
-        const res = await client.put(
-            `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
-            { status: 'rejected' }
-        );
-        const updated = res.data.data;
-        const idx = applicants.value.findIndex(a => a.id === updated.id);
-        if (idx >= 0) applicants.value[idx] = updated;
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Gagal menolak';
-        alert(msg);
-    } finally {
-        saving.value = false;
-    }
+function rejectApplicant(applicant) {
+    openConfirm(
+        'Tolak Lamaran',
+        `Tolak lamaran dari ${applicant.user?.head_of_family?.full_name ?? 'warga'}?`,
+        'danger',
+        async () => {
+            saving.value = true;
+            try {
+                const res = await client.put(
+                    `/village-staff/developments/${route.params.id}/applicants/${applicant.id}`,
+                    { status: 'rejected' }
+                );
+                const updated = res.data.data;
+                const idx = applicants.value.findIndex(a => a.id === updated.id);
+                if (idx >= 0) applicants.value[idx] = updated;
+            } catch (err) {
+                const msg = err.response?.data?.message ?? 'Gagal menolak';
+                alert(msg);
+            } finally {
+                saving.value = false;
+            }
+        }
+    );
 }
 
 const statusOptions = [
@@ -436,4 +455,14 @@ function selectClass() {
             </form>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="saving"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

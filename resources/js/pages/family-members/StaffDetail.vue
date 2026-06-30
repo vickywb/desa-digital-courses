@@ -2,11 +2,17 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import client from '../../api/client';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
 const loading = ref(true);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
 
 const relationLabel = (rel) => {
     const map = { wife: 'Istri', child: 'Anak', head: 'Kepala Keluarga' };
@@ -24,14 +30,20 @@ onMounted(async () => {
     }
 });
 
-async function deleteMember() {
-    if (!confirm(`Yakin ingin menghapus ${item.value.full_name}?`)) return;
-    try {
-        await client.delete(`/village-staff/head-families/${route.params.headId}/members/${route.params.memberId}`);
-        router.push(`/staff/head-families/${route.params.headId}/members`);
-    } catch {
-        alert('Gagal menghapus anggota keluarga');
-    }
+function deleteMember() {
+    openConfirm(
+        'Hapus Anggota',
+        `Yakin ingin menghapus ${item.value.full_name}?`,
+        'danger',
+        async () => {
+            try {
+                await client.delete(`/village-staff/head-families/${route.params.headId}/members/${route.params.memberId}`);
+                router.push(`/staff/head-families/${route.params.headId}/members`);
+            } catch {
+                alert('Gagal menghapus anggota keluarga');
+            }
+        }
+    );
 }
 </script>
 
@@ -125,4 +137,14 @@ async function deleteMember() {
             </div>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="false"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

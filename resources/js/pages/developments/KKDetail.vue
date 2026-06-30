@@ -3,12 +3,19 @@ import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import client from '../../api/client';
 import { formatRupiah, formatToClientTimezone } from '../../helpers/format';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const item = ref(null);
 const loading = ref(true);
 const saving = ref(false);
+const confirmState = ref({ show: false, title: '', message: '', variant: 'danger', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
+
 const hasApplied = ref(false);
 const applicantId = ref(null);
 const applicantStatus = ref(null);
@@ -84,20 +91,26 @@ async function applyNow() {
     }
 }
 
-async function cancelApplication() {
-    if (!confirm('Yakin ingin membatalkan lamaran?')) return;
-    saving.value = true;
-    try {
-        await client.delete(`/village-resident/developments/${route.params.id}/applicants/${applicantId.value}`);
-        hasApplied.value = false;
-        applicantId.value = null;
-        applicantStatus.value = null;
-    } catch (err) {
-        const msg = err.response?.data?.message ?? 'Gagal membatalkan';
-        alert(msg);
-    } finally {
-        saving.value = false;
-    }
+function cancelApplication() {
+    openConfirm(
+        'Batalkan Lamaran',
+        'Yakin ingin membatalkan lamaran?',
+        'danger',
+        async () => {
+            saving.value = true;
+            try {
+                await client.delete(`/village-resident/developments/${route.params.id}/applicants/${applicantId.value}`);
+                hasApplied.value = false;
+                applicantId.value = null;
+                applicantStatus.value = null;
+            } catch (err) {
+                const msg = err.response?.data?.message ?? 'Gagal membatalkan';
+                alert(msg);
+            } finally {
+                saving.value = false;
+            }
+        }
+    );
 }
 </script>
 
@@ -260,4 +273,14 @@ async function cancelApplication() {
             </div>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="saving"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>

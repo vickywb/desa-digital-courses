@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import client from '../../api/client';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -10,6 +11,12 @@ const participants = ref([]);
 const loading = ref(true);
 const showModal = ref(false);
 const saving = ref(false);
+
+const confirmState = ref({ show: false, title: '', message: '', variant: 'primary', onConfirm: null });
+
+function openConfirm(title, message, variant, onConfirm) {
+    confirmState.value = { show: true, title, message, variant, onConfirm };
+}
 
 const form = ref({
     title: '',
@@ -29,22 +36,28 @@ async function loadParticipants() {
     }
 }
 
-async function approveParticipant(participant) {
-    if (!confirm(`Terima peserta ${participant.head_of_family?.full_name ?? 'ini'}?`)) return;
-    saving.value = true;
-    try {
-        const res = await client.put(
-            `/village-staff/events/${route.params.id}/participants/${participant.id}`,
-            { payment_status: 'paid' }
-        );
-        const updated = res.data.data;
-        const idx = participants.value.findIndex(p => p.id === updated.id);
-        if (idx >= 0) participants.value[idx] = updated;
-    } catch (err) {
-        alert(err.response?.data?.message ?? 'Gagal menyetujui');
-    } finally {
-        saving.value = false;
-    }
+function approveParticipant(participant) {
+    openConfirm(
+        'Terima Peserta',
+        `Terima peserta ${participant.head_of_family?.full_name ?? 'ini'}?`,
+        'primary',
+        async () => {
+            saving.value = true;
+            try {
+                const res = await client.put(
+                    `/village-staff/events/${route.params.id}/participants/${participant.id}`,
+                    { payment_status: 'paid' }
+                );
+                const updated = res.data.data;
+                const idx = participants.value.findIndex(p => p.id === updated.id);
+                if (idx >= 0) participants.value[idx] = updated;
+            } catch (err) {
+                alert(err.response?.data?.message ?? 'Gagal menyetujui');
+            } finally {
+                saving.value = false;
+            }
+        }
+    );
 }
 
 onMounted(async () => {
@@ -360,4 +373,13 @@ function selectClass() {
         </div>
     </div>
 
+    <ConfirmModal
+        :show="confirmState.show"
+        :title="confirmState.title"
+        :message="confirmState.message"
+        :variant="confirmState.variant"
+        :loading="saving"
+        @close="confirmState.show = false"
+        @confirm="confirmState.onConfirm?.()"
+    />
 </template>
